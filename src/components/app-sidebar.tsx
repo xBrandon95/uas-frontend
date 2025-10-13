@@ -14,25 +14,40 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/authStore";
 
-const data = {
-  navMain: [
-    {
-      title: "Administración",
-      url: "#",
-      icon: ShieldUser,
-      isActive: true,
-      items: [
-        {
-          title: "Unidades",
-          url: "/unidades",
-        },
-      ],
-    },
-  ],
-};
+const navData = [
+  {
+    title: "Administración",
+    url: "#",
+    icon: ShieldUser,
+    isActive: true,
+    items: [
+      {
+        title: "Usuarios",
+        url: "/usuarios",
+        roles: ["admin"],
+      },
+      {
+        title: "Unidades",
+        url: "/unidades",
+        roles: ["admin"],
+      },
+    ],
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore();
+
+  const userRole = user?.rol ?? "";
+
+  const filteredNav = navData
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(
+        (item) => !item.roles || item.roles.includes(userRole)
+      ),
+    }))
+    .filter((section) => section.items.length > 0);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -46,7 +61,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={filteredNav} />
       </SidebarContent>
 
       <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>

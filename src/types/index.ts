@@ -1,12 +1,14 @@
 // ============================================
 // AUTH TYPES
 // ============================================
+export * from "./unidad";
 
 export interface User {
   id_usuario: number;
   nombre: string;
   usuario: string;
   rol: "admin" | "encargado" | "operador";
+  id_unidad: number;
 }
 
 export interface LoginRequest {
@@ -20,18 +22,29 @@ export interface LoginResponse {
   usuario: User;
 }
 
+export interface PaginationFilterParams {
+  page: number;
+  limit: number;
+  search?: string;
+}
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
 // ============================================
 // ENTIDADES MAESTRAS
 // ============================================
-
-export interface Unidad {
-  id_unidad: number;
-  nombre: string;
-  descripcion?: string;
-  activo: boolean;
-  fecha_creacion: string;
-  fecha_actualizacion: string;
-}
 
 export interface Semillera {
   id_semillera: number;

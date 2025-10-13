@@ -4,6 +4,7 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 import { Toaster } from "sonner";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Sistema de Gestión de Semillas",
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        {children}
+        <Providers>{children}</Providers>
         <Toaster position="top-right" richColors />
       </body>
     </html>

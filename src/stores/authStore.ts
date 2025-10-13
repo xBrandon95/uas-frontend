@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true); // 👈 esto marca cuando ya se cargó
+        state?.setHasHydrated(true);
       },
     }
   )
