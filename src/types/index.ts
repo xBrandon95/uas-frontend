@@ -1,46 +1,11 @@
 // ============================================
 // AUTH TYPES
 // ============================================
+
+export * from "./auth";
 export * from "./unidad";
-
-export interface User {
-  id_usuario: number;
-  nombre: string;
-  usuario: string;
-  rol: "admin" | "encargado" | "operador";
-  id_unidad: number;
-}
-
-export interface LoginRequest {
-  usuario: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-  usuario: User;
-}
-
-export interface PaginationFilterParams {
-  page: number;
-  limit: number;
-  search?: string;
-}
-
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: PaginationMeta;
-}
+export * from "./usuario";
+export * from "./pagination";
 
 // ============================================
 // ENTIDADES MAESTRAS

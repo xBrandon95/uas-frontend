@@ -31,6 +31,11 @@ const navData = [
         url: "/unidades",
         roles: ["admin"],
       },
+      {
+        title: "Semillas",
+        url: "/semillas",
+        roles: ["admin", "encargado", "operador"],
+      },
     ],
   },
 ];

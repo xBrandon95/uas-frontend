@@ -3,18 +3,17 @@
 import { useState } from "react";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
-import { createColumns } from "@/components/unidades/unidad-columns";
-import { UnidadDataTable } from "@/components/unidades/unidad-data-table";
-import { UnidadFormDialog } from "@/components/unidades/unidad-form-dialog";
-import { DeleteUnidadDialog } from "@/components/unidades/delete-unidad-dialog";
-import { useUnidades } from "@/hooks/use-unidades";
-import { useToggleUnidadActive } from "@/hooks/use-unidades";
+import { createColumns } from "@/components/usuarios/usuario-columns";
+import { UsuarioDataTable } from "@/components/usuarios/usuario-data-table";
+import { UsuarioFormDialog } from "@/components/usuarios/usuario-form-dialog";
+import { DeleteUsuarioDialog } from "@/components/usuarios/delete-usuario-dialog";
+import { UsuarioDetailDialog } from "@/components/usuarios/usuario-detail-dialog";
+import { useUsuarios, useToggleUsuarioActive } from "@/hooks/use-usuarios";
 import { Button } from "@/components/ui/button";
-import { Building2, Plus } from "lucide-react";
-import { Unidad } from "@/types";
-import { UnidadDetailDialog } from "@/components/unidades/unidad-detail-dialog";
+import { Plus, Users } from "lucide-react";
+import { Usuario } from "@/types";
 
-export default function UnidadesPage() {
+export default function UsuariosPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
@@ -23,15 +22,17 @@ export default function UnidadesPage() {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedUnidadId, setSelectedUnidadId] = useState<number | null>(null);
-  const [unidadToDelete, setUnidadToDelete] = useState<Unidad | null>(null);
+  const [selectedUsuarioId, setSelectedUsuarioId] = useState<number | null>(
+    null
+  );
+  const [usuarioToDelete, setUsuarioToDelete] = useState<Usuario | null>(null);
 
-  const { data, isLoading, isError, error } = useUnidades({
+  const { data, isLoading, isError, error } = useUsuarios({
     page,
     limit,
     search,
   });
-  const toggleActiveMutation = useToggleUnidadActive();
+  const toggleActiveMutation = useToggleUsuarioActive();
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -48,26 +49,26 @@ export default function UnidadesPage() {
   };
 
   const handleCreate = () => {
-    setSelectedUnidadId(null);
+    setSelectedUsuarioId(null);
     setFormDialogOpen(true);
   };
 
-  const handleView = (unidad: Unidad) => {
-    setSelectedUnidadId(unidad.id_unidad);
+  const handleView = (usuario: Usuario) => {
+    setSelectedUsuarioId(usuario.id_usuario);
     setDetailDialogOpen(true);
   };
 
-  const handleEdit = (unidad: Unidad) => {
-    setSelectedUnidadId(unidad.id_unidad);
+  const handleEdit = (usuario: Usuario) => {
+    setSelectedUsuarioId(usuario.id_usuario);
     setFormDialogOpen(true);
   };
 
-  const handleToggleActive = async (unidad: Unidad) => {
-    await toggleActiveMutation.mutateAsync(unidad.id_unidad);
+  const handleToggleActive = async (usuario: Usuario) => {
+    await toggleActiveMutation.mutateAsync(usuario.id_usuario);
   };
 
-  const handleDelete = (unidad: Unidad) => {
-    setUnidadToDelete(unidad);
+  const handleDelete = (usuario: Usuario) => {
+    setUsuarioToDelete(usuario);
     setDeleteDialogOpen(true);
   };
 
@@ -84,7 +85,7 @@ export default function UnidadesPage() {
     return (
       <ErrorMessage
         message={error.message}
-        title="Error al cargar las unidades"
+        title="Error al cargar los usuarios"
       />
     );
 
@@ -94,22 +95,21 @@ export default function UnidadesPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Building2 className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold tracking-tight">Unidades</h1>
+              <Users className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold tracking-tight">Usuarios</h1>
             </div>
-
-            <p className="text-muted-foreground mt-2">
-              Gestiona las unidades acondicionadoras de semilla
+            <p className="text-muted-foreground">
+              Gestiona los usuarios del sistema y sus permisos
             </p>
           </div>
-          <Button onClick={handleCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Unidad
+          <Button onClick={handleCreate} size="lg">
+            <Plus className="mr-2 h-5 w-5" />
+            Nuevo Usuario
           </Button>
         </div>
 
         <div className="bg-card rounded-lg border p-6">
-          <UnidadDataTable
+          <UsuarioDataTable
             columns={columns}
             data={data?.data || []}
             meta={
@@ -130,22 +130,22 @@ export default function UnidadesPage() {
         </div>
       </div>
 
-      <UnidadDetailDialog
+      <UsuarioDetailDialog
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
-        unidadId={selectedUnidadId}
+        usuarioId={selectedUsuarioId}
       />
 
-      <UnidadFormDialog
+      <UsuarioFormDialog
         open={formDialogOpen}
         onOpenChange={setFormDialogOpen}
-        unidadId={selectedUnidadId}
+        usuarioId={selectedUsuarioId}
       />
 
-      <DeleteUnidadDialog
+      <DeleteUsuarioDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        unidad={unidadToDelete}
+        usuario={usuarioToDelete}
       />
     </>
   );
