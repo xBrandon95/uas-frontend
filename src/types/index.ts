@@ -6,81 +6,38 @@ export * from "./auth";
 export * from "./unidad";
 export * from "./usuario";
 export * from "./pagination";
+export * from "./semilla";
+export * from "./variedad";
+export * from "./conductor";
+export * from "./vehiculo";
+export * from "./categoria";
+export * from "./semillera";
+export * from "./cooperador";
 
 // ============================================
 // ENTIDADES MAESTRAS
 // ============================================
 
-export interface Semillera {
-  id_semillera: number;
-  nombre: string;
-  direccion?: string;
-  telefono?: string;
-  nit?: string;
-  activo: boolean;
-}
+// export interface Cooperador {
+//   id_cooperador: number;
+//   id_semillera: number;
+//   semillera?: Semillera;
+//   nombre: string;
+//   ci?: string;
+//   telefono?: string;
+//   direccion?: string;
+//   activo: boolean;
+// }
 
-export interface Cooperador {
-  id_cooperador: number;
-  id_semillera: number;
-  semillera?: Semillera;
-  nombre: string;
-  ci?: string;
-  telefono?: string;
-  direccion?: string;
-  activo: boolean;
-}
-
-export interface Conductor {
-  id_conductor: number;
-  nombre: string;
-  ci: string;
-  telefono?: string;
-  licencia?: string;
-  activo: boolean;
-}
-
-export interface Vehiculo {
-  id_vehiculo: number;
-  placa: string;
-  tipo?: string;
-  marca?: string;
-  modelo?: string;
-  activo: boolean;
-}
-
-export interface Semilla {
-  id_semilla: number;
-  nombre: string;
-  tipo?: string;
-  activo: boolean;
-}
-
-export interface Variedad {
-  id_variedad: number;
-  id_semilla: number;
-  semilla?: Semilla;
-  nombre: string;
-  codigo?: string;
-  activo: boolean;
-}
-
-export interface Categoria {
-  id_categoria: number;
-  nombre: string;
-  codigo?: string;
-  activo: boolean;
-}
-
-export interface Cliente {
-  id_cliente: number;
-  nombre: string;
-  nit?: string;
-  telefono?: string;
-  direccion?: string;
-  email?: string;
-  activo: boolean;
-}
+// export interface Cliente {
+//   id_cliente: number;
+//   nombre: string;
+//   nit?: string;
+//   telefono?: string;
+//   direccion?: string;
+//   email?: string;
+//   activo: boolean;
+// }
 
 // ============================================
 // PROCESOS OPERATIVOS

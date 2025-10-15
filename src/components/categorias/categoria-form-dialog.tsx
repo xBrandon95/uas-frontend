@@ -17,39 +17,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import {
-  useCreateUnidad,
-  useUnidad,
-  useUpdateUnidad,
-} from "@/hooks/use-unidades";
+  useCreateCategoria,
+  useCategoria,
+  useUpdateCategoria,
+} from "@/hooks/use-categorias";
 
-interface UnidadFormDialogProps {
+interface CategoriaFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  unidadId?: number | null;
+  categoriaId?: number | null;
 }
 
-const unidadSchema = z.object({
+const categoriaSchema = z.object({
   nombre: z
     .string()
     .min(3, "El nombre debe tener al menos 3 caracteres")
     .max(100, "El nombre no puede exceder 100 caracteres"),
-  ubicacion: z.string().optional(),
-  activo: z.boolean(),
 });
 
-type UnidadFormData = z.infer<typeof unidadSchema>;
+type CategoriaFormData = z.infer<typeof categoriaSchema>;
 
-export function UnidadFormDialog({
+export function CategoriaFormDialog({
   open,
   onOpenChange,
-  unidadId,
-}: UnidadFormDialogProps) {
-  const isEditing = !!unidadId;
-  const createMutation = useCreateUnidad();
-  const updateMutation = useUpdateUnidad();
+  categoriaId,
+}: CategoriaFormDialogProps) {
+  const isEditing = !!categoriaId;
+  const createMutation = useCreateCategoria();
+  const updateMutation = useUpdateCategoria();
 
-  const { data: unidad, isLoading: isLoadingUnidad } = useUnidad(
-    isEditing ? unidadId : null
+  const { data: categoria, isLoading: isLoadingCategoria } = useCategoria(
+    isEditing ? categoriaId : null
   );
 
   const {
@@ -57,40 +55,35 @@ export function UnidadFormDialog({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<UnidadFormData>({
-    resolver: zodResolver(unidadSchema),
+  } = useForm<CategoriaFormData>({
+    resolver: zodResolver(categoriaSchema),
     defaultValues: {
       nombre: "",
-      ubicacion: "",
-      activo: true,
     },
   });
 
   useEffect(() => {
-    if (isEditing && unidad) {
+    if (isEditing && categoria) {
       reset({
-        nombre: unidad.nombre,
-        ubicacion: unidad.ubicacion,
-        activo: unidad.activo,
+        nombre: categoria.nombre,
       });
     } else if (!isEditing) {
       reset({
         nombre: "",
-        ubicacion: "",
-        activo: true,
       });
     }
-  }, [isEditing, unidad, reset]);
+  }, [isEditing, categoria, reset]);
 
-  const onSubmit = async (data: UnidadFormData) => {
-    if (isEditing && unidadId) {
+  const onSubmit = async (data: CategoriaFormData) => {
+    if (isEditing && categoriaId) {
       await updateMutation.mutateAsync({
-        id: unidadId,
+        id: categoriaId,
         dto: data,
       });
       onOpenChange(false);
       return;
     }
+
     await createMutation.mutateAsync(data);
     onOpenChange(false);
     reset();
@@ -103,16 +96,16 @@ export function UnidadFormDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar Unidad" : "Nueva Unidad"}
+            {isEditing ? "Editar Categoría" : "Nueva Categoría"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Actualiza la información de la unidad"
-              : "Ingresa los datos de la nueva unidad"}
+              ? "Actualiza la información de la categoría"
+              : "Ingresa los datos de la nueva categoría"}
           </DialogDescription>
         </DialogHeader>
 
-        {isLoadingUnidad ? (
+        {isLoadingCategoria ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
             <span className="ml-2 text-sm text-muted-foreground">
@@ -123,44 +116,17 @@ export function UnidadFormDialog({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">
-                Nombre <span className="text-red-500">*</span>
+                Nombre de la Categoría <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="nombre"
                 {...register("nombre")}
-                placeholder="Ej: Unidad Acondicionadora"
+                placeholder="Ej: Certificada"
                 className={errors.nombre ? "border-red-500" : ""}
               />
               {errors.nombre && (
                 <p className="text-sm text-red-500">{errors.nombre.message}</p>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="ubicacion">Ubicación</Label>
-              <Input
-                id="ubicacion"
-                {...register("ubicacion")}
-                placeholder="Ubicación de la unidad (opcional)"
-                className={errors.nombre ? "border-red-500" : ""}
-              />
-              {errors.ubicacion && (
-                <p className="text-sm text-red-500">
-                  {errors.ubicacion.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="activo"
-                {...register("activo")}
-                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-              />
-              <Label htmlFor="activo" className="cursor-pointer">
-                Unidad activa
-              </Label>
             </div>
 
             <DialogFooter>

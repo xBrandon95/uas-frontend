@@ -29,7 +29,7 @@ import {
   useUpdateUsuario,
 } from "@/hooks/use-usuarios";
 import { useUnidades } from "@/hooks/use-unidades";
-import { Role } from "@/types";
+import { CreateUsuarioDto, Role, UpdateUsuarioDto } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface UsuarioFormDialogProps {
@@ -131,36 +131,34 @@ export function UsuarioFormDialog({
   }, [rolSeleccionado, setValue]);
 
   const onSubmit = async (data: UsuarioFormData) => {
-    // Preparar datos según el rol
-    const dto: any = {
+    const base = {
       nombre: data.nombre,
       usuario: data.usuario,
       rol: data.rol,
       activo: data.activo,
+      ...(data.rol !== Role.ADMIN && data.id_unidad
+        ? { id_unidad: data.id_unidad }
+        : {}),
     };
 
-    // Admin no debe tener unidad
-    if (data.rol !== Role.ADMIN && data.id_unidad) {
-      dto.id_unidad = data.id_unidad;
-    }
-
-    // Solo incluir password si se proporcionó
-    if (data.password && data.password.trim() !== "") {
-      dto.password = data.password;
-    }
-
     if (isEditing && usuarioId) {
-      await updateMutation.mutateAsync({
-        id: usuarioId,
-        dto,
-      });
+      const dto: UpdateUsuarioDto = {
+        ...base,
+        ...(data.password?.trim() ? { password: data.password } : {}),
+      };
+
+      await updateMutation.mutateAsync({ id: usuarioId, dto });
     } else {
-      // En creación, el password es obligatorio
-      if (!data.password || data.password.trim() === "") {
-        return;
-      }
-      await createMutation.mutateAsync({ ...dto, password: data.password });
+      if (!data.password?.trim()) return;
+
+      const dto: CreateUsuarioDto = {
+        ...base,
+        password: data.password,
+      };
+
+      await createMutation.mutateAsync(dto);
     }
+
     onOpenChange(false);
   };
 

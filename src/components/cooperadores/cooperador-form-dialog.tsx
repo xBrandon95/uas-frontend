@@ -17,39 +17,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import {
-  useCreateUnidad,
-  useUnidad,
-  useUpdateUnidad,
-} from "@/hooks/use-unidades";
+  useCreateCooperador,
+  useCooperador,
+  useUpdateCooperador,
+} from "@/hooks/use-cooperadores";
 
-interface UnidadFormDialogProps {
+interface CooperadorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  unidadId?: number | null;
+  cooperadorId?: number | null;
 }
 
-const unidadSchema = z.object({
+const cooperadorSchema = z.object({
   nombre: z
     .string()
     .min(3, "El nombre debe tener al menos 3 caracteres")
-    .max(100, "El nombre no puede exceder 100 caracteres"),
-  ubicacion: z.string().optional(),
-  activo: z.boolean(),
+    .max(200, "El nombre no puede exceder 200 caracteres"),
+  ci: z
+    .string()
+    .min(5, "El CI debe tener al menos 5 caracteres")
+    .max(50, "El CI no puede exceder 50 caracteres")
+    .regex(
+      /^[0-9]+[A-Z]?$/,
+      "El CI debe contener solo números y opcionalmente una letra al final"
+    ),
+  telefono: z
+    .string()
+    .max(50, "El teléfono no puede exceder 50 caracteres")
+    .optional()
+    .or(z.literal("")),
 });
 
-type UnidadFormData = z.infer<typeof unidadSchema>;
+type CooperadorFormData = z.infer<typeof cooperadorSchema>;
 
-export function UnidadFormDialog({
+export function CooperadorFormDialog({
   open,
   onOpenChange,
-  unidadId,
-}: UnidadFormDialogProps) {
-  const isEditing = !!unidadId;
-  const createMutation = useCreateUnidad();
-  const updateMutation = useUpdateUnidad();
+  cooperadorId,
+}: CooperadorFormDialogProps) {
+  const isEditing = !!cooperadorId;
+  const createMutation = useCreateCooperador();
+  const updateMutation = useUpdateCooperador();
 
-  const { data: unidad, isLoading: isLoadingUnidad } = useUnidad(
-    isEditing ? unidadId : null
+  const { data: cooperador, isLoading: isLoadingCooperador } = useCooperador(
+    isEditing ? cooperadorId : null
   );
 
   const {
@@ -57,41 +68,46 @@ export function UnidadFormDialog({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<UnidadFormData>({
-    resolver: zodResolver(unidadSchema),
+  } = useForm<CooperadorFormData>({
+    resolver: zodResolver(cooperadorSchema),
     defaultValues: {
       nombre: "",
-      ubicacion: "",
-      activo: true,
+      ci: "",
+      telefono: "",
     },
   });
 
   useEffect(() => {
-    if (isEditing && unidad) {
+    if (isEditing && cooperador) {
       reset({
-        nombre: unidad.nombre,
-        ubicacion: unidad.ubicacion,
-        activo: unidad.activo,
+        nombre: cooperador.nombre,
+        ci: cooperador.ci,
+        telefono: cooperador.telefono || "",
       });
     } else if (!isEditing) {
       reset({
         nombre: "",
-        ubicacion: "",
-        activo: true,
+        ci: "",
+        telefono: "",
       });
     }
-  }, [isEditing, unidad, reset]);
+  }, [isEditing, cooperador, reset]);
 
-  const onSubmit = async (data: UnidadFormData) => {
-    if (isEditing && unidadId) {
+  const onSubmit = async (data: CooperadorFormData) => {
+    const submitData = {
+      ...data,
+      telefono: data.telefono === "" ? undefined : data.telefono,
+    };
+
+    if (isEditing && cooperadorId) {
       await updateMutation.mutateAsync({
-        id: unidadId,
-        dto: data,
+        id: cooperadorId,
+        dto: submitData,
       });
       onOpenChange(false);
       return;
     }
-    await createMutation.mutateAsync(data);
+    await createMutation.mutateAsync(submitData);
     onOpenChange(false);
     reset();
   };
@@ -103,16 +119,16 @@ export function UnidadFormDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar Unidad" : "Nueva Unidad"}
+            {isEditing ? "Editar Cooperador" : "Nuevo Cooperador"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Actualiza la información de la unidad"
-              : "Ingresa los datos de la nueva unidad"}
+              ? "Actualiza la información del cooperador"
+              : "Ingresa los datos del nuevo cooperador"}
           </DialogDescription>
         </DialogHeader>
 
-        {isLoadingUnidad ? (
+        {isLoadingCooperador ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
             <span className="ml-2 text-sm text-muted-foreground">
@@ -123,12 +139,11 @@ export function UnidadFormDialog({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">
-                Nombre <span className="text-red-500">*</span>
+                Nombre Completo <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="nombre"
                 {...register("nombre")}
-                placeholder="Ej: Unidad Acondicionadora"
                 className={errors.nombre ? "border-red-500" : ""}
               />
               {errors.nombre && (
@@ -137,30 +152,32 @@ export function UnidadFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ubicacion">Ubicación</Label>
+              <Label htmlFor="ci">
+                Carnet de Identidad <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="ubicacion"
-                {...register("ubicacion")}
-                placeholder="Ubicación de la unidad (opcional)"
-                className={errors.nombre ? "border-red-500" : ""}
+                id="ci"
+                {...register("ci")}
+                className={errors.ci ? "border-red-500" : ""}
               />
-              {errors.ubicacion && (
-                <p className="text-sm text-red-500">
-                  {errors.ubicacion.message}
-                </p>
+              {errors.ci && (
+                <p className="text-sm text-red-500">{errors.ci.message}</p>
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="activo"
-                {...register("activo")}
-                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+            <div className="space-y-2">
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                {...register("telefono")}
+                placeholder="(opcional)"
+                className={errors.telefono ? "border-red-500" : ""}
               />
-              <Label htmlFor="activo" className="cursor-pointer">
-                Unidad activa
-              </Label>
+              {errors.telefono && (
+                <p className="text-sm text-red-500">
+                  {errors.telefono.message}
+                </p>
+              )}
             </div>
 
             <DialogFooter>

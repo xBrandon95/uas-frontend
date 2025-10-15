@@ -32,8 +32,38 @@ const navData = [
         roles: ["admin"],
       },
       {
+        title: "Variedades",
+        url: "/variedades",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
         title: "Semillas",
         url: "/semillas",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Categorias",
+        url: "/categorias",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Semilleras",
+        url: "/semilleras",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Conductores",
+        url: "/conductores",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Vehiculos",
+        url: "/vehiculos",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Cooperadores",
+        url: "/cooperadores",
         roles: ["admin", "encargado", "operador"],
       },
     ],

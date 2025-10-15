@@ -17,39 +17,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import {
-  useCreateUnidad,
-  useUnidad,
-  useUpdateUnidad,
-} from "@/hooks/use-unidades";
+  useCreateSemilla,
+  useSemilla,
+  useUpdateSemilla,
+} from "@/hooks/use-semillas";
 
-interface UnidadFormDialogProps {
+interface SemillaFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  unidadId?: number | null;
+  semillaId?: number | null;
 }
 
-const unidadSchema = z.object({
+const semillaSchema = z.object({
   nombre: z
     .string()
     .min(3, "El nombre debe tener al menos 3 caracteres")
     .max(100, "El nombre no puede exceder 100 caracteres"),
-  ubicacion: z.string().optional(),
   activo: z.boolean(),
 });
 
-type UnidadFormData = z.infer<typeof unidadSchema>;
+type SemillaFormData = z.infer<typeof semillaSchema>;
 
-export function UnidadFormDialog({
+export function SemillaFormDialog({
   open,
   onOpenChange,
-  unidadId,
-}: UnidadFormDialogProps) {
-  const isEditing = !!unidadId;
-  const createMutation = useCreateUnidad();
-  const updateMutation = useUpdateUnidad();
+  semillaId,
+}: SemillaFormDialogProps) {
+  const isEditing = !!semillaId;
+  const createMutation = useCreateSemilla();
+  const updateMutation = useUpdateSemilla();
 
-  const { data: unidad, isLoading: isLoadingUnidad } = useUnidad(
-    isEditing ? unidadId : null
+  const { data: semilla, isLoading: isLoadingSemilla } = useSemilla(
+    isEditing ? semillaId : null
   );
 
   const {
@@ -57,40 +56,38 @@ export function UnidadFormDialog({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<UnidadFormData>({
-    resolver: zodResolver(unidadSchema),
+  } = useForm<SemillaFormData>({
+    resolver: zodResolver(semillaSchema),
     defaultValues: {
       nombre: "",
-      ubicacion: "",
       activo: true,
     },
   });
 
   useEffect(() => {
-    if (isEditing && unidad) {
+    if (isEditing && semilla) {
       reset({
-        nombre: unidad.nombre,
-        ubicacion: unidad.ubicacion,
-        activo: unidad.activo,
+        nombre: semilla.nombre,
+        activo: semilla.activo,
       });
     } else if (!isEditing) {
       reset({
         nombre: "",
-        ubicacion: "",
         activo: true,
       });
     }
-  }, [isEditing, unidad, reset]);
+  }, [isEditing, semilla, reset]);
 
-  const onSubmit = async (data: UnidadFormData) => {
-    if (isEditing && unidadId) {
+  const onSubmit = async (data: SemillaFormData) => {
+    if (isEditing && semillaId) {
       await updateMutation.mutateAsync({
-        id: unidadId,
+        id: semillaId,
         dto: data,
       });
       onOpenChange(false);
       return;
     }
+
     await createMutation.mutateAsync(data);
     onOpenChange(false);
     reset();
@@ -103,16 +100,16 @@ export function UnidadFormDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar Unidad" : "Nueva Unidad"}
+            {isEditing ? "Editar Semilla" : "Nueva Semilla"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Actualiza la información de la unidad"
-              : "Ingresa los datos de la nueva unidad"}
+              ? "Actualiza la información de la semilla"
+              : "Ingresa los datos de la nueva semilla"}
           </DialogDescription>
         </DialogHeader>
 
-        {isLoadingUnidad ? (
+        {isLoadingSemilla ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
             <span className="ml-2 text-sm text-muted-foreground">
@@ -128,26 +125,10 @@ export function UnidadFormDialog({
               <Input
                 id="nombre"
                 {...register("nombre")}
-                placeholder="Ej: Unidad Acondicionadora"
                 className={errors.nombre ? "border-red-500" : ""}
               />
               {errors.nombre && (
                 <p className="text-sm text-red-500">{errors.nombre.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="ubicacion">Ubicación</Label>
-              <Input
-                id="ubicacion"
-                {...register("ubicacion")}
-                placeholder="Ubicación de la unidad (opcional)"
-                className={errors.nombre ? "border-red-500" : ""}
-              />
-              {errors.ubicacion && (
-                <p className="text-sm text-red-500">
-                  {errors.ubicacion.message}
-                </p>
               )}
             </div>
 
@@ -159,7 +140,7 @@ export function UnidadFormDialog({
                 className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
               />
               <Label htmlFor="activo" className="cursor-pointer">
-                Unidad activa
+                Semilla activa
               </Label>
             </div>
 
