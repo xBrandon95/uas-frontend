@@ -66,6 +66,11 @@ const navData = [
         url: "/cooperadores",
         roles: ["admin", "encargado", "operador"],
       },
+      {
+        title: "Ordenes ingreso",
+        url: "/ordenes-ingreso",
+        roles: ["admin", "encargado", "operador"],
+      },
     ],
   },
 ];

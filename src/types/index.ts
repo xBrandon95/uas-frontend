@@ -13,6 +13,7 @@ export * from "./vehiculo";
 export * from "./categoria";
 export * from "./semillera";
 export * from "./cooperador";
+export * from "./orden-ingreso";
 
 // ============================================
 // ENTIDADES MAESTRAS
