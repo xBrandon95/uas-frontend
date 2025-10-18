@@ -28,21 +28,21 @@ import { useVehiculosActivos } from "@/hooks/use-vehiculos";
 import { useSemillasActivas } from "@/hooks/use-semillas";
 import { useVariedadesBySemilla } from "@/hooks/use-variedades";
 import { useCategoriasActivas } from "@/hooks/use-categorias";
-import { useUnidades } from "@/hooks/use-unidades";
 import Loader from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import { useCooperadores } from "@/hooks/use-cooperadores";
+import { useAuthStore } from "@/stores/authStore";
 
 const ordenSchema = z.object({
-  numero_orden: z.string().min(1, "Requerido").max(50),
-  id_semillera: z.number({ required_error: "Requerido" }),
-  id_cooperador: z.number({ required_error: "Requerido" }),
-  id_conductor: z.number({ required_error: "Requerido" }),
-  id_vehiculo: z.number({ required_error: "Requerido" }),
-  id_semilla: z.number({ required_error: "Requerido" }),
-  id_variedad: z.number({ required_error: "Requerido" }),
-  id_categoria_ingreso: z.number({ required_error: "Requerido" }),
-  id_unidad: z.number({ required_error: "Requerido" }),
+  // numero_orden: z.string().min(1, "Requerido").max(50),
+  id_semillera: z.number({ message: "Requerido" }),
+  id_cooperador: z.number({ message: "Requerido" }),
+  id_conductor: z.number({ message: "Requerido" }),
+  id_vehiculo: z.number({ message: "Requerido" }),
+  id_semilla: z.number({ message: "Requerido" }),
+  id_variedad: z.number({ message: "Requerido" }),
+  id_categoria_ingreso: z.number({ message: "Requerido" }),
+  id_unidad: z.number({ message: "Requerido" }),
   nro_lote_campo: z.string().optional(),
   nro_bolsas: z.number().optional(),
   nro_cupon: z.string().optional(),
@@ -59,7 +59,7 @@ const ordenSchema = z.object({
   porcentaje_grano_verde: z.number().min(0).max(100).optional(),
   observaciones: z.string().optional(),
   estado: z.string().default("pendiente"),
-  id_usuario_creador: z.number().optional(),
+  // id_usuario_creador: z.number().optional(),
 });
 
 type OrdenFormData = z.infer<typeof ordenSchema>;
@@ -76,13 +76,14 @@ export default function OrdenIngresoFormPage() {
     isEditing ? Number(ordenId) : null
   );
 
+  const { user } = useAuthStore();
+
   // Cargar datos de catálogos
   const { data: semilleras } = useSemillerasActivas();
   const { data: conductores } = useConductoresActivos();
   const { data: vehiculos } = useVehiculosActivos();
   const { data: semillas } = useSemillasActivas();
   const { data: categorias } = useCategoriasActivas();
-  const { data: unidades } = useUnidades({ page: 1, limit: 100, search: "" });
   const { data: cooperadores } = useCooperadores({
     page: 1,
     limit: 100,
@@ -99,7 +100,10 @@ export default function OrdenIngresoFormPage() {
   } = useForm<OrdenFormData>({
     resolver: zodResolver(ordenSchema),
     defaultValues: {
-      estado: "pendiente",
+      id_unidad: user?.id_unidad,
+      estado: "completado",
+      // numero_orden: "1",
+      // id_usuario_creador: user?.id_usuario,
     },
   });
 
@@ -141,19 +145,17 @@ export default function OrdenIngresoFormPage() {
   }, [isEditing, orden, reset]);
 
   const onSubmit = async (data: OrdenFormData) => {
-    try {
-      if (isEditing) {
-        await updateMutation.mutateAsync({
-          id: Number(ordenId),
-          dto: data,
-        });
-      } else {
-        await createMutation.mutateAsync(data);
-      }
-      router.push("/ordenes-ingreso");
-    } catch (error) {
-      // Error manejado por el hook
+    console.log(data);
+
+    if (isEditing) {
+      await updateMutation.mutateAsync({
+        id: Number(ordenId),
+        dto: data,
+      });
+    } else {
+      await createMutation.mutateAsync(data);
     }
+    router.push("/ordenes-ingreso");
   };
 
   const isLoading =
@@ -180,77 +182,6 @@ export default function OrdenIngresoFormPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        {/* Información General */}
-        <div className="bg-card rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">Información General</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="numero_orden">
-                Número de Orden <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="numero_orden"
-                {...register("numero_orden")}
-                className={errors.numero_orden ? "border-red-500" : ""}
-              />
-              {errors.numero_orden && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.numero_orden.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="id_unidad">
-                Unidad <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                value={watch("id_unidad")?.toString()}
-                onValueChange={(value) => setValue("id_unidad", Number(value))}
-              >
-                <SelectTrigger
-                  className={errors.id_unidad ? "border-red-500" : ""}
-                >
-                  <SelectValue placeholder="Seleccionar unidad" />
-                </SelectTrigger>
-                <SelectContent>
-                  {unidades?.data?.map((unidad) => (
-                    <SelectItem
-                      key={unidad.id_unidad}
-                      value={unidad.id_unidad.toString()}
-                    >
-                      {unidad.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.id_unidad && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.id_unidad.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="estado">Estado</Label>
-              <Select
-                value={watch("estado")}
-                onValueChange={(value) => setValue("estado", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pendiente">Pendiente</SelectItem>
-                  <SelectItem value="en_proceso">En Proceso</SelectItem>
-                  <SelectItem value="completado">Completado</SelectItem>
-                  <SelectItem value="cancelado">Cancelado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
         {/* Transporte */}
         <div className="bg-card rounded-lg border p-6">
           <h2 className="text-xl font-semibold mb-4">
@@ -400,7 +331,7 @@ export default function OrdenIngresoFormPage() {
         {/* Información de Semilla */}
         <div className="bg-card rounded-lg border p-6">
           <h2 className="text-xl font-semibold mb-4">Información de Semilla</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="id_semilla">
                 Semilla <span className="text-red-500">*</span>
@@ -413,7 +344,10 @@ export default function OrdenIngresoFormPage() {
                 }}
               >
                 <SelectTrigger
-                  className={errors.id_semilla ? "border-red-500" : ""}
+                  className={cn(
+                    "w-full",
+                    errors.id_semilla && "border-red-500"
+                  )}
                 >
                   <SelectValue placeholder="Seleccionar semilla" />
                 </SelectTrigger>
@@ -445,7 +379,10 @@ export default function OrdenIngresoFormPage() {
                 disabled={!selectedSemillaId}
               >
                 <SelectTrigger
-                  className={errors.id_variedad ? "border-red-500" : ""}
+                  className={cn(
+                    "w-full",
+                    errors.id_variedad && "border-red-500"
+                  )}
                 >
                   <SelectValue placeholder="Seleccionar variedad" />
                 </SelectTrigger>
@@ -476,12 +413,14 @@ export default function OrdenIngresoFormPage() {
                 }
               >
                 <SelectTrigger
-                  className={
-                    errors.id_categoria_ingreso ? "border-red-500" : ""
-                  }
+                  className={cn(
+                    "w-full",
+                    errors.id_categoria_ingreso && "border-red-500"
+                  )}
                 >
                   <SelectValue placeholder="Seleccionar categoría" />
                 </SelectTrigger>
+
                 <SelectContent>
                   {categorias?.map((categoria) => (
                     <SelectItem
@@ -499,17 +438,17 @@ export default function OrdenIngresoFormPage() {
             </div>
 
             <div>
+              <Label htmlFor="nro_lote_campo">Nº Lote Campo</Label>
+              <Input id="nro_lote_campo" {...register("nro_lote_campo")} />
+            </div>
+
+            <div>
               <Label htmlFor="nro_bolsas">Número de Bolsas</Label>
               <Input
                 id="nro_bolsas"
                 type="number"
                 {...register("nro_bolsas", { valueAsNumber: true })}
               />
-            </div>
-
-            <div>
-              <Label htmlFor="nro_lote_campo">Nº Lote Campo</Label>
-              <Input id="nro_lote_campo" {...register("nro_lote_campo")} />
             </div>
 
             <div>

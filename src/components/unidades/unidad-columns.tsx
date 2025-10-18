@@ -1,4 +1,3 @@
-// components/unidades/columns.tsx - Actualizado con opción de detalle
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";

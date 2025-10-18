@@ -106,10 +106,13 @@ export function SemilleraFormDialog({
         id: semilleraId,
         dto: submitData,
       });
-    } else {
-      await createMutation.mutateAsync(submitData);
+      onOpenChange(false);
+      return;
     }
+
+    await createMutation.mutateAsync(submitData);
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

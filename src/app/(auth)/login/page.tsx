@@ -15,7 +15,7 @@ export default function LoginPage() {
     if (!hasHydrated) return;
 
     if (isAuthenticated) {
-      router.push("/unidades");
+      router.push("/ordenes-ingreso");
     }
   }, [hasHydrated, isAuthenticated, router]);
 

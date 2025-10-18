@@ -149,7 +149,7 @@ export default function OrdenesIngresoPage() {
                       <TableCell>
                         {orden.peso_neto ? (
                           <span className="font-mono">
-                            {orden.peso_neto.toFixed(2)} kg
+                            {orden.peso_neto} kg
                           </span>
                         ) : (
                           <span className="text-muted-foreground">-</span>

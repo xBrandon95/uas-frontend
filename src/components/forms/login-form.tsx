@@ -29,7 +29,7 @@ export function LoginForm({
     try {
       await login({ usuario, password });
       toast.success("¡Bienvenido!");
-      router.push("/unidades");
+      router.push("/ordenes-ingreso");
     } catch (error) {
       console.log(error);
       toast.error("Error al iniciar sesión");

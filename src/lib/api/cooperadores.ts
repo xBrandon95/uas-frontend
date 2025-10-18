@@ -12,7 +12,6 @@ export async function getCooperadores(
   params: PaginationFilterParams
 ): Promise<PaginatedResponse<Cooperador>> {
   const { data } = await api.get("/cooperadores", { params });
-  console.log(data);
   return data;
 }
 
