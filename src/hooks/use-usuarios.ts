@@ -61,8 +61,9 @@ export function useUpdateUsuario() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateUsuarioDto }) =>
       updateUsuario(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      queryClient.invalidateQueries({ queryKey: ["usuario", variables.id] });
       toast.success("Usuario actualizado exitosamente");
     },
     onError: (error: unknown) => {
@@ -76,8 +77,9 @@ export function useToggleUsuarioActive() {
 
   return useMutation({
     mutationFn: (id: number) => toggleUsuarioActive(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      queryClient.invalidateQueries({ queryKey: ["usuario", id] });
       toast.success("Estado actualizado exitosamente");
     },
     onError: (error: unknown) => {

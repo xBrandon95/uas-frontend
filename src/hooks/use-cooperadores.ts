@@ -61,9 +61,10 @@ export function useUpdateCooperador() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateCooperadorDto }) =>
       updateCooperador(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["cooperadores"] });
       queryClient.invalidateQueries({ queryKey: ["cooperadores-activos"] });
+      queryClient.invalidateQueries({ queryKey: ["cooperador", variables.id] });
       toast.success("Cooperador actualizado exitosamente");
     },
     onError: (error: unknown) => {

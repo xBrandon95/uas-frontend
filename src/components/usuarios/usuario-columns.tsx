@@ -23,9 +23,9 @@ interface ColumnsProps {
 
 const getRoleBadge = (rol: string) => {
   const variants = {
-    admin: "destructive",
-    encargado: "default",
-    operador: "secondary",
+    admin: "admin",
+    encargado: "encargado",
+    operador: "operador",
   } as const;
 
   const labels = {
@@ -47,13 +47,6 @@ export const createColumns = ({
   onToggleActive,
   onDelete,
 }: ColumnsProps): ColumnDef<Usuario>[] => [
-  {
-    accessorKey: "id_usuario",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id_usuario")}</div>
-    ),
-  },
   {
     accessorKey: "nombre",
     header: "Nombre",
@@ -88,7 +81,7 @@ export const createColumns = ({
     cell: ({ row }) => {
       const activo = row.getValue("activo") as boolean;
       return (
-        <Badge variant={activo ? "default" : "secondary"}>
+        <Badge variant={activo ? "success" : "secondary"}>
           {activo ? "Activo" : "Inactivo"}
         </Badge>
       );

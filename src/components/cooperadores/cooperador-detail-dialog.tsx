@@ -46,16 +46,6 @@ export function CooperadorDetailDialog({
           </div>
         ) : cooperador ? (
           <div className="space-y-6">
-            {/* ID */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  ID del Cooperador
-                </p>
-                <p className="text-xl font-bold">{cooperador.id_cooperador}</p>
-              </div>
-            </div>
-
             <Separator />
 
             {/* Información principal */}

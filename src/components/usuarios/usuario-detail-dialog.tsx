@@ -28,9 +28,9 @@ interface UsuarioDetailDialogProps {
 
 const getRoleBadge = (rol: string) => {
   const variants = {
-    admin: { variant: "destructive" as const, label: "Administrador" },
-    encargado: { variant: "default" as const, label: "Encargado" },
-    operador: { variant: "secondary" as const, label: "Operador" },
+    admin: { variant: "admin" as const, label: "Administrador" },
+    encargado: { variant: "encargado" as const, label: "Encargado" },
+    operador: { variant: "operador" as const, label: "Operador" },
   };
 
   const config = variants[rol as keyof typeof variants] || {
@@ -87,24 +87,6 @@ export function UsuarioDetailDialog({
           </div>
         ) : usuario ? (
           <div className="space-y-6">
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">ID de Usuario</p>
-                <p className="text-xl font-bold">{usuario.id_usuario}</p>
-              </div>
-              <div className="flex gap-2">
-                {getRoleBadge(usuario.rol)}
-                <Badge
-                  variant={usuario.activo ? "default" : "secondary"}
-                  className="h-8"
-                >
-                  <Activity className="mr-1 h-3 w-3" />
-                  {usuario.activo ? "Activo" : "Inactivo"}
-                </Badge>
-              </div>
-            </div>
-
             <Separator />
 
             {/* Información principal */}
@@ -145,6 +127,17 @@ export function UsuarioDetailDialog({
                 </div>
               )}
 
+              <div className="flex gap-2">
+                {getRoleBadge(usuario.rol)}
+                <Badge
+                  variant={usuario.activo ? "success" : "secondary"}
+                  className="h-8"
+                >
+                  <Activity className="mr-1 h-3 w-3" />
+                  {usuario.activo ? "Activo" : "Inactivo"}
+                </Badge>
+              </div>
+
               {usuario.rol === Role.ADMIN && (
                 <div className="rounded-lg bg-muted/50 p-3">
                   <p className="text-sm text-muted-foreground">
@@ -158,37 +151,6 @@ export function UsuarioDetailDialog({
             </div>
 
             <Separator />
-
-            {/* Fechas */}
-            <div className="space-y-3">
-              <div className="rounded-lg bg-muted/50 p-3">
-                <div className="flex items-start gap-2">
-                  <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Fecha de Creación
-                    </p>
-                    <p className="text-sm font-semibold mt-1 capitalize">
-                      {formatDate(usuario.fecha_creacion)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-muted/50 p-3">
-                <div className="flex items-start gap-2">
-                  <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Última Actualización
-                    </p>
-                    <p className="text-sm font-semibold mt-1 capitalize">
-                      {formatDate(usuario.fecha_actualizacion)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         ) : (
           <div className="py-12 text-center text-muted-foreground">
