@@ -78,10 +78,10 @@ export function useUpdateVariedad() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateVariedadDto }) =>
       updateVariedad(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["variedades"] });
       queryClient.invalidateQueries({ queryKey: ["variedades-activas"] });
-      queryClient.invalidateQueries({ queryKey: ["variedades-semilla"] });
+      queryClient.invalidateQueries({ queryKey: ["variedad", variables.id] });
       toast.success("Variedad actualizada exitosamente");
     },
     onError: (error: unknown) => {

@@ -47,13 +47,13 @@ export function VehiculoDetailDialog({
           </div>
         ) : vehiculo ? (
           <div className="space-y-6">
-            {/* ID */}
+            {/* ID
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">ID del Vehículo</p>
                 <p className="text-xl font-bold">{vehiculo.id_vehiculo}</p>
               </div>
-            </div>
+            </div> */}
 
             <Separator />
 

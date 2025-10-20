@@ -66,9 +66,12 @@ export function useUpdateConductor() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateConductorDto }) =>
       updateConductor(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["conductores"] });
       queryClient.invalidateQueries({ queryKey: ["conductores-activos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["conductor", variables.id],
+      });
       toast.success("Conductor actualizado exitosamente");
     },
     onError: (error: unknown) => {

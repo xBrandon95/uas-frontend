@@ -26,13 +26,6 @@ export const createColumns = ({
   onDelete,
 }: ColumnsProps): ColumnDef<Variedad>[] => [
   {
-    accessorKey: "id_variedad",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id_variedad")}</div>
-    ),
-  },
-  {
     accessorKey: "semilla.nombre",
     header: "Semilla",
     cell: ({ row }) => {

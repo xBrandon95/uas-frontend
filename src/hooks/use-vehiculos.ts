@@ -66,9 +66,10 @@ export function useUpdateVehiculo() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateVehiculoDto }) =>
       updateVehiculo(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["vehiculos"] });
       queryClient.invalidateQueries({ queryKey: ["vehiculos-activos"] });
+      queryClient.invalidateQueries({ queryKey: ["vehiculo", variables.id] });
       toast.success("Vehículo actualizado exitosamente");
     },
     onError: (error: unknown) => {

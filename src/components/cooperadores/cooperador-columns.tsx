@@ -25,13 +25,6 @@ export const createColumns = ({
   onDelete,
 }: ColumnsProps): ColumnDef<Cooperador>[] => [
   {
-    accessorKey: "id_cooperador",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id_cooperador")}</div>
-    ),
-  },
-  {
     accessorKey: "nombre",
     header: "Nombre",
   },

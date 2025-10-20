@@ -67,9 +67,10 @@ export function useUpdateSemilla() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateSemillaDto }) =>
       updateSemilla(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["semillas"] });
       queryClient.invalidateQueries({ queryKey: ["semillas-activas"] });
+      queryClient.invalidateQueries({ queryKey: ["semilla", variables.id] });
       toast.success("Semilla actualizada exitosamente");
     },
     onError: (error: unknown) => {
@@ -84,9 +85,10 @@ export function useToggleSemillaActive() {
 
   return useMutation({
     mutationFn: (id: number) => toggleSemillaActive(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["semillas"] });
       queryClient.invalidateQueries({ queryKey: ["semillas-activas"] });
+      queryClient.invalidateQueries({ queryKey: ["semilla", id] });
       toast.success("Estado actualizado exitosamente");
     },
     onError: (error: unknown) => {

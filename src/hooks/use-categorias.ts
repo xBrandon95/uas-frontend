@@ -66,9 +66,10 @@ export function useUpdateCategoria() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateCategoriaDto }) =>
       updateCategoria(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["categorias"] });
       queryClient.invalidateQueries({ queryKey: ["categorias-activas"] });
+      queryClient.invalidateQueries({ queryKey: ["categoria", variables.id] });
       toast.success("Categoría actualizada exitosamente");
     },
     onError: (error: unknown) => {

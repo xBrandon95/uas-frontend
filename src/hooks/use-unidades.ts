@@ -52,8 +52,9 @@ export function useUpdateUnidad() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateUnidadDto }) =>
       updateUnidad(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["unidades"] });
+      queryClient.invalidateQueries({ queryKey: ["unidades", variables.id] });
       toast.success("Unidad actualizada exitosamente");
     },
     onError: (error: unknown) => {
@@ -67,8 +68,9 @@ export function useToggleUnidadActive() {
 
   return useMutation({
     mutationFn: (id: number) => toggleUnidadActive(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["unidades"] });
+      queryClient.invalidateQueries({ queryKey: ["unidad", id] });
       toast.success("Estado actualizado exitosamente");
     },
     onError: (error: unknown) => {

@@ -28,13 +28,6 @@ export const createColumns = ({
   onDelete,
 }: ColumnsProps): ColumnDef<Unidad>[] => [
   {
-    accessorKey: "id_unidad",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id_unidad")}</div>
-    ),
-  },
-  {
     accessorKey: "nombre",
     header: "Nombre",
   },
@@ -48,7 +41,7 @@ export const createColumns = ({
     cell: ({ row }) => {
       const activo = row.getValue("activo") as boolean;
       return (
-        <Badge variant={activo ? "default" : "secondary"}>
+        <Badge variant={activo ? "success" : "secondary"}>
           {activo ? "Activo" : "Inactivo"}
         </Badge>
       );
