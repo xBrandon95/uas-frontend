@@ -53,9 +53,12 @@ export async function getLotesByOrdenIngreso(
   return data;
 }
 
-// Obtener inventario por variedad
-export async function getInventarioVariedad(): Promise<InventarioVariedad[]> {
-  const { data } = await api.get("/lotes-produccion/inventario");
+export async function getInventarioVariedad(
+  idUnidad?: number
+): Promise<InventarioVariedad[]> {
+  const { data } = await api.get("/lotes-produccion/inventario", {
+    params: idUnidad ? { idUnidad } : {},
+  });
   return data;
 }
 

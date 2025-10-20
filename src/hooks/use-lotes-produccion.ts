@@ -71,10 +71,10 @@ export function useLotesByOrdenIngreso(idOrdenIngreso: number | null) {
 }
 
 // Obtener inventario por variedad
-export function useInventarioVariedad() {
+export function useInventarioVariedad(idUnidad?: number) {
   return useQuery({
-    queryKey: ["lotes-produccion", "inventario"],
-    queryFn: getInventarioVariedad,
+    queryKey: ["lotes-produccion", "inventario", idUnidad],
+    queryFn: () => getInventarioVariedad(idUnidad),
   });
 }
 
