@@ -46,15 +46,6 @@ export function ConductorDetailDialog({
           </div>
         ) : conductor ? (
           <div className="space-y-6">
-            {/* ID */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  ID del Conductor
-                </p>
-                <p className="text-xl font-bold">{conductor.id_conductor}</p>
-              </div>
-            </div>
 
             <Separator />
 

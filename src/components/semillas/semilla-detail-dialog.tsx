@@ -47,22 +47,6 @@ export function SemillaDetailDialog({
           </div>
         ) : semilla ? (
           <div className="space-y-6">
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  ID de la Semilla
-                </p>
-                <p className="text-xl font-bold">{semilla.id_semilla}</p>
-              </div>
-              <Badge
-                variant={semilla.activo ? "default" : "secondary"}
-                className="h-8"
-              >
-                <Activity className="mr-1 h-3 w-3" />
-                {semilla.activo ? "Activa" : "Inactiva"}
-              </Badge>
-            </div>
 
             <Separator />
 
@@ -78,6 +62,25 @@ export function SemillaDetailDialog({
                 <p className="text-lg font-semibold">{semilla.nombre}</p>
               </div>
             </div>
+
+            <Separator />
+            {/* ID y Estado */}
+            <div className="flex items-center justify-between">
+              {/* <div>
+                <p className="text-sm text-muted-foreground">
+                  ID de la Semilla
+                </p>
+                <p className="text-xl font-bold">{semilla.id_semilla}</p>
+              </div> */}
+              <Badge
+                variant={semilla.activo ? "success" : "secondary"}
+                className="h-8"
+              >
+                <Activity className="mr-1 h-3 w-3" />
+                {semilla.activo ? "Activo" : "Inactiva"}
+              </Badge>
+            </div>
+
           </div>
         ) : (
           <div className="py-12 text-center text-muted-foreground">

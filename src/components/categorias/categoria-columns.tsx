@@ -24,13 +24,13 @@ export const createColumns = ({
   onEdit,
   onDelete,
 }: ColumnsProps): ColumnDef<Categoria>[] => [
-  {
-    accessorKey: "id_categoria",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id_categoria")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "id_categoria",
+  //   header: "ID",
+  //   cell: ({ row }) => (
+  //     <div className="font-medium">{row.getValue("id_categoria")}</div>
+  //   ),
+  // },
   {
     accessorKey: "nombre",
     header: "Nombre de la Categoría",

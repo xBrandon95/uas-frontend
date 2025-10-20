@@ -65,21 +65,6 @@ export function UnidadDetailDialog({
           </div>
         ) : unidad ? (
           <div className="space-y-6">
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">ID de la Unidad</p>
-                <p className="text-xl font-bold">{unidad.id_unidad}</p>
-              </div>
-              <Badge
-                variant={unidad.activo ? "default" : "secondary"}
-                className="h-8"
-              >
-                <Activity className="mr-1 h-3 w-3" />
-                {unidad.activo ? "Activa" : "Inactiva"}
-              </Badge>
-            </div>
-
             <Separator />
 
             {/* Información principal */}
@@ -107,35 +92,19 @@ export function UnidadDetailDialog({
 
             <Separator />
 
-            {/* Fechas */}
-            <div className="space-y-3">
-              <div className="rounded-lg bg-muted/50 p-3">
-                <div className="flex items-start gap-2">
-                  <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Fecha de Creación
-                    </p>
-                    <p className="text-sm font-semibold mt-1 capitalize">
-                      {formatDate(unidad.fecha_creacion)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-muted/50 p-3">
-                <div className="flex items-start gap-2">
-                  <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Última Actualización
-                    </p>
-                    <p className="text-sm font-semibold mt-1 capitalize">
-                      {formatDate(unidad.fecha_actualizacion)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* ID y Estado */}
+            <div className="flex items-center justify-between">
+              {/* <div>
+                <p className="text-sm text-muted-foreground">ID de la Unidad</p>
+                <p className="text-xl font-bold">{unidad.id_unidad}</p>
+              </div> */}
+              <Badge
+                variant={unidad.activo ? "success" : "secondary"}
+                className="h-8"
+              >
+                <Activity className="mr-1 h-3 w-3" />
+                {unidad.activo ? "Activo" : "Inactiva"}
+              </Badge>
             </div>
           </div>
         ) : (

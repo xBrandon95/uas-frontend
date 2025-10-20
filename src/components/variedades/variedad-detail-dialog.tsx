@@ -47,16 +47,6 @@ export function VariedadDetailDialog({
           </div>
         ) : variedad ? (
           <div className="space-y-6">
-            {/* ID */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  ID de la Variedad
-                </p>
-                <p className="text-xl font-bold">{variedad.id_variedad}</p>
-              </div>
-            </div>
-
             <Separator />
 
             {/* Información principal */}

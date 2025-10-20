@@ -47,22 +47,6 @@ export function SemilleraDetailDialog({
           </div>
         ) : semillera ? (
           <div className="space-y-6">
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  ID de la Semillera
-                </p>
-                <p className="text-xl font-bold">{semillera.id_semillera}</p>
-              </div>
-              <Badge
-                variant={semillera.activo ? "default" : "secondary"}
-                className="h-8"
-              >
-                <Activity className="mr-1 h-3 w-3" />
-                {semillera.activo ? "Activa" : "Inactiva"}
-              </Badge>
-            </div>
 
             <Separator />
 
@@ -114,7 +98,26 @@ export function SemilleraDetailDialog({
                 )}
               </div>
             </div>
+
+            <Separator />
+            {/* Estado */}
+            <div className="flex items-center justify-between">
+              {/* <div>
+                <p className="text-sm text-muted-foreground">
+                  ID de la Semillera
+                </p>
+                <p className="text-xl font-bold">{semillera.id_semillera}</p>
+              </div> */}
+              <Badge
+                variant={semillera.activo ? "success" : "secondary"}
+                className="h-8"
+              >
+                <Activity className="mr-1 h-3 w-3" />
+                {semillera.activo ? "Activa" : "Inactiva"}
+              </Badge>
+            </div>
           </div>
+
         ) : (
           <div className="py-12 text-center text-muted-foreground">
             No se encontraron datos de la semillera

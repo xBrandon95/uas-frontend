@@ -67,9 +67,12 @@ export function useUpdateSemillera() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateSemilleraDto }) =>
       updateSemillera(id, dto),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["semilleras"] });
       queryClient.invalidateQueries({ queryKey: ["semilleras-activas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["semillera", variables.id],
+      });
       toast.success("Semillera actualizada exitosamente");
     },
     onError: (error: unknown) => {
@@ -84,9 +87,12 @@ export function useToggleSemilleraActive() {
 
   return useMutation({
     mutationFn: (id: number) => toggleSemilleraActive(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["semilleras"] });
       queryClient.invalidateQueries({ queryKey: ["semilleras-activas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["semillera", id],
+      });
       toast.success("Estado actualizado exitosamente");
     },
     onError: (error: unknown) => {
