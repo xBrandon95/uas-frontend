@@ -14,6 +14,7 @@ export * from "./categoria";
 export * from "./semillera";
 export * from "./cooperador";
 export * from "./orden-ingreso";
+export * from "./lote-produccion";
 
 // ============================================
 // ENTIDADES MAESTRAS

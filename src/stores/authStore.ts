@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import api from "@/lib/axios";
 import { User, LoginRequest, LoginResponse } from "@/types";
+import { queryClient } from "@/lib/queryClient";
 
 interface AuthState {
   user: User | null;
@@ -68,6 +69,9 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
+
+        queryClient.clear();
+
         set({
           user: null,
           token: null,
