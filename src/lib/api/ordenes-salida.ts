@@ -1,3 +1,5 @@
+// Actualizar completamente src/lib/api/ordenes-salida.ts
+
 import api from "@/lib/axios";
 import {
   OrdenSalida,
@@ -41,17 +43,6 @@ export async function getOrdenesSalidaByCliente(
   idCliente: number
 ): Promise<OrdenSalida[]> {
   const { data } = await api.get(`/ordenes-salida/cliente/${idCliente}`);
-  return data;
-}
-
-// Obtener órdenes por rango de fechas
-export async function getOrdenesSalidaByFecha(
-  fechaInicio: string,
-  fechaFin: string
-): Promise<OrdenSalida[]> {
-  const { data } = await api.get("/ordenes-salida/fecha", {
-    params: { inicio: fechaInicio, fin: fechaFin },
-  });
   return data;
 }
 
