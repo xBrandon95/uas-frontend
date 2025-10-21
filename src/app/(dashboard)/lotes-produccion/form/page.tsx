@@ -32,18 +32,16 @@ import { useVariedadesBySemilla } from "@/hooks/use-variedades";
 import { useCategoriasActivas } from "@/hooks/use-categorias";
 import { useUnidades } from "@/hooks/use-unidades";
 import Loader from "@/components/ui/loader";
+import { cn } from "@/lib/utils";
 
 const loteSchema = z.object({
   id_orden_ingreso: z.number({ message: "Requerido" }),
-  id_variedad: z.number({ message: "Requerido" }),
   id_categoria_salida: z.number({ message: "Requerido" }),
   nro_bolsas: z.number().min(1, "Mínimo 1 bolsa"),
   kg_por_bolsa: z.number().min(0.01, "Mínimo 0.01 kg"),
   presentacion: z.string().optional(),
   tipo_servicio: z.string().optional(),
   fecha_produccion: z.string().optional(),
-  id_unidad: z.number({ message: "Requerido" }),
-  estado: z.string().default("disponible"),
 });
 
 type LoteFormData = z.infer<typeof loteSchema>;
@@ -67,7 +65,6 @@ export default function LoteProduccionFormPage() {
   const { data: ordenSeleccionada } = useOrdenIngreso(selectedOrdenId);
   const { data: lotesExistentes } = useLotesByOrdenIngreso(selectedOrdenId);
   const { data: categorias } = useCategoriasActivas();
-  const { data: unidades } = useUnidades({ page: 1, limit: 100 });
 
   const selectedSemillaId = ordenSeleccionada?.id_semilla;
   const { data: variedades } = useVariedadesBySemilla(
@@ -109,7 +106,6 @@ export default function LoteProduccionFormPage() {
       setSelectedOrdenId(lote.id_orden_ingreso);
       reset({
         id_orden_ingreso: lote.id_orden_ingreso,
-        id_variedad: lote.id_variedad,
         id_categoria_salida: lote.id_categoria_salida,
         nro_bolsas: lote.nro_bolsas,
         kg_por_bolsa: Number(lote.kg_por_bolsa),
@@ -125,6 +121,10 @@ export default function LoteProduccionFormPage() {
   }, [isEditing, lote, reset]);
 
   const onSubmit = async (data: LoteFormData) => {
+    data.id_unidad = ordenSeleccionada?.id_unidad;
+    data.estado = "disponible";
+    data.id_variedad = ordenSeleccionada?.id_variedad;
+
     if (!isEditing && excedePeso) {
       return;
     }
@@ -196,7 +196,10 @@ export default function LoteProduccionFormPage() {
                   }}
                 >
                   <SelectTrigger
-                    className={errors.id_orden_ingreso ? "border-red-500" : ""}
+                    className={cn(
+                      "w-full",
+                      errors.id_orden_ingreso && "border-red-500"
+                    )}
                   >
                     <SelectValue placeholder="Seleccionar orden de ingreso" />
                   </SelectTrigger>
@@ -213,7 +216,8 @@ export default function LoteProduccionFormPage() {
                               {orden.numero_orden}
                             </Badge>
                             <span>
-                              {orden.semilla?.nombre} - {orden.peso_neto} kg
+                              {orden.semilla?.nombre} - {orden.variedad?.nombre}{" "}
+                              - {orden.peso_neto} kg
                             </span>
                           </div>
                         </SelectItem>
@@ -302,8 +306,8 @@ export default function LoteProduccionFormPage() {
               <h2 className="text-xl font-semibold mb-4">
                 Paso 2: Información del Lote
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* <div>
                   <Label htmlFor="id_variedad">
                     Variedad <span className="text-red-500">*</span>
                   </Label>
@@ -332,7 +336,7 @@ export default function LoteProduccionFormPage() {
                   {errors.id_variedad && (
                     <p className="text-sm text-red-500 mt-1">Campo requerido</p>
                   )}
-                </div>
+                </div> */}
 
                 <div>
                   <Label htmlFor="id_categoria_salida">
@@ -345,9 +349,10 @@ export default function LoteProduccionFormPage() {
                     }
                   >
                     <SelectTrigger
-                      className={
-                        errors.id_categoria_salida ? "border-red-500" : ""
-                      }
+                      className={cn(
+                        "w-full",
+                        errors.id_categoria_salida && "border-red-500"
+                      )}
                     >
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
@@ -367,7 +372,7 @@ export default function LoteProduccionFormPage() {
                   )}
                 </div>
 
-                <div>
+                {/* <div>
                   <Label htmlFor="id_unidad">
                     Unidad <span className="text-red-500">*</span>
                   </Label>
@@ -396,7 +401,7 @@ export default function LoteProduccionFormPage() {
                   {errors.id_unidad && (
                     <p className="text-sm text-red-500 mt-1">Campo requerido</p>
                   )}
-                </div>
+                </div> */}
 
                 <div>
                   <Label htmlFor="fecha_produccion">Fecha de Producción</Label>
@@ -407,7 +412,7 @@ export default function LoteProduccionFormPage() {
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <Label htmlFor="estado">Estado</Label>
                   <Select
                     value={watch("estado")}
@@ -423,7 +428,7 @@ export default function LoteProduccionFormPage() {
                       <SelectItem value="descartado">Descartado</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
 
