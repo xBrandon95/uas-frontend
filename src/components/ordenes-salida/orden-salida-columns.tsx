@@ -105,7 +105,7 @@ export const createColumns = ({
     header: "Total Kg",
     cell: ({ row }) => {
       const kg = row.original.detalles.reduce((sum, d) => sum + d.total_kg, 0);
-      return <span className="font-mono font-semibold">{kg.toFixed(2)}</span>;
+      return <span className="font-mono font-semibold">{kg}</span>;
     },
   },
   {

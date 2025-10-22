@@ -9,6 +9,7 @@ import { LoteProduccion } from "@/types";
 // Obtener todas las órdenes
 export async function getOrdenesSalida(): Promise<OrdenSalida[]> {
   const { data } = await api.get("/ordenes-salida");
+  console.log(data);
   return data;
 }
 

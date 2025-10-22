@@ -191,6 +191,7 @@ export default function OrdenSalidaFormPage() {
       }
     }
 
+    console.log(user);
     const dto = {
       ...data,
       id_unidad: user?.id_unidad!,
