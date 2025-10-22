@@ -1,5 +1,3 @@
-// Actualizar completamente src/lib/api/ordenes-salida.ts
-
 import api from "@/lib/axios";
 import {
   OrdenSalida,
@@ -14,7 +12,21 @@ export async function getOrdenesSalida(): Promise<OrdenSalida[]> {
   return data;
 }
 
-// Obtener lotes disponibles para la orden
+// ✅ NUEVO: Obtener lotes filtrados por semillera y semilla
+export async function getLotesDisponiblesFiltrados(
+  idSemillera: number,
+  idSemilla: number
+): Promise<LoteProduccion[]> {
+  const { data } = await api.get(
+    "/ordenes-salida/lotes-disponibles-filtrados",
+    {
+      params: { idSemillera, idSemilla },
+    }
+  );
+  return data;
+}
+
+// Obtener lotes disponibles para la orden (sin filtros)
 export async function getLotesDisponiblesParaOrden(): Promise<
   LoteProduccion[]
 > {

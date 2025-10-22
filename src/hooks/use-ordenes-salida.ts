@@ -10,6 +10,7 @@ import {
   getOrdenesSalidaByCliente,
   getEstadisticasOrdenesSalida,
   getLotesDisponiblesParaOrden,
+  getLotesDisponiblesFiltrados, // ✅ NUEVO
 } from "@/lib/api/ordenes-salida";
 import { CreateOrdenSalidaDto, UpdateOrdenSalidaDto } from "@/types";
 import { toast } from "sonner";
@@ -24,7 +25,20 @@ export function useOrdenesSalida() {
   });
 }
 
-// Obtener lotes disponibles
+// ✅ NUEVO: Hook para obtener lotes filtrados
+export function useLotesDisponiblesFiltrados(
+  idSemillera: number | null,
+  idSemilla: number | null
+) {
+  return useQuery({
+    queryKey: ["ordenes-salida", "lotes-filtrados", idSemillera, idSemilla],
+    queryFn: () => getLotesDisponiblesFiltrados(idSemillera!, idSemilla!),
+    enabled: !!idSemillera && !!idSemilla,
+    staleTime: 30000,
+  });
+}
+
+// Hook original (mantener por compatibilidad)
 export function useLotesDisponiblesParaOrden() {
   return useQuery({
     queryKey: ["ordenes-salida", "lotes-disponibles"],
