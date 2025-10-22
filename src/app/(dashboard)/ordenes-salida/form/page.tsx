@@ -36,9 +36,10 @@ import {
 } from "lucide-react";
 import {
   useCreateOrdenSalida,
-  useLotesDisponiblesParaOrden,
+  useLotesDisponiblesFiltrados,
 } from "@/hooks/use-ordenes-salida";
 import { useSemillerasActivas } from "@/hooks/use-semilleras";
+import { useSemillasActivas } from "@/hooks/use-semillas";
 import { useClientesActivos } from "@/hooks/use-clientes";
 import { useConductoresActivos } from "@/hooks/use-conductores";
 import { useVehiculosActivos } from "@/hooks/use-vehiculos";
@@ -58,6 +59,7 @@ const detalleSchema = z.object({
 
 const ordenSalidaSchema = z.object({
   id_semillera: z.number({ message: "Requerido" }),
+  id_semilla: z.number({ message: "Requerido" }), // ✅ NUEVO
   id_cliente: z.number({ message: "Requerido" }),
   id_conductor: z.number({ message: "Requerido" }),
   id_vehiculo: z.number({ message: "Requerido" }),
@@ -73,11 +75,21 @@ export default function OrdenSalidaFormPage() {
   const router = useRouter();
   const { user } = useAuthStore();
   const [selectedLoteId, setSelectedLoteId] = useState<number | null>(null);
+  const [selectedSemilleraId, setSelectedSemilleraId] = useState<number | null>(
+    null
+  );
+  const [selectedSemillaId, setSelectedSemillaId] = useState<number | null>(
+    null
+  );
 
   const createMutation = useCreateOrdenSalida();
+
+  // ✅ USAR EL NUEVO HOOK CON FILTROS
   const { data: lotesDisponibles, isLoading: isLoadingLotes } =
-    useLotesDisponiblesParaOrden();
+    useLotesDisponiblesFiltrados(selectedSemilleraId, selectedSemillaId);
+
   const { data: semilleras } = useSemillerasActivas();
+  const { data: semillas } = useSemillasActivas(); // ✅ NUEVO
   const { data: clientes } = useClientesActivos();
   const { data: conductores } = useConductoresActivos();
   const { data: vehiculos } = useVehiculosActivos();
@@ -103,6 +115,21 @@ export default function OrdenSalidaFormPage() {
   });
 
   const detalles = watch("detalles");
+  const watchedSemillera = watch("id_semillera");
+  const watchedSemilla = watch("id_semilla");
+
+  // ✅ Actualizar estados cuando cambian los selects
+  useMemo(() => {
+    if (watchedSemillera) {
+      setSelectedSemilleraId(watchedSemillera);
+    }
+  }, [watchedSemillera]);
+
+  useMemo(() => {
+    if (watchedSemilla) {
+      setSelectedSemillaId(watchedSemilla);
+    }
+  }, [watchedSemilla]);
 
   // Calcular totales
   const totales = useMemo(() => {
@@ -204,9 +231,11 @@ export default function OrdenSalidaFormPage() {
               </Label>
               <Select
                 value={watch("id_semillera")?.toString()}
-                onValueChange={(value) =>
-                  setValue("id_semillera", Number(value))
-                }
+                onValueChange={(value) => {
+                  setValue("id_semillera", Number(value));
+                  // Limpiar detalles al cambiar semillera
+                  setValue("detalles", []);
+                }}
               >
                 <SelectTrigger
                   className={cn(errors.id_semillera && "border-red-500")}
@@ -225,6 +254,40 @@ export default function OrdenSalidaFormPage() {
                 </SelectContent>
               </Select>
               {errors.id_semillera && (
+                <p className="text-sm text-red-500 mt-1">Campo requerido</p>
+              )}
+            </div>
+
+            {/* ✅ NUEVO CAMPO: SEMILLA */}
+            <div>
+              <Label htmlFor="id_semilla">
+                Semilla <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={watch("id_semilla")?.toString()}
+                onValueChange={(value) => {
+                  setValue("id_semilla", Number(value));
+                  // Limpiar detalles al cambiar semilla
+                  setValue("detalles", []);
+                }}
+              >
+                <SelectTrigger
+                  className={cn(errors.id_semilla && "border-red-500")}
+                >
+                  <SelectValue placeholder="Seleccionar semilla" />
+                </SelectTrigger>
+                <SelectContent>
+                  {semillas?.map((s) => (
+                    <SelectItem
+                      key={s.id_semilla}
+                      value={s.id_semilla.toString()}
+                    >
+                      {s.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.id_semilla && (
                 <p className="text-sm text-red-500 mt-1">Campo requerido</p>
               )}
             </div>
@@ -362,39 +425,66 @@ export default function OrdenSalidaFormPage() {
         <div className="bg-card rounded-lg border p-6">
           <h2 className="text-xl font-semibold mb-4">Agregar Lotes</h2>
 
+          {/* ✅ MENSAJE DE ADVERTENCIA */}
+          {(!selectedSemilleraId || !selectedSemillaId) && (
+            <Alert className="mb-4 border-amber-200 bg-amber-50">
+              <AlertCircle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-900">
+                <strong>Importante:</strong> Primero debes seleccionar una{" "}
+                <strong>Semillera</strong> y una <strong>Semilla</strong> para
+                poder agregar lotes.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="flex gap-4 items-end mb-4">
             <div className="flex-1">
               <Label>Seleccionar Lote Disponible</Label>
               <Select
                 value={selectedLoteId?.toString()}
                 onValueChange={(value) => setSelectedLoteId(Number(value))}
+                disabled={!selectedSemilleraId || !selectedSemillaId}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar un lote" />
+                  <SelectValue
+                    placeholder={
+                      !selectedSemilleraId || !selectedSemillaId
+                        ? "Primero selecciona semillera y semilla"
+                        : "Seleccionar un lote"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {lotesDisponibles?.map((lote) => (
-                    <SelectItem
-                      key={lote.id_lote_produccion}
-                      value={lote.id_lote_produccion.toString()}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{lote.nro_lote}</Badge>
-                        <span>{lote.variedad?.nombre}</span>
-                        <span className="text-muted-foreground">
-                          ({lote.nro_bolsas} bolsas ×{" "}
-                          {Number(lote.kg_por_bolsa)} kg)
-                        </span>
-                      </div>
+                  {lotesDisponibles && lotesDisponibles.length > 0 ? (
+                    lotesDisponibles.map((lote) => (
+                      <SelectItem
+                        key={lote.id_lote_produccion}
+                        value={lote.id_lote_produccion.toString()}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{lote.nro_lote}</Badge>
+                          <span>{lote.variedad?.nombre}</span>
+                          <span className="text-muted-foreground">
+                            ({lote.nro_bolsas} bolsas ×{" "}
+                            {Number(lote.kg_por_bolsa)} kg)
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="no-lotes" disabled>
+                      No hay lotes disponibles para esta combinación
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
             <Button
               type="button"
               onClick={handleAgregarLote}
-              disabled={!selectedLoteId}
+              disabled={
+                !selectedLoteId || !selectedSemilleraId || !selectedSemillaId
+              }
             >
               <Plus className="mr-2 h-4 w-4" />
               Agregar

@@ -62,20 +62,6 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "fecha_actualizacion",
-    header: "Última Actualización",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("fecha_actualizacion"));
-      return date.toLocaleDateString("es-BO", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       const unidad = row.original;

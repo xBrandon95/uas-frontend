@@ -13,7 +13,7 @@ import { Sprout, Plus } from "lucide-react";
 import { Variedad } from "@/types";
 import { VariedadDetailDialog } from "@/components/variedades/variedad-detail-dialog";
 
-export default function VariedadesPage() {
+export default function VariedadesSection() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
@@ -92,7 +92,7 @@ export default function VariedadesPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Sprout className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold tracking-tight">Variedades</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Variedades</h1>
             </div>
 
             <p className="text-muted-foreground mt-2">
@@ -105,26 +105,24 @@ export default function VariedadesPage() {
           </Button>
         </div>
 
-        <div className="bg-card rounded-lg border p-6">
-          <VariedadDataTable
-            columns={columns}
-            data={data?.data || []}
-            meta={
-              data?.meta || {
-                total: 0,
-                page: 1,
-                limit: 10,
-                totalPages: 1,
-                hasNextPage: false,
-                hasPreviousPage: false,
-              }
+        <VariedadDataTable
+          columns={columns}
+          data={data?.data || []}
+          meta={
+            data?.meta || {
+              total: 0,
+              page: 1,
+              limit: 10,
+              totalPages: 1,
+              hasNextPage: false,
+              hasPreviousPage: false,
             }
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            onSearchChange={handleSearchChange}
-            searchValue={search}
-          />
-        </div>
+          }
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          onSearchChange={handleSearchChange}
+          searchValue={search}
+        />
       </div>
 
       <VariedadDetailDialog

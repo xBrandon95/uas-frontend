@@ -13,7 +13,7 @@ import { FolderOpen, Plus } from "lucide-react";
 import { Categoria } from "@/types";
 import { CategoriaDetailDialog } from "@/components/categorias/categoria-detail-dialog";
 
-export default function CategoriasPage() {
+export default function CategoriasSection() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
@@ -92,7 +92,7 @@ export default function CategoriasPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <FolderOpen className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold tracking-tight">Categorías</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Categorías</h1>
             </div>
 
             <p className="text-muted-foreground mt-2">
@@ -105,26 +105,24 @@ export default function CategoriasPage() {
           </Button>
         </div>
 
-        <div className="bg-card rounded-lg border p-6">
-          <CategoriaDataTable
-            columns={columns}
-            data={data?.data || []}
-            meta={
-              data?.meta || {
-                total: 0,
-                page: 1,
-                limit: 10,
-                totalPages: 1,
-                hasNextPage: false,
-                hasPreviousPage: false,
-              }
+        <CategoriaDataTable
+          columns={columns}
+          data={data?.data || []}
+          meta={
+            data?.meta || {
+              total: 0,
+              page: 1,
+              limit: 10,
+              totalPages: 1,
+              hasNextPage: false,
+              hasPreviousPage: false,
             }
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            onSearchChange={handleSearchChange}
-            searchValue={search}
-          />
-        </div>
+          }
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          onSearchChange={handleSearchChange}
+          searchValue={search}
+        />
       </div>
 
       <CategoriaDetailDialog

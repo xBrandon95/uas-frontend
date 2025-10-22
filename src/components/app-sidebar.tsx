@@ -32,18 +32,8 @@ const navData = [
         roles: ["admin"],
       },
       {
-        title: "Variedades",
-        url: "/variedades",
-        roles: ["admin", "encargado", "operador"],
-      },
-      {
-        title: "Semillas",
-        url: "/semillas",
-        roles: ["admin", "encargado", "operador"],
-      },
-      {
-        title: "Categorias",
-        url: "/categorias",
+        title: "Gestión semilla",
+        url: "/gestion-semilla",
         roles: ["admin", "encargado", "operador"],
       },
       {
