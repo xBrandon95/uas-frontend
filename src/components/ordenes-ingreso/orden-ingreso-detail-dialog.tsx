@@ -132,25 +132,25 @@ export function OrdenIngresoDetailDialog({
                 <div>
                   <p className="text-sm text-muted-foreground">Peso Bruto</p>
                   <p className="font-medium font-mono">
-                    {orden.peso_bruto?.toFixed(2) || "-"} kg
+                    {Number(orden.peso_bruto).toFixed(2) || "-"} kg
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Peso Tara</p>
                   <p className="font-medium font-mono">
-                    {orden.peso_tara?.toFixed(2) || "-"} kg
+                    {Number(orden.peso_tara).toFixed(2) || "-"} kg
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Peso Neto</p>
                   <p className="font-medium font-mono">
-                    {orden.peso_neto?.toFixed(2) || "-"} kg
+                    {Number(orden.peso_neto).toFixed(2) || "-"} kg
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Peso Líquido</p>
                   <p className="font-medium font-mono">
-                    {orden.peso_liquido?.toFixed(2) || "-"} kg
+                    {Number(orden.peso_liquido).toFixed(2) || "-"} kg
                   </p>
                 </div>
               </div>
@@ -168,13 +168,13 @@ export function OrdenIngresoDetailDialog({
                 <div>
                   <p className="text-sm text-muted-foreground">% Humedad</p>
                   <p className="font-medium">
-                    {orden.porcentaje_humedad?.toFixed(2) || "-"}%
+                    {Number(orden.porcentaje_humedad).toFixed(2) || "-"}%
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">% Impureza</p>
                   <p className="font-medium">
-                    {orden.porcentaje_impureza?.toFixed(2) || "-"}%
+                    {Number(orden.porcentaje_impureza).toFixed(2) || "-"}%
                   </p>
                 </div>
                 <div>
@@ -182,13 +182,13 @@ export function OrdenIngresoDetailDialog({
                     % Grano Dañado
                   </p>
                   <p className="font-medium">
-                    {orden.porcentaje_grano_danado?.toFixed(2) || "-"}%
+                    {Number(orden.porcentaje_grano_danado).toFixed(2) || "-"}%
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">% Grano Verde</p>
                   <p className="font-medium">
-                    {orden.porcentaje_grano_verde?.toFixed(2) || "-"}%
+                    {Number(orden.porcentaje_grano_verde).toFixed(2) || "-"}%
                   </p>
                 </div>
               </div>

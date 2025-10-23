@@ -88,7 +88,7 @@ export default function VariedadesSection() {
   return (
     <>
       <div className="container mx-auto py-6">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Sprout className="h-8 w-8 text-primary" />

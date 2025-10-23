@@ -212,10 +212,10 @@ export function OrdenSalidaDetailDialog({
                           {detalle.nro_bolsas}
                         </TableCell>
                         <TableCell className="text-right font-mono">
-                          {detalle.kg_bolsa.toFixed(2)}
+                          {detalle.kg_bolsa}
                         </TableCell>
                         <TableCell className="text-right font-mono font-semibold">
-                          {detalle.total_kg.toFixed(2)}
+                          {detalle.total_kg}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -234,9 +234,7 @@ export function OrdenSalidaDetailDialog({
                 <div>
                   <span className="text-muted-foreground">Total Kg:</span>
                   <span className="ml-2 font-semibold font-mono">
-                    {orden.detalles
-                      .reduce((sum, d) => sum + d.total_kg, 0)
-                      .toFixed(2)}
+                    {orden.detalles.reduce((sum, d) => sum + d.total_kg, 0)}
                   </span>
                 </div>
               </div>

@@ -16,6 +16,10 @@ import { LoteProduccion } from "@/types";
 
 export default function LotesProduccionPage() {
   const router = useRouter();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -24,7 +28,30 @@ export default function LotesProduccionPage() {
     useState<LoteProduccion | null>(null);
   const [loteToDelete, setLoteToDelete] = useState<LoteProduccion | null>(null);
 
-  const { data: lotes, isLoading, isError, error } = useLotesProduccion();
+  const {
+    data: lotes,
+    isLoading,
+    isError,
+    error,
+  } = useLotesProduccion({
+    page,
+    limit,
+    search,
+  });
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+  };
+
+  const handleSearchChange = (newSearch: string) => {
+    setSearch(newSearch);
+    setPage(1);
+  };
 
   const handleCreate = () => {
     router.push("/lotes-produccion/form");
@@ -103,7 +130,24 @@ export default function LotesProduccionPage() {
         </div>
 
         <div className="bg-card rounded-lg border p-6">
-          <LoteDataTable columns={columns} data={lotes || []} />
+          <LoteDataTable
+            columns={columns}
+            data={lotes?.data || []}
+            meta={
+              lotes?.meta || {
+                total: 0,
+                page: 1,
+                limit: 10,
+                totalPages: 1,
+                hasNextPage: false,
+                hasPreviousPage: false,
+              }
+            }
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearchChange={handleSearchChange}
+            searchValue={search}
+          />
         </div>
       </div>
 

@@ -55,6 +55,18 @@ export const createColumns = ({
     ),
   },
   {
+    accessorKey: "variedad.semilla.nombre",
+    header: "Semilla",
+    cell: ({ row }) => {
+      const semilla = row.original.variedad?.semilla?.nombre;
+      return (
+        <Badge variant="secondary" className="uppercase">
+          {semilla || "N/A"}
+        </Badge>
+      );
+    },
+  },
+  {
     accessorKey: "variedad.nombre",
     header: "Variedad",
     cell: ({ row }) => {

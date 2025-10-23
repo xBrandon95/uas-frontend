@@ -37,16 +37,6 @@ const navData = [
         roles: ["admin", "encargado", "operador"],
       },
       {
-        title: "Conductores",
-        url: "/conductores",
-        roles: ["admin", "encargado", "operador"],
-      },
-      {
-        title: "Vehiculos",
-        url: "/vehiculos",
-        roles: ["admin", "encargado", "operador"],
-      },
-      {
         title: "Semilleras",
         url: "/semilleras",
         roles: ["admin", "encargado", "operador"],
@@ -54,6 +44,16 @@ const navData = [
       {
         title: "Cooperadores",
         url: "/cooperadores",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Conductores",
+        url: "/conductores",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Vehiculos",
+        url: "/vehiculos",
         roles: ["admin", "encargado", "operador"],
       },
       {

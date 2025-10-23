@@ -162,7 +162,7 @@ export function ClienteFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nit">NIT</Label>
+              <Label htmlFor="nit">NIT/CI</Label>
               <Input
                 id="nit"
                 {...register("nit")}

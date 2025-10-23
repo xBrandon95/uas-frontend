@@ -64,7 +64,7 @@ export function ClienteDetailDialog({
                 <div className="flex items-center gap-2 mb-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
-                    NIT
+                    NIT/CI
                   </p>
                 </div>
                 {cliente.nit ? (

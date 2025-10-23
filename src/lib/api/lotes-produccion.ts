@@ -5,11 +5,21 @@ import {
   UpdateLoteProduccionDto,
   InventarioVariedad,
   EstadisticasLote,
+  PaginationFilterParams,
+  PaginatedResponse,
 } from "@/types";
 
-// Obtener todos los lotes
-export async function getLotesProduccion(): Promise<LoteProduccion[]> {
-  const { data } = await api.get("/lotes-produccion");
+// Obtener lotes con paginación
+export async function getLotesProduccion(
+  params: PaginationFilterParams
+): Promise<PaginatedResponse<LoteProduccion>> {
+  const { data } = await api.get("/lotes-produccion", { params });
+  return data;
+}
+
+// Obtener todos los lotes sin paginación
+export async function getLotesProduccionAll(): Promise<LoteProduccion[]> {
+  const { data } = await api.get("/lotes-produccion/all");
   return data;
 }
 

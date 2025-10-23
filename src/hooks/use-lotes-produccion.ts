@@ -1,5 +1,6 @@
 import {
   getLotesProduccion,
+  getLotesProduccionAll,
   getLoteProduccionById,
   createLoteProduccion,
   updateLoteProduccion,
@@ -13,16 +14,28 @@ import {
   getInventarioVariedad,
   getEstadisticasLotes,
 } from "@/lib/api/lotes-produccion";
-import { CreateLoteProduccionDto, UpdateLoteProduccionDto } from "@/types";
+import {
+  CreateLoteProduccionDto,
+  UpdateLoteProduccionDto,
+  PaginationFilterParams,
+} from "@/types";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils/error";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Obtener todos los lotes
-export function useLotesProduccion() {
+// Obtener lotes con paginación
+export function useLotesProduccion(params: PaginationFilterParams) {
   return useQuery({
-    queryKey: ["lotes-produccion"],
-    queryFn: getLotesProduccion,
+    queryKey: ["lotes-produccion", params],
+    queryFn: () => getLotesProduccion(params),
+  });
+}
+
+// Obtener todos los lotes sin paginación
+export function useLotesProduccionAll() {
+  return useQuery({
+    queryKey: ["lotes-produccion", "all"],
+    queryFn: getLotesProduccionAll,
   });
 }
 
