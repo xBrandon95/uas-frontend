@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 
-interface UnidadDataTableProps<TData, TValue> {
+interface OrdenIngresoDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   meta: {
@@ -43,7 +43,7 @@ interface UnidadDataTableProps<TData, TValue> {
   searchValue: string;
 }
 
-export function UnidadDataTable<TData, TValue>({
+export function OrdenIngresoDataTable<TData, TValue>({
   columns,
   data,
   meta,
@@ -51,7 +51,7 @@ export function UnidadDataTable<TData, TValue>({
   onLimitChange,
   onSearchChange,
   searchValue,
-}: UnidadDataTableProps<TData, TValue>) {
+}: OrdenIngresoDataTableProps<TData, TValue>) {
   const [searchInput, setSearchInput] = useState(searchValue);
 
   const table = useReactTable({
@@ -79,7 +79,7 @@ export function UnidadDataTable<TData, TValue>({
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar unidades..."
+            placeholder="Buscar por número de orden, semillera, cooperador..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-8"
@@ -133,7 +133,7 @@ export function UnidadDataTable<TData, TValue>({
                 >
                   {searchInput
                     ? `No se encontraron resultados para "${searchInput}"`
-                    : "No se encontraron resultados."}
+                    : "No se encontraron órdenes de ingreso."}
                 </TableCell>
               </TableRow>
             )}

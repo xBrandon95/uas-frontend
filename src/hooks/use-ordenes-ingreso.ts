@@ -1,5 +1,6 @@
 import {
   getOrdenesIngreso,
+  getOrdenesIngresoAll,
   getOrdenIngresoById,
   createOrdenIngreso,
   updateOrdenIngreso,
@@ -11,16 +12,28 @@ import {
   getEstadisticasOrdenesIngreso,
   getOrdenIngresoByNumero,
 } from "@/lib/api/ordenes-ingreso";
-import { CreateOrdenIngresoDto, UpdateOrdenIngresoDto } from "@/types";
+import {
+  CreateOrdenIngresoDto,
+  UpdateOrdenIngresoDto,
+  PaginationFilterParams,
+} from "@/types";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils/error";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Obtener todas las órdenes
-export function useOrdenesIngreso() {
+// Obtener órdenes con paginación
+export function useOrdenesIngreso(params: PaginationFilterParams) {
   return useQuery({
-    queryKey: ["ordenes-ingreso"],
-    queryFn: getOrdenesIngreso,
+    queryKey: ["ordenes-ingreso", params],
+    queryFn: () => getOrdenesIngreso(params),
+  });
+}
+
+// Obtener todas las órdenes sin paginación
+export function useOrdenesIngresoAll() {
+  return useQuery({
+    queryKey: ["ordenes-ingreso", "all"],
+    queryFn: getOrdenesIngresoAll,
   });
 }
 

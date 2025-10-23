@@ -565,7 +565,7 @@ export default function OrdenSalidaFormPage() {
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary" className="font-mono">
-                            {totalKg.toFixed(2)} kg
+                            {totalKg} kg
                           </Badge>
                         </TableCell>
                         <TableCell>

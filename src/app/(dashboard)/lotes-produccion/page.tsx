@@ -9,14 +9,10 @@ import { LoteDataTable } from "@/components/lotes-produccion/lote-produccion-dat
 import { LoteDetailDialog } from "@/components/lotes-produccion/lote-produccion-detail-dialog";
 import { ChangeStatusDialog } from "@/components/lotes-produccion/change-status-dialog";
 import { DeleteLoteDialog } from "@/components/lotes-produccion/delete-lote-dialog";
-import {
-  useLotesByUnidad,
-  useLotesProduccion,
-} from "@/hooks/use-lotes-produccion";
+import { useLotesProduccion } from "@/hooks/use-lotes-produccion";
 import { Button } from "@/components/ui/button";
 import { Package, Plus } from "lucide-react";
 import { LoteProduccion } from "@/types";
-import { useAuthStore } from "@/stores/authStore";
 
 export default function LotesProduccionPage() {
   const router = useRouter();
@@ -27,8 +23,6 @@ export default function LotesProduccionPage() {
   const [loteToChangeStatus, setLoteToChangeStatus] =
     useState<LoteProduccion | null>(null);
   const [loteToDelete, setLoteToDelete] = useState<LoteProduccion | null>(null);
-
-  const authStore = useAuthStore();
 
   const { data: lotes, isLoading, isError, error } = useLotesProduccion();
 

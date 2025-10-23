@@ -61,7 +61,7 @@ export default function LoteProduccionFormPage() {
   );
 
   // Cargar datos
-  const { data: ordenes } = useOrdenesIngreso();
+  const { data: ordenes } = useOrdenesIngreso({ limit: 100, page: 1 });
   const { data: ordenSeleccionada } = useOrdenIngreso(selectedOrdenId);
   const { data: lotesExistentes } = useLotesByOrdenIngreso(selectedOrdenId);
   const { data: categorias } = useCategoriasActivas();
@@ -204,7 +204,7 @@ export default function LoteProduccionFormPage() {
                     <SelectValue placeholder="Seleccionar orden de ingreso" />
                   </SelectTrigger>
                   <SelectContent>
-                    {ordenes
+                    {ordenes?.data
                       ?.filter((o) => o.estado === "completado")
                       .map((orden) => (
                         <SelectItem

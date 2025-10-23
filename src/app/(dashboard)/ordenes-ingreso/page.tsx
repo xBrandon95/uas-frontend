@@ -5,25 +5,22 @@ import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
 import { createColumns } from "@/components/ordenes-ingreso/orden-ingreso-columns";
+import { OrdenIngresoDataTable } from "@/components/ordenes-ingreso/orden-ingreso-data-table";
 import { OrdenIngresoDetailDialog } from "@/components/ordenes-ingreso/orden-ingreso-detail-dialog";
 import { ChangeStatusDialog } from "@/components/ordenes-ingreso/change-status-dialog";
 import { DeleteOrdenDialog } from "@/components/ordenes-ingreso/delete-orden-dialog";
 import { useOrdenesIngreso } from "@/hooks/use-ordenes-ingreso";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { FileText, Plus } from "lucide-react";
 import { OrdenIngreso } from "@/types";
-import { Badge } from "@/components/ui/badge";
 
 export default function OrdenesIngresoPage() {
   const router = useRouter();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+
+  // Modales
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -32,7 +29,25 @@ export default function OrdenesIngresoPage() {
     useState<OrdenIngreso | null>(null);
   const [ordenToDelete, setOrdenToDelete] = useState<OrdenIngreso | null>(null);
 
-  const { data: ordenes, isLoading, isError, error } = useOrdenesIngreso();
+  const { data, isLoading, isError, error } = useOrdenesIngreso({
+    page,
+    limit,
+    search,
+  });
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+  };
+
+  const handleSearchChange = (newSearch: string) => {
+    setSearch(newSearch);
+    setPage(1);
+  };
 
   const handleCreate = () => {
     router.push("/ordenes-ingreso/form");
@@ -74,23 +89,6 @@ export default function OrdenesIngresoPage() {
       />
     );
 
-  const getEstadoBadge = (estado: string) => {
-    const estados: Record<
-      string,
-      {
-        variant: "default" | "secondary" | "destructive" | "outline";
-        label: string;
-      }
-    > = {
-      pendiente: { variant: "secondary", label: "Pendiente" },
-      en_proceso: { variant: "default", label: "En Proceso" },
-      completado: { variant: "outline", label: "Completado" },
-      cancelado: { variant: "destructive", label: "Cancelado" },
-    };
-
-    return estados[estado] || { variant: "secondary", label: estado };
-  };
-
   return (
     <>
       <div className="container mx-auto py-6">
@@ -102,7 +100,6 @@ export default function OrdenesIngresoPage() {
                 Órdenes de Ingreso
               </h1>
             </div>
-
             <p className="text-muted-foreground mt-2">
               Gestiona las órdenes de ingreso de semillas
             </p>
@@ -113,103 +110,25 @@ export default function OrdenesIngresoPage() {
           </Button>
         </div>
 
-        <div className="bg-card rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nº Orden</TableHead>
-                <TableHead>Semillera</TableHead>
-                <TableHead>Cooperador</TableHead>
-                <TableHead>Semilla</TableHead>
-                <TableHead>Peso Neto</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ordenes && ordenes.length > 0 ? (
-                ordenes.map((orden) => {
-                  const estadoConfig = getEstadoBadge(orden.estado);
-                  return (
-                    <TableRow key={orden.id_orden_ingreso}>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className="font-mono font-semibold"
-                        >
-                          {orden.numero_orden}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {orden.semillera?.nombre || "N/A"}
-                      </TableCell>
-                      <TableCell>{orden.cooperador?.nombre || "N/A"}</TableCell>
-                      <TableCell>{orden.semilla?.nombre || "N/A"}</TableCell>
-                      <TableCell>
-                        {orden.peso_neto ? (
-                          <span className="font-mono">
-                            {orden.peso_neto} kg
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={estadoConfig.variant}>
-                          {estadoConfig.label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(orden.fecha_creacion).toLocaleDateString(
-                          "es-BO"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleView(orden)}
-                          >
-                            Ver
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(orden)}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleChangeStatus(orden)}
-                          >
-                            Estado
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(orden)}
-                            className="text-red-600"
-                          >
-                            Eliminar
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center">
-                    No se encontraron órdenes de ingreso
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <div className="bg-card rounded-lg border p-6">
+          <OrdenIngresoDataTable
+            columns={columns}
+            data={data?.data || []}
+            meta={
+              data?.meta || {
+                total: 0,
+                page: 1,
+                limit: 10,
+                totalPages: 1,
+                hasNextPage: false,
+                hasPreviousPage: false,
+              }
+            }
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearchChange={handleSearchChange}
+            searchValue={search}
+          />
         </div>
       </div>
 

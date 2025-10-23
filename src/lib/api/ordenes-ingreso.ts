@@ -3,11 +3,21 @@ import {
   OrdenIngreso,
   CreateOrdenIngresoDto,
   UpdateOrdenIngresoDto,
+  PaginationFilterParams,
+  PaginatedResponse,
 } from "@/types";
 
-// Obtener todas las órdenes
-export async function getOrdenesIngreso(): Promise<OrdenIngreso[]> {
-  const { data } = await api.get("/ordenes-ingreso");
+// Obtener órdenes con paginación
+export async function getOrdenesIngreso(
+  params: PaginationFilterParams
+): Promise<PaginatedResponse<OrdenIngreso>> {
+  const { data } = await api.get("/ordenes-ingreso", { params });
+  return data;
+}
+
+// Obtener todas las órdenes sin paginación (para casos específicos)
+export async function getOrdenesIngresoAll(): Promise<OrdenIngreso[]> {
+  const { data } = await api.get("/ordenes-ingreso/all");
   return data;
 }
 

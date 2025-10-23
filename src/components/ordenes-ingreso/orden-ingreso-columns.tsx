@@ -83,7 +83,7 @@ export const createColumns = ({
     cell: ({ row }) => {
       const peso = row.getValue("peso_neto") as number;
       return peso ? (
-        <span className="font-mono">{peso.toFixed(2)} kg</span>
+        <span className="font-mono">{peso} kg</span>
       ) : (
         <span className="text-muted-foreground">-</span>
       );
