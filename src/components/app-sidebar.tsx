@@ -79,6 +79,11 @@ const navData = [
         url: "/lotes-produccion",
         roles: ["admin", "encargado", "operador"],
       },
+      {
+        title: "Ordenes salida",
+        url: "/ordenes-salida",
+        roles: ["admin", "encargado", "operador"],
+      },
     ],
   },
 ];
