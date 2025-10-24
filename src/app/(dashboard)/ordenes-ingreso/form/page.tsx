@@ -101,9 +101,7 @@ export default function OrdenIngresoFormPage() {
     resolver: zodResolver(ordenSchema),
     defaultValues: {
       id_unidad: user?.id_unidad,
-      estado: "completado",
-      // numero_orden: "1",
-      // id_usuario_creador: user?.id_usuario,
+      estado: "pendiente",
     },
   });
 
@@ -113,55 +111,49 @@ export default function OrdenIngresoFormPage() {
   );
 
   useEffect(() => {
-    if (
-      isEditing &&
-      orden &&
-      semilleras &&
-      cooperadores &&
-      conductores &&
-      vehiculos &&
-      semillas &&
-      categorias
-    ) {
-      reset({
-        numero_orden: orden.numero_orden,
-        id_semillera: orden.id_semillera,
-        id_cooperador: orden.id_cooperador,
-        id_conductor: orden.id_conductor,
-        id_vehiculo: orden.id_vehiculo,
-        id_semilla: orden.id_semilla,
-        id_variedad: orden.id_variedad,
-        id_categoria_ingreso: orden.id_categoria_ingreso,
-        id_unidad: orden.id_unidad,
-        nro_lote_campo: orden.nro_lote_campo,
-        nro_bolsas: orden.nro_bolsas,
-        nro_cupon: orden.nro_cupon,
-        lugar_ingreso: orden.lugar_ingreso,
-        lugar_salida: orden.lugar_salida,
-        peso_bruto: orden.peso_bruto,
-        peso_tara: orden.peso_tara,
-        peso_neto: orden.peso_neto,
-        peso_liquido: orden.peso_liquido,
-        porcentaje_humedad: orden.porcentaje_humedad,
-        porcentaje_impureza: orden.porcentaje_impureza,
-        peso_hectolitrico: orden.peso_hectolitrico,
-        porcentaje_grano_danado: orden.porcentaje_grano_danado,
-        porcentaje_grano_verde: orden.porcentaje_grano_verde,
-        observaciones: orden.observaciones,
-        estado: orden.estado,
-      });
+    if (isEditing && orden) {
+      // Usar setTimeout para asegurar que los datos de catálogos estén cargados
+      setTimeout(() => {
+        reset({
+          id_semillera: orden.id_semillera,
+          id_cooperador: orden.id_cooperador,
+          id_conductor: orden.id_conductor,
+          id_vehiculo: orden.id_vehiculo,
+          id_semilla: orden.id_semilla,
+          id_unidad: orden.id_unidad,
+          id_variedad: orden.id_variedad,
+          id_categoria_ingreso: orden.id_categoria_ingreso,
+          nro_lote_campo: orden.nro_lote_campo,
+          nro_bolsas: orden.nro_bolsas,
+          nro_cupon: orden.nro_cupon,
+          peso_bruto: orden.peso_bruto,
+          peso_tara: orden.peso_tara,
+          peso_neto: orden.peso_neto,
+          peso_liquido: orden.peso_liquido,
+          porcentaje_humedad: orden.porcentaje_humedad,
+          porcentaje_impureza: orden.porcentaje_impureza,
+          peso_hectolitrico: orden.peso_hectolitrico,
+          porcentaje_grano_danado: orden.porcentaje_grano_danado,
+          porcentaje_grano_verde: orden.porcentaje_grano_verde,
+          observaciones: orden.observaciones,
+        });
+      }, 100);
     }
-  }, [
-    isEditing,
-    orden,
-    semilleras,
-    cooperadores,
-    conductores,
-    vehiculos,
-    semillas,
-    categorias,
-    reset,
-  ]);
+  }, [isEditing, orden, reset]);
+
+  // Segundo useEffect: Actualizar la variedad cuando se carguen las variedades
+  useEffect(() => {
+    if (isEditing && orden && variedades && variedades.length > 0) {
+      // Solo actualizar el campo id_variedad si existe en la orden
+      if (orden.id_variedad) {
+        setValue("id_variedad", orden.id_variedad, {
+          shouldValidate: true,
+          shouldDirty: false,
+        });
+      }
+    }
+  }, [isEditing, orden, variedades, setValue]); // Reemplaza el useEffect actual con este:
+
   const onSubmit = async (data: OrdenFormData) => {
     console.log(data);
 

@@ -69,7 +69,8 @@ export function useOrdenIngreso(id: number | null) {
     queryKey: ["orden-ingreso", id],
     queryFn: () => getOrdenIngresoById(id!),
     enabled: !!id,
-    staleTime: 30000,
+    staleTime: 0, // 🔥 Siempre se considera “viejo”
+    refetchOnMount: "always", // Fuerza refetch al cambiar entre pantallas
   });
 }
 
