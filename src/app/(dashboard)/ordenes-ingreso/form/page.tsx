@@ -113,7 +113,16 @@ export default function OrdenIngresoFormPage() {
   );
 
   useEffect(() => {
-    if (isEditing && orden) {
+    if (
+      isEditing &&
+      orden &&
+      semilleras &&
+      cooperadores &&
+      conductores &&
+      vehiculos &&
+      semillas &&
+      categorias
+    ) {
       reset({
         numero_orden: orden.numero_orden,
         id_semillera: orden.id_semillera,
@@ -142,8 +151,17 @@ export default function OrdenIngresoFormPage() {
         estado: orden.estado,
       });
     }
-  }, [isEditing, orden, reset]);
-
+  }, [
+    isEditing,
+    orden,
+    semilleras,
+    cooperadores,
+    conductores,
+    vehiculos,
+    semillas,
+    categorias,
+    reset,
+  ]);
   const onSubmit = async (data: OrdenFormData) => {
     console.log(data);
 
