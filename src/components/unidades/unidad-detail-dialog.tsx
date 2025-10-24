@@ -9,13 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  CalendarDays,
-  MapPin,
-  Building2,
-  Activity,
-  Loader2,
-} from "lucide-react";
+import { MapPin, Building2, Activity, Loader2 } from "lucide-react";
 import { useUnidad } from "@/hooks/use-unidades";
 
 interface UnidadDetailDialogProps {
@@ -31,29 +25,30 @@ export function UnidadDetailDialog({
 }: UnidadDetailDialogProps) {
   const { data: unidad, isLoading } = useUnidad(unidadId);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-BO", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Detalle de la Unidad
-          </DialogTitle>
-          <DialogDescription>
-            Información completa de la unidad acondicionadora
-          </DialogDescription>
+          <div className="flex items-center justify-between pr-3">
+            <div>
+              <DialogTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Detalle de la Unidad
+              </DialogTitle>
+              <DialogDescription>
+                Información completa de la unidad acondicionadora
+              </DialogDescription>
+            </div>
+            {unidad && (
+              <Badge
+                variant={unidad.activo ? "success" : "secondary"}
+                className="h-7"
+              >
+                <Activity className="mr-1 h-3 w-3" />
+                {unidad.activo ? "Activo" : "Inactiva"}
+              </Badge>
+            )}
+          </div>
         </DialogHeader>
 
         {isLoading ? (
@@ -86,25 +81,14 @@ export function UnidadDetailDialog({
                     Ubicación
                   </p>
                 </div>
-                <p className="text-base font-semibold">{unidad.ubicacion}</p>
+                <p className="text-base">
+                  {unidad.ubicacion || (
+                    <span className="text-muted-foreground italic">
+                      Sin ubicación especificada
+                    </span>
+                  )}
+                </p>
               </div>
-            </div>
-
-            <Separator />
-
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              {/* <div>
-                <p className="text-sm text-muted-foreground">ID de la Unidad</p>
-                <p className="text-xl font-bold">{unidad.id_unidad}</p>
-              </div> */}
-              <Badge
-                variant={unidad.activo ? "success" : "secondary"}
-                className="h-8"
-              >
-                <Activity className="mr-1 h-3 w-3" />
-                {unidad.activo ? "Activo" : "Inactiva"}
-              </Badge>
             </div>
           </div>
         ) : (

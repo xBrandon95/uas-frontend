@@ -74,20 +74,22 @@ export function ConductorFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && conductor) {
-      reset({
-        nombre: conductor.nombre,
-        ci: conductor.ci,
-        telefono: conductor.telefono || "",
-      });
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        ci: "",
-        telefono: "",
-      });
+    if (open) {
+      if (isEditing && conductor) {
+        reset({
+          nombre: conductor.nombre,
+          ci: conductor.ci,
+          telefono: conductor.telefono || "",
+        });
+      } else if (!isEditing) {
+        reset({
+          nombre: "",
+          ci: "",
+          telefono: "",
+        });
+      }
     }
-  }, [isEditing, conductor, reset]);
+  }, [open, isEditing, conductor, reset]);
 
   const onSubmit = async (data: ConductorFormData) => {
     const submitData = {
@@ -106,7 +108,6 @@ export function ConductorFormDialog({
 
     await createMutation.mutateAsync(submitData);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

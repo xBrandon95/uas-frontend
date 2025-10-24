@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Truck, Tag, Car, Loader2 } from "lucide-react";
 import { useVehiculo } from "@/hooks/use-vehiculos";
@@ -47,49 +46,36 @@ export function VehiculoDetailDialog({
           </div>
         ) : vehiculo ? (
           <div className="space-y-6">
-            {/* ID
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">ID del Vehículo</p>
-                <p className="text-xl font-bold">{vehiculo.id_vehiculo}</p>
-              </div>
-            </div> */}
-
             <Separator />
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-primary/5 border-2 border-primary/20 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Tag className="h-5 w-5 text-primary" />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Car className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Marca/Modelo
+                  </p>
+                </div>
+                <p className="text-base">
+                  {vehiculo.marca_modelo || (
+                    <span className="text-muted-foreground italic">
+                      Sin marca/modelo registrado
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Tag className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Placa del Vehículo
                   </p>
                 </div>
-                <Badge
-                  variant="default"
-                  className="text-xl font-bold font-mono px-4 py-2"
-                >
+                <p className="text-base font-bold font-mono">
                   {vehiculo.placa}
-                </Badge>
-              </div>
-
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Car className="h-4 w-4 text-muted-foreground" />
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Marca
-                  </p>
-                </div>
-                {vehiculo.marca_modelo ? (
-                  <p className="text-lg font-semibold">
-                    {vehiculo.marca_modelo}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Sin marca registrada
-                  </p>
-                )}
+                </p>
               </div>
             </div>
           </div>

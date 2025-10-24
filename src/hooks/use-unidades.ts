@@ -5,6 +5,7 @@ import {
   toggleUnidadActive,
   deleteUnidad,
   getUnidadById,
+  getAllUnidades,
 } from "@/lib/api/unidades";
 import {
   CreateUnidadDto,
@@ -22,6 +23,12 @@ export function useUnidades(params: PaginationFilterParams) {
   });
 }
 
+export function useAllUnidades() {
+  return useQuery({
+    queryKey: ["unidades", "all"],
+    queryFn: () => getAllUnidades(),
+  });
+}
 export function useUnidad(id: number | null) {
   return useQuery({
     queryKey: ["unidad", id],

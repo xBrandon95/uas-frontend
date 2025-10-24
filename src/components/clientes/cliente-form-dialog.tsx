@@ -82,22 +82,24 @@ export function ClienteFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && cliente) {
-      reset({
-        nombre: cliente.nombre,
-        nit: cliente.nit || "",
-        telefono: cliente.telefono || "",
-        direccion: cliente.direccion || "",
-      });
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        nit: "",
-        telefono: "",
-        direccion: "",
-      });
+    if (open) {
+      if (isEditing && cliente) {
+        reset({
+          nombre: cliente.nombre,
+          nit: cliente.nit || "",
+          telefono: cliente.telefono || "",
+          direccion: cliente.direccion || "",
+        });
+      } else if (!isEditing) {
+        reset({
+          nombre: "",
+          nit: "",
+          telefono: "",
+          direccion: "",
+        });
+      }
     }
-  }, [isEditing, cliente, reset]);
+  }, [open, isEditing, cliente, reset]);
 
   const onSubmit = async (data: ClienteFormData) => {
     const submitData = {
@@ -118,7 +120,6 @@ export function ClienteFormDialog({
 
     await createMutation.mutateAsync(submitData);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

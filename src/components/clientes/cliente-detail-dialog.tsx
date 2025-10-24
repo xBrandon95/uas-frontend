@@ -50,66 +50,62 @@ export function ClienteDetailDialog({
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Nombre
                   </p>
                 </div>
-                <p className="text-lg font-semibold">{cliente.nombre}</p>
+                <p className="text-base font-semibold">{cliente.nombre}</p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     NIT/CI
                   </p>
                 </div>
-                {cliente.nit ? (
-                  <p className="text-lg font-semibold font-mono">
-                    {cliente.nit}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Sin NIT registrado
-                  </p>
-                )}
+                <p className="text-base font-mono">
+                  {cliente.nit || (
+                    <span className="text-muted-foreground italic font-sans">
+                      Sin NIT registrado
+                    </span>
+                  )}
+                </p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Teléfono
                   </p>
                 </div>
-                {cliente.telefono ? (
-                  <p className="text-lg font-semibold font-mono">
-                    {cliente.telefono}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Sin teléfono registrado
-                  </p>
-                )}
+                <p className="text-base font-mono">
+                  {cliente.telefono || (
+                    <span className="text-muted-foreground italic font-sans">
+                      Sin teléfono registrado
+                    </span>
+                  )}
+                </p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Dirección
                   </p>
                 </div>
-                {cliente.direccion ? (
-                  <p className="text-base">{cliente.direccion}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Sin dirección registrada
-                  </p>
-                )}
+                <p className="text-base">
+                  {cliente.direccion || (
+                    <span className="text-muted-foreground">
+                      Sin dirección registrada
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           </div>

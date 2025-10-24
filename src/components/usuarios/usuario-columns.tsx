@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Power, Trash2, Eye } from "lucide-react";
+import { MoreHorizontal, Pencil, Power, Eye } from "lucide-react";
 import { Usuario } from "@/types";
 
 interface ColumnsProps {
@@ -128,14 +128,6 @@ export const createColumns = ({
             <DropdownMenuItem onClick={() => onToggleActive(usuario)}>
               <Power className="mr-2 h-4 w-4" />
               {usuario.activo ? "Desactivar" : "Activar"}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(usuario)}
-              className="text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

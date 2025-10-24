@@ -65,18 +65,20 @@ export function SemillaFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && semilla) {
-      reset({
-        nombre: semilla.nombre,
-        activo: semilla.activo,
-      });
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        activo: true,
-      });
+    if (open) {
+      if (isEditing && semilla) {
+        reset({
+          nombre: semilla.nombre,
+          activo: semilla.activo,
+        });
+      } else if (!isEditing) {
+        reset({
+          nombre: "",
+          activo: true,
+        });
+      }
     }
-  }, [isEditing, semilla, reset]);
+  }, [open, isEditing, semilla, reset]);
 
   const onSubmit = async (data: SemillaFormData) => {
     if (isEditing && semillaId) {
@@ -90,7 +92,6 @@ export function SemillaFormDialog({
 
     await createMutation.mutateAsync(data);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

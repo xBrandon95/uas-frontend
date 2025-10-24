@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sprout, Wheat, Loader2 } from "lucide-react";
 import { useVariedad } from "@/hooks/use-variedades";
@@ -30,7 +29,6 @@ export function VariedadDetailDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sprout className="h-5 w-5" />
             Detalle de la Variedad
           </DialogTitle>
           <DialogDescription>
@@ -51,28 +49,30 @@ export function VariedadDetailDialog({
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <Sprout className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
-                    Nombre de la Variedad
+                    Nombre
                   </p>
                 </div>
-                <p className="text-lg font-semibold">{variedad.nombre}</p>
+                <p className="text-base font-semibold">{variedad.nombre}</p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <Wheat className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Semilla Asociada
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-base">
-                    {variedad.semilla?.nombre || "N/A"}
-                  </Badge>
-                </div>
+                <p className="text-base font-semibold">
+                  {variedad.semilla?.nombre || (
+                    <span className="text-muted-foreground italic">
+                      Sin semilla asociada
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           </div>

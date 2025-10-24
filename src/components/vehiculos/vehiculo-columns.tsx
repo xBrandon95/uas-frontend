@@ -41,7 +41,7 @@ export const createColumns = ({
     accessorKey: "placa",
     header: "Placa",
     cell: ({ row }) => (
-      <Badge variant="outline" className="font-mono font-semibold text-base">
+      <Badge variant="outline" className="font-mono font-semibold text-sm">
         {row.getValue("placa")}
       </Badge>
     ),

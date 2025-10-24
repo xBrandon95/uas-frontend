@@ -28,7 +28,7 @@ import {
   useUsuario,
   useUpdateUsuario,
 } from "@/hooks/use-usuarios";
-import { useUnidades } from "@/hooks/use-unidades";
+import { useAllUnidades } from "@/hooks/use-unidades";
 import { CreateUsuarioDto, Role, UpdateUsuarioDto } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -38,26 +38,73 @@ interface UsuarioFormDialogProps {
   usuarioId?: number | null;
 }
 
-const usuarioSchema = z.object({
-  nombre: z
-    .string()
-    .min(3, "El nombre debe tener al menos 3 caracteres")
-    .max(100, "El nombre no puede exceder 100 caracteres"),
-  usuario: z
-    .string()
-    .min(4, "El usuario debe tener al menos 4 caracteres")
-    .max(50, "El usuario no puede exceder 50 caracteres"),
-  password: z
-    .string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres")
-    .optional()
-    .or(z.literal("")),
-  rol: z.nativeEnum(Role),
-  id_unidad: z.number().optional().nullable(),
-  activo: z.boolean(),
-});
+const createUsuarioSchema = z
+  .object({
+    nombre: z
+      .string()
+      .min(3, "El nombre debe tener al menos 3 caracteres")
+      .max(100, "El nombre no puede exceder 100 caracteres"),
+    usuario: z
+      .string()
+      .min(4, "El usuario debe tener al menos 4 caracteres")
+      .max(50, "El usuario no puede exceder 50 caracteres"),
+    password: z
+      .string()
+      .min(6, "La contraseña debe tener al menos 6 caracteres"),
+    rol: z.nativeEnum(Role),
+    id_unidad: z.number().optional().nullable(),
+    activo: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      // Si el rol no es ADMIN, id_unidad es requerido
+      if (data.rol !== Role.ADMIN) {
+        return data.id_unidad !== undefined && data.id_unidad !== null;
+      }
+      return true;
+    },
+    {
+      message: "La unidad es requerida para este rol",
+      path: ["id_unidad"],
+    }
+  );
 
-type UsuarioFormData = z.infer<typeof usuarioSchema>;
+const updateUsuarioSchema = z
+  .object({
+    nombre: z
+      .string()
+      .min(3, "El nombre debe tener al menos 3 caracteres")
+      .max(100, "El nombre no puede exceder 100 caracteres"),
+    usuario: z
+      .string()
+      .min(4, "El usuario debe tener al menos 4 caracteres")
+      .max(50, "El usuario no puede exceder 50 caracteres"),
+    password: z
+      .string()
+      .min(6, "La contraseña debe tener al menos 6 caracteres")
+      .optional()
+      .or(z.literal("")),
+    rol: z.nativeEnum(Role),
+    id_unidad: z.number().optional().nullable(),
+    activo: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      // Si el rol no es ADMIN, id_unidad es requerido
+      if (data.rol !== Role.ADMIN) {
+        return data.id_unidad !== undefined && data.id_unidad !== null;
+      }
+      return true;
+    },
+    {
+      message: "La unidad es requerida para este rol",
+      path: ["id_unidad"],
+    }
+  );
+
+type UsuarioFormData =
+  | z.infer<typeof createUsuarioSchema>
+  | z.infer<typeof updateUsuarioSchema>;
 
 export function UsuarioFormDialog({
   open,
@@ -72,11 +119,7 @@ export function UsuarioFormDialog({
     isEditing ? usuarioId : null
   );
 
-  const { data: unidadesData } = useUnidades({
-    page: 1,
-    limit: 100,
-    search: "",
-  });
+  const { data: unidades } = useAllUnidades();
 
   const {
     register,
@@ -86,7 +129,9 @@ export function UsuarioFormDialog({
     setValue,
     formState: { errors },
   } = useForm<UsuarioFormData>({
-    resolver: zodResolver(usuarioSchema),
+    resolver: zodResolver(
+      isEditing ? updateUsuarioSchema : createUsuarioSchema
+    ),
     defaultValues: {
       nombre: "",
       usuario: "",
@@ -98,30 +143,33 @@ export function UsuarioFormDialog({
   });
 
   const rolSeleccionado = watch("rol");
+  const esAdminEditando = isEditing && usuario?.rol === Role.ADMIN;
 
   useEffect(() => {
-    if (isEditing && usuario) {
-      setTimeout(() => {
+    if (open) {
+      if (isEditing && usuario) {
+        setTimeout(() => {
+          reset({
+            nombre: usuario.nombre,
+            usuario: usuario.usuario,
+            password: "",
+            rol: usuario.rol as Role,
+            id_unidad: usuario.id_unidad || undefined,
+            activo: usuario.activo,
+          });
+        }, 0);
+      } else if (!isEditing) {
         reset({
-          nombre: usuario.nombre,
-          usuario: usuario.usuario,
+          nombre: "",
+          usuario: "",
           password: "",
-          rol: usuario.rol as Role,
-          id_unidad: usuario.id_unidad || undefined,
-          activo: usuario.activo,
+          rol: Role.OPERADOR,
+          id_unidad: undefined,
+          activo: true,
         });
-      }, 0);
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        usuario: "",
-        password: "",
-        rol: Role.OPERADOR,
-        id_unidad: undefined,
-        activo: true,
-      });
+      }
     }
-  }, [isEditing, usuario, reset]);
+  }, [open, isEditing, usuario, reset]);
 
   // Si cambia el rol a admin, limpiar unidad
   useEffect(() => {
@@ -251,7 +299,13 @@ export function UsuarioFormDialog({
               </Label>
               <Select
                 value={watch("rol")}
-                onValueChange={(value) => setValue("rol", value as Role)}
+                onValueChange={(value) => {
+                  setValue("rol", value as Role, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  });
+                }}
+                disabled={esAdminEditando}
               >
                 <SelectTrigger
                   className={cn("w-full", errors.rol && "border-red-500")}
@@ -259,11 +313,38 @@ export function UsuarioFormDialog({
                   <SelectValue placeholder="Selecciona un rol" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={Role.ADMIN}>Administrador</SelectItem>
-                  <SelectItem value={Role.ENCARGADO}>Encargado</SelectItem>
-                  <SelectItem value={Role.OPERADOR}>Operador</SelectItem>
+                  {!isEditing && (
+                    <>
+                      <SelectItem value={Role.ENCARGADO}>Encargado</SelectItem>
+                      <SelectItem value={Role.OPERADOR}>Operador</SelectItem>
+                    </>
+                  )}
+                  {isEditing && (
+                    <>
+                      {usuario?.rol === Role.ADMIN && (
+                        <SelectItem value={Role.ADMIN}>
+                          Administrador
+                        </SelectItem>
+                      )}
+                      {usuario?.rol !== Role.ADMIN && (
+                        <>
+                          <SelectItem value={Role.ENCARGADO}>
+                            Encargado
+                          </SelectItem>
+                          <SelectItem value={Role.OPERADOR}>
+                            Operador
+                          </SelectItem>
+                        </>
+                      )}
+                    </>
+                  )}
                 </SelectContent>
               </Select>
+              {esAdminEditando && (
+                <p className="text-sm text-muted-foreground">
+                  No se puede cambiar el rol de un administrador
+                </p>
+              )}
               {errors.rol && (
                 <p className="text-sm text-red-500">{errors.rol.message}</p>
               )}
@@ -276,9 +357,13 @@ export function UsuarioFormDialog({
                 </Label>
                 <Select
                   value={watch("id_unidad")?.toString() || ""}
-                  onValueChange={(value) =>
-                    setValue("id_unidad", value ? parseInt(value) : undefined)
-                  }
+                  onValueChange={(value) => {
+                    const newValue = value ? parseInt(value) : undefined;
+                    setValue("id_unidad", newValue, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                  }}
                 >
                   <SelectTrigger
                     className={cn(
@@ -289,7 +374,7 @@ export function UsuarioFormDialog({
                     <SelectValue placeholder="Selecciona una unidad" />
                   </SelectTrigger>
                   <SelectContent>
-                    {unidadesData?.data?.map((unidad) => (
+                    {unidades?.map((unidad) => (
                       <SelectItem
                         key={unidad.id_unidad}
                         value={unidad.id_unidad.toString()}

@@ -29,13 +29,25 @@ export function SemillaDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wheat className="h-5 w-5" />
-            Detalle de la Semilla
-          </DialogTitle>
-          <DialogDescription>
-            Información completa de la semilla
-          </DialogDescription>
+          <div className="flex items-center justify-between pr-3">
+            <div>
+              <DialogTitle className="flex items-center gap-2">
+                Detalle de la Semilla
+              </DialogTitle>
+              <DialogDescription>
+                Información completa de la semilla
+              </DialogDescription>
+            </div>
+            {semilla && (
+              <Badge
+                variant={semilla.activo ? "success" : "secondary"}
+                className="h-7"
+              >
+                <Activity className="mr-1 h-3 w-3" />
+                {semilla.activo ? "Activo" : "Inactiva"}
+              </Badge>
+            )}
+          </div>
         </DialogHeader>
 
         {isLoading ? (
@@ -47,40 +59,20 @@ export function SemillaDetailDialog({
           </div>
         ) : semilla ? (
           <div className="space-y-6">
-
             <Separator />
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <Wheat className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
-                    Nombre de la Semilla
+                    Nombre
                   </p>
                 </div>
-                <p className="text-lg font-semibold">{semilla.nombre}</p>
+                <p className="text-base font-semibold">{semilla.nombre}</p>
               </div>
             </div>
-
-            <Separator />
-            {/* ID y Estado */}
-            <div className="flex items-center justify-between">
-              {/* <div>
-                <p className="text-sm text-muted-foreground">
-                  ID de la Semilla
-                </p>
-                <p className="text-xl font-bold">{semilla.id_semilla}</p>
-              </div> */}
-              <Badge
-                variant={semilla.activo ? "success" : "secondary"}
-                className="h-8"
-              >
-                <Activity className="mr-1 h-3 w-3" />
-                {semilla.activo ? "Activo" : "Inactiva"}
-              </Badge>
-            </div>
-
           </div>
         ) : (
           <div className="py-12 text-center text-muted-foreground">

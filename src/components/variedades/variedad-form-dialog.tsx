@@ -79,20 +79,22 @@ export function VariedadFormDialog({
   const selectedSemillaId = watch("id_semilla");
 
   useEffect(() => {
-    if (isEditing && variedad) {
-      setTimeout(() => {
+    if (open) {
+      if (isEditing && variedad) {
+        setTimeout(() => {
+          reset({
+            nombre: variedad.nombre,
+            id_semilla: variedad.id_semilla,
+          });
+        }, 0);
+      } else if (!isEditing) {
         reset({
-          nombre: variedad.nombre,
-          id_semilla: variedad.id_semilla,
+          nombre: "",
+          id_semilla: undefined,
         });
-      }, 0);
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        id_semilla: undefined,
-      });
+      }
     }
-  }, [isEditing, variedad, reset]);
+  }, [open, isEditing, variedad, reset]);
 
   const onSubmit = async (data: VariedadFormData) => {
     if (isEditing && variedadId) {
@@ -106,7 +108,6 @@ export function VariedadFormDialog({
 
     await createMutation.mutateAsync(data);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading =

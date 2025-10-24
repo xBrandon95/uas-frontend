@@ -69,18 +69,20 @@ export function VehiculoFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && vehiculo) {
-      reset({
-        placa: vehiculo.placa,
-        marca_modelo: vehiculo.marca_modelo,
-      });
-    } else if (!isEditing) {
-      reset({
-        placa: "",
-        marca_modelo: "",
-      });
+    if (open) {
+      if (isEditing && vehiculo) {
+        reset({
+          placa: vehiculo.placa,
+          marca_modelo: vehiculo.marca_modelo,
+        });
+      } else if (!isEditing) {
+        reset({
+          placa: "",
+          marca_modelo: "",
+        });
+      }
     }
-  }, [isEditing, vehiculo, reset]);
+  }, [open, isEditing, vehiculo, reset]);
 
   const onSubmit = async (data: VehiculoFormData) => {
     if (isEditing && vehiculoId) {
@@ -94,7 +96,6 @@ export function VehiculoFormDialog({
 
     await createMutation.mutateAsync(data);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

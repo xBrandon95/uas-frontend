@@ -46,49 +46,46 @@ export function ConductorDetailDialog({
           </div>
         ) : conductor ? (
           <div className="space-y-6">
-
             <Separator />
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Nombre Completo
                   </p>
                 </div>
-                <p className="text-lg font-semibold">{conductor.nombre}</p>
+                <p className="text-base font-semibold">{conductor.nombre}</p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Cédula de Identidad
                   </p>
                 </div>
-                <p className="text-lg font-semibold font-mono">
+                <p className="text-base font-semibold font-mono">
                   {conductor.ci}
                 </p>
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Teléfono
                   </p>
                 </div>
-                {conductor.telefono ? (
-                  <p className="text-lg font-semibold font-mono">
-                    {conductor.telefono}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Sin teléfono registrado
-                  </p>
-                )}
+                <p className="text-base font-mono">
+                  {conductor.telefono || (
+                    <span className="text-muted-foreground font-sans">
+                      Sin teléfono registrado
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           </div>

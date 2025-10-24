@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { FolderOpen, Tag, Loader2 } from "lucide-react";
+import { FolderOpen, Loader2 } from "lucide-react";
 import { useCategoria } from "@/hooks/use-categorias";
 
 interface CategoriaDetailDialogProps {
@@ -29,7 +29,6 @@ export function CategoriaDetailDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" />
             Detalle de la Categoría
           </DialogTitle>
           <DialogDescription>
@@ -46,19 +45,18 @@ export function CategoriaDetailDialog({
           </div>
         ) : categoria ? (
           <div className="space-y-6">
-
             <Separator />
 
             {/* Información principal */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Tag className="h-4 w-4 text-muted-foreground" />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <FolderOpen className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-medium text-muted-foreground">
-                    Nombre de la Categoría
+                    Nombre
                   </p>
                 </div>
-                <p className="text-lg font-semibold">{categoria.nombre}</p>
+                <p className="text-base font-semibold">{categoria.nombre}</p>
               </div>
             </div>
           </div>

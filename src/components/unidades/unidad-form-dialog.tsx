@@ -67,20 +67,22 @@ export function UnidadFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && unidad) {
-      reset({
-        nombre: unidad.nombre,
-        ubicacion: unidad.ubicacion,
-        activo: unidad.activo,
-      });
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-        ubicacion: "",
-        activo: true,
-      });
+    if (open) {
+      if (isEditing && unidad) {
+        reset({
+          nombre: unidad.nombre,
+          ubicacion: unidad.ubicacion,
+          activo: unidad.activo,
+        });
+      } else if (!isEditing) {
+        reset({
+          nombre: "",
+          ubicacion: "",
+          activo: true,
+        });
+      }
     }
-  }, [isEditing, unidad, reset]);
+  }, [open, isEditing, unidad, reset]);
 
   const onSubmit = async (data: UnidadFormData) => {
     if (isEditing && unidadId) {
@@ -93,7 +95,6 @@ export function UnidadFormDialog({
     }
     await createMutation.mutateAsync(data);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
@@ -142,7 +143,7 @@ export function UnidadFormDialog({
                 id="ubicacion"
                 {...register("ubicacion")}
                 placeholder="Ubicación de la unidad (opcional)"
-                className={errors.nombre ? "border-red-500" : ""}
+                className={errors.ubicacion ? "border-red-500" : ""}
               />
               {errors.ubicacion && (
                 <p className="text-sm text-red-500">

@@ -63,16 +63,18 @@ export function CategoriaFormDialog({
   });
 
   useEffect(() => {
-    if (isEditing && categoria) {
-      reset({
-        nombre: categoria.nombre,
-      });
-    } else if (!isEditing) {
-      reset({
-        nombre: "",
-      });
+    if (open) {
+      if (isEditing && categoria) {
+        reset({
+          nombre: categoria.nombre,
+        });
+      } else if (!isEditing) {
+        reset({
+          nombre: "",
+        });
+      }
     }
-  }, [isEditing, categoria, reset]);
+  }, [open, isEditing, categoria, reset]);
 
   const onSubmit = async (data: CategoriaFormData) => {
     if (isEditing && categoriaId) {
@@ -86,7 +88,6 @@ export function CategoriaFormDialog({
 
     await createMutation.mutateAsync(data);
     onOpenChange(false);
-    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

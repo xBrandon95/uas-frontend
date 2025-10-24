@@ -16,6 +16,12 @@ export async function getUnidades(
   return data;
 }
 
+// Obtener todas las unidades activas sin paginación
+export async function getAllUnidades(): Promise<Unidad[]> {
+  const { data } = await api.get("/unidades/all");
+  return data;
+}
+
 // Obtener unidad por id
 export async function getUnidadById(id: number): Promise<Unidad> {
   const { data } = await api.get(`/unidades/${id}`);
