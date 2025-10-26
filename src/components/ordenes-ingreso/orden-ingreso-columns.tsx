@@ -78,6 +78,14 @@ export const createColumns = ({
     },
   },
   {
+    accessorKey: "variedad.nombre",
+    header: "Variedad",
+    cell: ({ row }) => {
+      const variedad = row.original.variedad;
+      return <span>{variedad?.nombre || "N/A"}</span>;
+    },
+  },
+  {
     accessorKey: "peso_neto",
     header: "Peso Neto",
     cell: ({ row }) => {

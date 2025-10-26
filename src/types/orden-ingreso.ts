@@ -30,7 +30,6 @@ export interface OrdenIngreso {
   id_categoria_ingreso: number;
   categoria_ingreso: Categoria;
   nro_lote_campo?: string;
-  nro_bolsas?: number;
   nro_cupon?: string;
 
   // Datos de ingreso/salida
