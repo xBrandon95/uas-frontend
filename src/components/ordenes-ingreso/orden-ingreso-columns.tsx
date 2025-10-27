@@ -86,12 +86,22 @@ export const createColumns = ({
     },
   },
   {
+    accessorKey: "categoria_ingreso.nombre",
+    header: "Categoria",
+    cell: ({ row }) => {
+      const categoria = row.original.categoria_ingreso;
+      return <span>{categoria?.nombre || "N/A"}</span>;
+    },
+  },
+  {
     accessorKey: "peso_neto",
     header: "Peso Neto",
     cell: ({ row }) => {
       const peso = row.getValue("peso_neto") as number;
       return peso ? (
-        <span className="font-mono">{Number(peso).toFixed(2)} kg</span>
+        <span className="font-mono flex justify-end">
+          {Number(peso).toFixed(2)} kg
+        </span>
       ) : (
         <span className="text-muted-foreground">-</span>
       );
@@ -142,18 +152,18 @@ export const createColumns = ({
               <Pencil className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
+            {/* <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
               <FileCheck className="mr-2 h-4 w-4" />
               Cambiar Estado
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
+            {/* <DropdownMenuItem
               onClick={() => onDelete(orden)}
               className="text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Eliminar
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
