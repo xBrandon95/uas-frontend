@@ -13,6 +13,7 @@ import { useOrdenesIngreso } from "@/hooks/use-ordenes-ingreso";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus } from "lucide-react";
 import { OrdenIngreso } from "@/types";
+import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
 
 export default function OrdenesIngresoPage() {
   const router = useRouter();
@@ -34,6 +35,14 @@ export default function OrdenesIngresoPage() {
     limit,
     search,
   });
+
+  // Hook para descargar el reporte PDF
+  const descargarReporte = useDescargarReporteOrdenIngreso();
+
+  // Handler para usarlo dentro de las columnas
+  const handleDownloadReport = (ordenId: number) => {
+    descargarReporte.mutate(ordenId);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -72,11 +81,13 @@ export default function OrdenesIngresoPage() {
     setDeleteDialogOpen(true);
   };
 
+  // handleDownloadReport al crear las columnas
   const columns = createColumns({
     onView: handleView,
     onEdit: handleEdit,
     onChangeStatus: handleChangeStatus,
     onDelete: handleDelete,
+    onDownloadReport: handleDownloadReport,
   });
 
   if (isLoading) return <Loader />;

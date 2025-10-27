@@ -11,14 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck, FileText } from "lucide-react";
 import { OrdenIngreso } from "@/types";
+import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
   onEdit: (orden: OrdenIngreso) => void;
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
+  onDownloadReport: (ordenId: number) => void; // ✅ ← agregado
 }
 
 const getEstadoBadge = (estado: string) => {
@@ -37,6 +39,65 @@ const getEstadoBadge = (estado: string) => {
 
   return estados[estado] || { variant: "secondary", label: estado };
 };
+
+// ✅ Nuevo componente para manejar los hooks correctamente
+function AccionesCell({
+  orden,
+  onView,
+  onEdit,
+  onChangeStatus,
+  onDelete,
+}: {
+  orden: OrdenIngreso;
+  onView: (orden: OrdenIngreso) => void;
+  onEdit: (orden: OrdenIngreso) => void;
+  onChangeStatus: (orden: OrdenIngreso) => void;
+  onDelete: (orden: OrdenIngreso) => void;
+}) {
+  const descargarReporte = useDescargarReporteOrdenIngreso();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Abrir menú</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => onView(orden)}>
+          <Eye className="mr-2 h-4 w-4" />
+          Ver Detalle
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onEdit(orden)}>
+          <Pencil className="mr-2 h-4 w-4" />
+          Editar
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
+          <FileCheck className="mr-2 h-4 w-4" />
+          Cambiar Estado
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => onDelete(orden)}
+          className="text-red-600"
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Eliminar
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => descargarReporte.mutate(orden.id_orden_ingreso)}
+          disabled={descargarReporte.isPending}
+        >
+          <FileText className="mr-2 h-4 w-4" />
+          Descargar PDF
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export const createColumns = ({
   onView,
@@ -110,45 +171,18 @@ export const createColumns = ({
       });
     },
   },
+
+  // se modifica para usar la descarga del reporte
   {
     id: "actions",
-    cell: ({ row }) => {
-      const orden = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onView(orden)}>
-              <Eye className="mr-2 h-4 w-4" />
-              Ver Detalle
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(orden)}>
-              <Pencil className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
-              <FileCheck className="mr-2 h-4 w-4" />
-              Cambiar Estado
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(orden)}
-              className="text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <AccionesCell
+        orden={row.original}
+        onView={onView}
+        onEdit={onEdit}
+        onChangeStatus={onChangeStatus}
+        onDelete={onDelete}
+      />
+    ),
   },
 ];
