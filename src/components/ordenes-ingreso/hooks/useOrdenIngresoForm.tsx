@@ -8,7 +8,6 @@ import {
   useOrdenIngreso,
   useUpdateOrdenIngreso,
 } from "@/hooks/use-ordenes-ingreso";
-import { useAuthStore } from "@/stores/authStore";
 import {
   createOrdenSchema,
   updateOrdenSchema,
@@ -18,7 +17,6 @@ import {
 
 export function useOrdenIngresoForm(ordenId: string | null) {
   const router = useRouter();
-  const { user } = useAuthStore();
   const isEditing = !!ordenId;
 
   // Mutations
@@ -36,7 +34,6 @@ export function useOrdenIngresoForm(ordenId: string | null) {
     defaultValues: isEditing
       ? {}
       : {
-          id_unidad: user?.id_unidad,
           estado: "pendiente",
         },
   });
@@ -101,6 +98,7 @@ export function useOrdenIngresoForm(ordenId: string | null) {
           dto: data,
         });
       } else {
+        console.log(data);
         await createMutation.mutateAsync(data as CreateOrdenFormData);
       }
       router.push("/ordenes-ingreso");

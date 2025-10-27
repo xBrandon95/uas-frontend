@@ -6,12 +6,16 @@ import { cn } from "@/lib/utils";
 import { Percent } from "lucide-react";
 
 interface PercentageInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "type" | "onChange"
+  > {
   label: string;
   error?: string;
   helperText?: string;
   required?: boolean;
   showIcon?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const PercentageInput = forwardRef<HTMLInputElement, PercentageInputProps>(
@@ -23,10 +27,38 @@ const PercentageInput = forwardRef<HTMLInputElement, PercentageInputProps>(
       required = false,
       showIcon = true,
       className,
+      onChange,
       ...props
     },
     ref
   ) => {
+    // Handler para limitar valores entre 0 y 100
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+
+      // Si está vacío, permitir (para poder borrar)
+      if (value === "") {
+        onChange?.(e);
+        return;
+      }
+
+      const numValue = parseFloat(value);
+
+      // Si no es un número válido, no hacer nada
+      if (isNaN(numValue)) {
+        return;
+      }
+
+      // Limitar entre 0 y 100
+      if (numValue > 100) {
+        e.target.value = "100";
+      } else if (numValue < 0) {
+        e.target.value = "0";
+      }
+
+      onChange?.(e);
+    };
+
     return (
       <div className="space-y-2">
         <Label htmlFor={props.id}>
@@ -41,11 +73,8 @@ const PercentageInput = forwardRef<HTMLInputElement, PercentageInputProps>(
             step="0.01"
             min="0"
             max="100"
-            className={cn(
-              "pr-10",
-              error && "border-red-500 focus-visible:ring-red-500",
-              className
-            )}
+            className={cn("pr-10", error && "border-red-500 ", className)}
+            onChange={handleChange}
             {...props}
           />
           {showIcon && (

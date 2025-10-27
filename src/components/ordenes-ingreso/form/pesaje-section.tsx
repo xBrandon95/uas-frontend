@@ -46,7 +46,7 @@ export function PesajeSection({
             type="number"
             step="0.01"
             className={errors.peso_bruto ? "border-red-500" : ""}
-            {...register("peso_bruto", { valueAsNumber: true })}
+            {...register("peso_bruto")}
           />
           {errors.peso_bruto && (
             <p className="text-sm text-red-500 mt-1">Campo requerido</p>
@@ -63,7 +63,7 @@ export function PesajeSection({
             type="number"
             step="0.01"
             className={errors.peso_tara ? "border-red-500" : ""}
-            {...register("peso_tara", { valueAsNumber: true })}
+            {...register("peso_tara")}
           />
           {errors.peso_tara && (
             <p className="text-sm text-red-500 mt-1">Campo requerido</p>
@@ -101,7 +101,7 @@ export function PesajeSection({
             type="number"
             step="0.01"
             className={errors.peso_liquido ? "border-red-500" : ""}
-            {...register("peso_liquido", { valueAsNumber: true })}
+            {...register("peso_liquido")}
           />
           {errors.peso_liquido && (
             <p className="text-sm text-red-500 mt-1">Campo requerido</p>

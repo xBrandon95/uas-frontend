@@ -1,4 +1,3 @@
-// src/components/ordenes-ingreso/form/LaboratorioSection.tsx
 import { UseFormReturn } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,37 +37,32 @@ export function LaboratorioSection({
         <PercentageInput
           id="porcentaje_humedad"
           label="Humedad"
-          helperText="Rango: 0% - 100%"
+          required
+          helperText="Valores mayores a 100 se ajustarán automáticamente"
           error={errors.porcentaje_humedad?.message}
-          {...register("porcentaje_humedad", {
-            valueAsNumber: true,
-            setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
-          })}
+          {...register("porcentaje_humedad")}
         />
 
         <PercentageInput
           id="porcentaje_impureza"
           label="Impureza"
-          helperText="Rango: 0% - 100%"
+          required
+          helperText="Valores mayores a 100 se ajustarán automáticamente"
           error={errors.porcentaje_impureza?.message}
-          {...register("porcentaje_impureza", {
-            valueAsNumber: true,
-            setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
-          })}
+          {...register("porcentaje_impureza")}
         />
 
         <div>
-          <Label htmlFor="peso_hectolitrico">Peso Hectolítrico (kg/hl)</Label>
+          <Label htmlFor="peso_hectolitrico">
+            Peso Hectolítrico (kg/hl) <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="peso_hectolitrico"
             type="number"
             step="0.01"
             min="0"
             className={errors.peso_hectolitrico ? "border-red-500" : ""}
-            {...register("peso_hectolitrico", {
-              valueAsNumber: true,
-              setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
-            })}
+            {...register("peso_hectolitrico")}
           />
           <p className="text-xs text-muted-foreground mt-1">
             Debe ser mayor a 0
@@ -83,23 +77,19 @@ export function LaboratorioSection({
         <PercentageInput
           id="porcentaje_grano_danado"
           label="Grano Dañado"
-          helperText="Rango: 0% - 100%"
+          required
+          helperText="Valores mayores a 100 se ajustarán automáticamente"
           error={errors.porcentaje_grano_danado?.message}
-          {...register("porcentaje_grano_danado", {
-            valueAsNumber: true,
-            setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
-          })}
+          {...register("porcentaje_grano_danado")}
         />
 
         <PercentageInput
           id="porcentaje_grano_verde"
           label="Grano Verde"
-          helperText="Rango: 0% - 100%"
+          required
+          helperText="Valores mayores a 100 se ajustarán automáticamente"
           error={errors.porcentaje_grano_verde?.message}
-          {...register("porcentaje_grano_verde", {
-            valueAsNumber: true,
-            setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
-          })}
+          {...register("porcentaje_grano_verde")}
         />
       </div>
     </div>
