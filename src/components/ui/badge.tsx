@@ -19,9 +19,14 @@ const badgeVariants = cva(
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         success:
           "bg-emerald-400/15 text-emerald-500 border border-emerald-400/0",
-        admin: "bg-red-500/15 text-red-600 border border-red-400/0",
-        encargado: "bg-blue-500/10 text-blue-700 border border-blue-400/0",
-        operador: "bg-indigo-500/10 text-indigo-700 border border-indigo-400/0",
+        pending:
+          "bg-amber-400/15 text-amber-500 border border-amber-400/0",
+        admin: 
+          "bg-red-500/15 text-red-600 border border-red-400/0",
+        encargado: 
+          "bg-blue-500/10 text-blue-700 border border-blue-400/0",
+        operador: 
+          "bg-indigo-500/10 text-indigo-700 border border-indigo-400/0",
       },
     },
     defaultVariants: {

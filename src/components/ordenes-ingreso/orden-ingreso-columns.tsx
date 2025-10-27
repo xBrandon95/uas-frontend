@@ -14,27 +14,27 @@ import {
 import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck, FileText } from "lucide-react";
 import { OrdenIngreso } from "@/types";
 import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
+import { Variedad } from '../../types/variedad';
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
   onEdit: (orden: OrdenIngreso) => void;
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
-  onDownloadReport: (ordenId: number) => void; // ✅ ← agregado
+  onDownloadReport: (ordenId: number) => void;
 }
 
 const getEstadoBadge = (estado: string) => {
   const estados: Record<
     string,
     {
-      variant: "default" | "secondary" | "destructive" | "outline";
+      variant: "default" | "admin" | "pending" | "success";
       label: string;
     }
   > = {
-    pendiente: { variant: "secondary", label: "Pendiente" },
-    en_proceso: { variant: "default", label: "En Proceso" },
-    completado: { variant: "outline", label: "Completado" },
-    cancelado: { variant: "destructive", label: "Cancelado" },
+    pendiente: { variant: "pending", label: "Pendiente" },
+    completado: { variant: "success", label: "Completado" },
+    cancelado: { variant: "admin", label: "Cancelado" },
   };
 
   return estados[estado] || { variant: "secondary", label: estado };
@@ -45,8 +45,6 @@ function AccionesCell({
   orden,
   onView,
   onEdit,
-  onChangeStatus,
-  onDelete,
 }: {
   orden: OrdenIngreso;
   onView: (orden: OrdenIngreso) => void;
@@ -75,18 +73,7 @@ function AccionesCell({
           <Pencil className="mr-2 h-4 w-4" />
           Editar
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
-          <FileCheck className="mr-2 h-4 w-4" />
-          Cambiar Estado
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => onDelete(orden)}
-          className="text-red-600"
-        >
-          <Trash2 className="mr-2 h-4 w-4" />
-          Eliminar
-        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => descargarReporte.mutate(orden.id_orden_ingreso)}
           disabled={descargarReporte.isPending}
@@ -136,6 +123,22 @@ export const createColumns = ({
     cell: ({ row }) => {
       const semilla = row.original.semilla;
       return <span>{semilla?.nombre || "N/A"}</span>;
+    },
+  },
+  {
+    accessorKey: "variedad.nombre",
+    header: "Variedad",
+    cell: ({ row }) => {
+      const variedad = row.original.variedad;
+      return <span>{variedad?.nombre || "N/A"}</span>;
+    },
+  },
+  {
+    accessorKey: "categoria.nombre",
+    header: "Categoría",
+    cell: ({ row }) => {
+      const categoria = row.original.categoria_ingreso;
+      return <span>{categoria?.nombre || "N/A"}</span>;
     },
   },
   {

@@ -97,8 +97,11 @@ export function useUpdateOrdenIngreso() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateOrdenIngresoDto }) =>
       updateOrdenIngreso(id, dto),
-    onSuccess: () => {
+    onSuccess: ({ id_orden_ingreso }) => {
       queryClient.invalidateQueries({ queryKey: ["ordenes-ingreso"] });
+      queryClient.invalidateQueries({
+        queryKey: ["orden-ingreso", id_orden_ingreso],
+      });
       toast.success("Orden de ingreso actualizada exitosamente");
     },
     onError: (error: unknown) => {

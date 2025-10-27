@@ -113,10 +113,6 @@ export function OrdenIngresoDetailDialog({
                     {orden.categoria_ingreso?.nombre}
                   </p>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Nº Bolsas</p>
-                  <p className="font-medium">{orden.nro_bolsas || "N/A"}</p>
-                </div>
               </div>
             </div>
 
