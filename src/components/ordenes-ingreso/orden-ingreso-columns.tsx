@@ -20,7 +20,7 @@ import {
 import {
   MoreHorizontal,
   Pencil,
-  Trash2,
+  Download,
   Eye,
   FileText,
   Lock,
@@ -72,14 +72,16 @@ function AccionesCell({
   const tieneLotsProduccion = (orden as any).tiene_lotes_produccion || false;
   const cantidadLotes = (orden as any).cantidad_lotes || 0;
   const estaCompletado = orden.estado === "completado";
-  const puedeEditar = !tieneLotsProduccion && !estaCompletado;
-  const puedeEliminar = !tieneLotsProduccion && !estaCompletado;
+  const estaEnProceso = orden.estado === "en_proceso";
+  const puedeEditar = !tieneLotsProduccion && !estaCompletado && !estaEnProceso;
+  const puedeEliminar =
+    !tieneLotsProduccion && !estaCompletado && !estaEnProceso;
 
   // Mensaje de tooltip para editar
   const mensajeEditar = !puedeEditar
     ? tieneLotsProduccion
       ? `No puede editarse: tiene ${cantidadLotes} lote(s) de producción asociado(s)`
-      : "No puede editarse: orden completada"
+      : "No se puede editar"
     : "Editar orden de ingreso";
 
   // Mensaje de tooltip para eliminar
@@ -139,21 +141,19 @@ function AccionesCell({
           Cambiar Estado
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
-
         {/* Descargar PDF */}
         <DropdownMenuItem
           onClick={() => descargarReporte.mutate(orden.id_orden_ingreso)}
           disabled={descargarReporte.isPending}
         >
-          <FileText className="mr-2 h-4 w-4" />
+          <Download className="mr-2 h-4 w-4" />
           {descargarReporte.isPending ? "Descargando..." : "Descargar PDF"}
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
 
         {/* Eliminar - Con validación */}
-        <TooltipProvider>
+        {/* <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
@@ -178,7 +178,7 @@ function AccionesCell({
               </TooltipContent>
             )}
           </Tooltip>
-        </TooltipProvider>
+        </TooltipProvider> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

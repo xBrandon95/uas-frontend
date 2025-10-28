@@ -11,6 +11,16 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { FileText, Truck, Wheat, Scale, Loader2 } from "lucide-react";
 import { useOrdenIngreso } from "@/hooks/use-ordenes-ingreso";
+import { useResumenProduccion } from "@/hooks/use-orden-resumen";
+import { OrdenProgresoCard } from "@/components/ordenes-ingreso/ordenes-progreso-card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface OrdenIngresoDetailDialogProps {
   open: boolean;
@@ -24,6 +34,8 @@ export function OrdenIngresoDetailDialog({
   ordenId,
 }: OrdenIngresoDetailDialogProps) {
   const { data: orden, isLoading } = useOrdenIngreso(ordenId);
+  const { data: resumen, isLoading: isLoadingResumen } =
+    useResumenProduccion(ordenId);
 
   const formatDate = (date: Date | string | undefined) => {
     if (!date) return "N/A";
@@ -32,7 +44,7 @@ export function OrdenIngresoDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -62,6 +74,17 @@ export function OrdenIngresoDetailDialog({
 
             <Separator />
 
+            {/* Progreso de Producción */}
+            {resumen && !isLoadingResumen && (
+              <>
+                <OrdenProgresoCard
+                  ordenIngreso={resumen.orden_ingreso}
+                  produccion={resumen.produccion}
+                />
+                <Separator />
+              </>
+            )}
+
             {/* Transporte */}
             <div>
               <h3 className="flex items-center gap-2 font-semibold mb-3">
@@ -84,7 +107,7 @@ export function OrdenIngresoDetailDialog({
                 <div>
                   <p className="text-sm text-muted-foreground">Vehículo</p>
                   <p className="font-medium font-mono">
-                    {orden.vehiculo?.placa}
+                    {orden.vehiculo?.marca_modelo} - {orden.vehiculo?.placa}
                   </p>
                 </div>
               </div>
@@ -157,7 +180,6 @@ export function OrdenIngresoDetailDialog({
             {/* Laboratorio */}
             <div>
               <h3 className="flex items-center gap-2 font-semibold mb-3">
-                {/* <Flask className="h-4 w-4" /> */}
                 Análisis de Laboratorio
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -189,6 +211,62 @@ export function OrdenIngresoDetailDialog({
                 </div>
               </div>
             </div>
+
+            {/* Lotes de Producción */}
+            {resumen && resumen.lotes && resumen.lotes.length > 0 && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="font-semibold mb-3">
+                    Lotes de Producción ({resumen.lotes.length})
+                  </h3>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nº Lote</TableHead>
+                          <TableHead>Variedad</TableHead>
+                          <TableHead>Categoría</TableHead>
+                          <TableHead className="text-right">Bolsas</TableHead>
+                          <TableHead className="text-right">Kg/Bolsa</TableHead>
+                          <TableHead className="text-right">Total Kg</TableHead>
+                          <TableHead>Estado</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {resumen.lotes.map((lote, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Badge variant="outline" className="font-mono">
+                                {lote.nro_lote}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{lote.variedad}</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">
+                                {lote.categoria}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-mono">
+                              {lote.nro_bolsas}
+                            </TableCell>
+                            <TableCell className="text-right font-mono">
+                              {lote.kg_por_bolsa}
+                            </TableCell>
+                            <TableCell className="text-right font-mono font-semibold">
+                              {lote.total_kg}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{lote.estado}</Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </>
+            )}
 
             {orden.observaciones && (
               <>
