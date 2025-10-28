@@ -11,10 +11,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck, FileText } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Eye,
+  FileText,
+  Lock,
+} from "lucide-react";
 import { OrdenIngreso } from "@/types";
 import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
-import { Variedad } from '../../types/variedad';
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
@@ -37,14 +49,16 @@ const getEstadoBadge = (estado: string) => {
     cancelado: { variant: "admin", label: "Cancelado" },
   };
 
-  return estados[estado] || { variant: "secondary", label: estado };
+  return estados[estado] || { variant: "default", label: estado };
 };
 
-// ✅ Nuevo componente para manejar los hooks correctamente
+// ✅ Componente para manejar los hooks correctamente
 function AccionesCell({
   orden,
   onView,
   onEdit,
+  onChangeStatus,
+  onDelete,
 }: {
   orden: OrdenIngreso;
   onView: (orden: OrdenIngreso) => void;
@@ -53,6 +67,27 @@ function AccionesCell({
   onDelete: (orden: OrdenIngreso) => void;
 }) {
   const descargarReporte = useDescargarReporteOrdenIngreso();
+
+  // 🔒 Verificar si puede editarse/eliminarse
+  const tieneLotsProduccion = (orden as any).tiene_lotes_produccion || false;
+  const cantidadLotes = (orden as any).cantidad_lotes || 0;
+  const estaCompletado = orden.estado === "completado";
+  const puedeEditar = !tieneLotsProduccion && !estaCompletado;
+  const puedeEliminar = !tieneLotsProduccion && !estaCompletado;
+
+  // Mensaje de tooltip para editar
+  const mensajeEditar = !puedeEditar
+    ? tieneLotsProduccion
+      ? `No puede editarse: tiene ${cantidadLotes} lote(s) de producción asociado(s)`
+      : "No puede editarse: orden completada"
+    : "Editar orden de ingreso";
+
+  // Mensaje de tooltip para eliminar
+  const mensajeEliminar = !puedeEliminar
+    ? tieneLotsProduccion
+      ? `No puede eliminarse: tiene ${cantidadLotes} lote(s) asociado(s)`
+      : "No puede eliminarse: orden completada"
+    : "Eliminar orden de ingreso";
 
   return (
     <DropdownMenu>
@@ -65,22 +100,85 @@ function AccionesCell({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Acciones</DropdownMenuLabel>
         <DropdownMenuSeparator />
+
+        {/* Ver Detalle - Siempre disponible */}
         <DropdownMenuItem onClick={() => onView(orden)}>
           <Eye className="mr-2 h-4 w-4" />
           Ver Detalle
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEdit(orden)}>
-          <Pencil className="mr-2 h-4 w-4" />
-          Editar
+
+        {/* Editar - Con validación */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <DropdownMenuItem
+                  onClick={() => puedeEditar && onEdit(orden)}
+                  disabled={!puedeEditar}
+                  className={
+                    !puedeEditar ? "opacity-50 cursor-not-allowed" : ""
+                  }
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Editar
+                  {!puedeEditar && <Lock className="ml-2 h-3 w-3" />}
+                </DropdownMenuItem>
+              </div>
+            </TooltipTrigger>
+            {!puedeEditar && (
+              <TooltipContent>
+                <p className="max-w-xs">{mensajeEditar}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
+
+        {/* Cambiar Estado */}
+        <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
+          <FileText className="mr-2 h-4 w-4" />
+          Cambiar Estado
         </DropdownMenuItem>
+
         <DropdownMenuSeparator />
+
+        {/* Descargar PDF */}
         <DropdownMenuItem
           onClick={() => descargarReporte.mutate(orden.id_orden_ingreso)}
           disabled={descargarReporte.isPending}
         >
           <FileText className="mr-2 h-4 w-4" />
-          Descargar PDF
+          {descargarReporte.isPending ? "Descargando..." : "Descargar PDF"}
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Eliminar - Con validación */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <DropdownMenuItem
+                  onClick={() => puedeEliminar && onDelete(orden)}
+                  disabled={!puedeEliminar}
+                  className={
+                    !puedeEliminar
+                      ? "opacity-50 cursor-not-allowed"
+                      : "text-red-600 focus:text-red-600"
+                  }
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Eliminar
+                  {!puedeEliminar && <Lock className="ml-2 h-3 w-3" />}
+                </DropdownMenuItem>
+              </div>
+            </TooltipTrigger>
+            {!puedeEliminar && (
+              <TooltipContent>
+                <p className="max-w-xs">{mensajeEliminar}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -159,7 +257,33 @@ export const createColumns = ({
     cell: ({ row }) => {
       const estado = row.getValue("estado") as string;
       const estadoConfig = getEstadoBadge(estado);
-      return <Badge variant={estadoConfig.variant}>{estadoConfig.label}</Badge>;
+      const orden = row.original as any;
+      const tieneLotsProduccion = orden.tiene_lotes_produccion || false;
+      const cantidadLotes = orden.cantidad_lotes || 0;
+
+      return (
+        <div className="flex items-center gap-2">
+          <Badge variant={estadoConfig.variant}>{estadoConfig.label}</Badge>
+          {tieneLotsProduccion && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="outline" className="text-xs gap-1">
+                    <Lock className="h-3 w-3" />
+                    {cantidadLotes}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tiene {cantidadLotes} lote(s) de producción</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    No puede editarse ni eliminarse
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      );
     },
   },
   {
@@ -174,8 +298,6 @@ export const createColumns = ({
       });
     },
   },
-
-  // se modifica para usar la descarga del reporte
   {
     id: "actions",
     cell: ({ row }) => (
