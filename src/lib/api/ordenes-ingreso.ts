@@ -29,6 +29,14 @@ export async function getOrdenesIngresoByEstado(
   return data;
 }
 
+// Obtener órdenes disponibles para crear lotes (pendiente o en_proceso)
+export async function getOrdenesDisponiblesParaLotes(): Promise<
+  OrdenIngreso[]
+> {
+  const { data } = await api.get("/ordenes-ingreso/disponibles-para-lotes");
+  return data;
+}
+
 // Obtener órdenes por unidad
 export async function getOrdenesIngresoByUnidad(
   idUnidad: number

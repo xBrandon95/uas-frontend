@@ -260,10 +260,25 @@ export const createColumns = ({
       const orden = row.original as any;
       const tieneLotsProduccion = orden.tiene_lotes_produccion || false;
       const cantidadLotes = orden.cantidad_lotes || 0;
+      const esEstadoFinal = estado === "completado" || estado === "cancelado";
 
       return (
         <div className="flex items-center gap-2">
           <Badge variant={estadoConfig.variant}>{estadoConfig.label}</Badge>
+          {esEstadoFinal && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="outline" className="text-xs gap-1">
+                    <Lock className="h-3 w-3" />
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Estado final - No se puede modificar</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {tieneLotsProduccion && (
             <TooltipProvider>
               <Tooltip>

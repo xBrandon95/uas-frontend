@@ -11,6 +11,7 @@ import {
   getOrdenesIngresoByFecha,
   getEstadisticasOrdenesIngreso,
   getOrdenIngresoByNumero,
+  getOrdenesDisponiblesParaLotes,
 } from "@/lib/api/ordenes-ingreso";
 import {
   CreateOrdenIngresoDto,
@@ -107,6 +108,15 @@ export function useUpdateOrdenIngreso() {
     onError: (error: unknown) => {
       toast.error(getErrorMessage(error));
     },
+  });
+}
+
+// Obtener órdenes disponibles para crear lotes
+export function useOrdenesDisponiblesParaLotes() {
+  return useQuery({
+    queryKey: ["ordenes-ingreso", "disponibles-para-lotes"],
+    queryFn: getOrdenesDisponiblesParaLotes,
+    staleTime: 30000, // 30 segundos
   });
 }
 

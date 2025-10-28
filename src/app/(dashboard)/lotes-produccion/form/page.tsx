@@ -25,12 +25,12 @@ import {
   useLotesByOrdenIngreso,
 } from "@/hooks/use-lotes-produccion";
 import {
+  useOrdenesDisponiblesParaLotes,
   useOrdenesIngreso,
   useOrdenIngreso,
 } from "@/hooks/use-ordenes-ingreso";
 import { useVariedadesBySemilla } from "@/hooks/use-variedades";
 import { useCategoriasActivas } from "@/hooks/use-categorias";
-import { useUnidades } from "@/hooks/use-unidades";
 import Loader from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 
@@ -61,11 +61,7 @@ export default function LoteProduccionFormPage() {
   );
 
   // Cargar datos
-  const { data: ordenes } = useOrdenesIngreso({
-    limit: 100,
-    page: 1,
-    search: "",
-  });
+  const { data: ordenes } = useOrdenesDisponiblesParaLotes();
   const { data: ordenSeleccionada } = useOrdenIngreso(selectedOrdenId);
   const { data: lotesExistentes } = useLotesByOrdenIngreso(selectedOrdenId);
   const { data: categorias } = useCategoriasActivas();
@@ -208,27 +204,22 @@ export default function LoteProduccionFormPage() {
                     <SelectValue placeholder="Seleccionar orden de ingreso" />
                   </SelectTrigger>
                   <SelectContent>
-                    {ordenes?.data
-                      ?.filter(
-                        (o) =>
-                          o.estado === "completado" || o.estado === "pendiente"
-                      )
-                      .map((orden) => (
-                        <SelectItem
-                          key={orden.id_orden_ingreso}
-                          value={orden.id_orden_ingreso.toString()}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="font-mono">
-                              {orden.numero_orden}
-                            </Badge>
-                            <span>
-                              {orden.semilla?.nombre} - {orden.variedad?.nombre}{" "}
-                              - {orden.peso_neto} kg
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
+                    {ordenes?.map((orden) => (
+                      <SelectItem
+                        key={orden.id_orden_ingreso}
+                        value={orden.id_orden_ingreso.toString()}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="font-mono">
+                            {orden.numero_orden}
+                          </Badge>
+                          <span>
+                            {orden.semilla?.nombre} - {orden.variedad?.nombre} -{" "}
+                            {orden.peso_neto} kg
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {errors.id_orden_ingreso && (
