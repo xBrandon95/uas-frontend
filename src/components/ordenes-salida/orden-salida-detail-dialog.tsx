@@ -56,14 +56,14 @@ export function OrdenSalidaDetailDialog({
     const estados: Record<
       string,
       {
-        variant: "default" | "secondary" | "destructive" | "outline";
+        variant: "default" | "pending" | "admin" | "success";
         label: string;
       }
     > = {
-      pendiente: { variant: "secondary", label: "Pendiente" },
+      pendiente: { variant: "pending", label: "Pendiente" },
       en_transito: { variant: "default", label: "En Tránsito" },
-      completado: { variant: "outline", label: "Completado" },
-      cancelado: { variant: "destructive", label: "Cancelado" },
+      completado: { variant: "success", label: "Completado" },
+      cancelado: { variant: "admin", label: "Cancelado" },
     };
 
     return estados[estado] || { variant: "secondary", label: estado };
@@ -237,7 +237,7 @@ export function OrdenSalidaDetailDialog({
                 <div>
                   <span className="text-muted-foreground">Total Kg:</span>
                   <span className="ml-2 font-semibold font-mono">
-                    {orden.detalles.reduce((sum, d) => sum + d.total_kg, 0)}
+                    {orden.detalles.reduce((sum, d) => sum + Number(d.total_kg), 0).toFixed(2)}
                   </span>
                 </div>
               </div>

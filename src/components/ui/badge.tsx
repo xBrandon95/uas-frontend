@@ -20,7 +20,7 @@ const badgeVariants = cva(
         success:
           "bg-emerald-400/15 text-emerald-500 border border-emerald-400/0",
         pending:
-          "bg-amber-400/15 text-amber-500 border border-amber-400/0",
+          "bg-[#409bb5]/15 text-[#409bb5] border border-[#409bb5]/0",
         admin: 
           "bg-red-500/15 text-red-600 border border-red-400/0",
         encargado: 

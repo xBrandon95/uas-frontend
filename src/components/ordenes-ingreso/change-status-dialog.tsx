@@ -55,12 +55,12 @@ export function ChangeStatusDialog({
   const getEstadoBadge = (estado: string) => {
     const configs: Record<
       string,
-      { variant: "default" | "secondary" | "destructive" | "outline" }
+      { variant: "default" | "success" | "admin" | "pending" }
     > = {
-      pendiente: { variant: "secondary" },
+      pendiente: { variant: "pending" },
       en_proceso: { variant: "default" },
-      completado: { variant: "outline" },
-      cancelado: { variant: "destructive" },
+      completado: { variant: "success" },
+      cancelado: { variant: "admin" },
     };
 
     return configs[estado] || { variant: "secondary" };

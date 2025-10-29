@@ -25,14 +25,14 @@ const getEstadoBadge = (estado: string) => {
   const estados: Record<
     string,
     {
-      variant: "default" | "secondary" | "destructive" | "outline";
+      variant: "default" | "admin" | "success" | "pending";
       label: string;
     }
   > = {
-    pendiente: { variant: "secondary", label: "Pendiente" },
+    pendiente: { variant: "pending", label: "Pendiente" },
     en_transito: { variant: "default", label: "En Tránsito" },
-    completado: { variant: "outline", label: "Completado" },
-    cancelado: { variant: "destructive", label: "Cancelado" },
+    completado: { variant: "success", label: "Completado" },
+    cancelado: { variant: "admin", label: "Cancelado" },
   };
 
   return estados[estado] || { variant: "secondary", label: estado };
@@ -104,7 +104,7 @@ export const createColumns = ({
     id: "total_kg",
     header: "Total Kg",
     cell: ({ row }) => {
-      const kg = row.original.detalles.reduce((sum, d) => sum + d.total_kg, 0);
+      const kg = row.original.detalles.reduce((sum, d) => sum + Number(d.total_kg), 0).toFixed(2);
       return <span className="font-mono font-semibold">{kg}</span>;
     },
   },

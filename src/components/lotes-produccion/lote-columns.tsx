@@ -25,15 +25,15 @@ const getEstadoBadge = (estado: string) => {
   const estados: Record<
     string,
     {
-      variant: "default" | "secondary" | "destructive" | "outline";
+      variant: "default" | "success" | "admin" | "pending";
       label: string;
     }
   > = {
-    disponible: { variant: "default", label: "Disponible" },
-    parcialmente_vendido: { variant: "outline", label: "Parcial" },
-    vendido: { variant: "secondary", label: "Vendido" },
-    reservado: { variant: "outline", label: "Reservado" },
-    descartado: { variant: "destructive", label: "Descartado" },
+    disponible: { variant: "success", label: "Disponible" },
+    parcialmente_vendido: { variant: "pending", label: "Parcial" },
+    vendido: { variant: "admin", label: "Vendido" },
+    reservado: { variant: "pending", label: "Reservado" },
+    descartado: { variant: "admin", label: "Descartado" },
   };
 
   return estados[estado] || { variant: "secondary", label: estado };
