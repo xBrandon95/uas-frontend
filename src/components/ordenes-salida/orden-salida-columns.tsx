@@ -90,14 +90,14 @@ export const createColumns = ({
     },
   },
   {
-    id: "total_bolsas",
-    header: "Total Bolsas",
+    id: "total_unidades",
+    header: "Total Unidades",
     cell: ({ row }) => {
-      const bolsas = row.original.detalles.reduce(
-        (sum, d) => sum + d.nro_bolsas,
+      const unidades = row.original.detalles.reduce(
+        (sum, d) => sum + d.cantidad_unidades,
         0
       );
-      return <span className="font-mono">{bolsas}</span>;
+      return <span className="font-mono">{unidades}</span>;
     },
   },
   {

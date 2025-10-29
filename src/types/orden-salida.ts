@@ -21,8 +21,8 @@ export interface DetalleOrdenSalida {
   categoria: Categoria;
   nro_lote: string;
   tamano: string;
-  nro_bolsas: number;
-  kg_bolsa: number;
+  cantidad_unidades: number;
+  kg_por_unidad: number;
   total_kg: number;
 }
 
@@ -56,8 +56,8 @@ export interface CreateDetalleOrdenSalidaDto {
   id_categoria: number;
   nro_lote: string;
   tamano?: string;
-  nro_bolsas: number;
-  kg_bolsa: number;
+  cantidad_unidades: number;
+  kg_por_unidad: number;
 }
 
 export type CreateOrdenSalidaDto = {

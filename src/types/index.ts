@@ -67,7 +67,7 @@ export interface OrdenIngreso {
   id_unidad: number;
   unidad?: Unidad;
   nro_lote_campo?: string;
-  nro_bolsas?: number;
+  cantidad_unidades?: number;
   nro_cupon?: string;
   lugar_ingreso?: string;
   hora_ingreso?: string;
@@ -97,8 +97,8 @@ export interface LoteProduccion {
   id_categoria_salida: number;
   categoria_salida?: Categoria;
   nro_lote: string;
-  nro_bolsas: number;
-  kg_por_bolsa: number;
+  cantidad_unidades: number;
+  kg_por_unidad: number;
   total_kg: number;
   presentacion?: string;
   tipo_servicio?: string;
@@ -120,8 +120,8 @@ export interface DetalleOrdenSalida {
   categoria?: Categoria;
   nro_lote: string;
   tamano?: string;
-  nro_bolsas: number;
-  kg_bolsa: number;
+  cantidad_unidades: number;
+  kg_por_unidad: number;
   total_kg?: number;
 }
 
@@ -155,7 +155,7 @@ export interface InventarioItem {
   variedad: string;
   semilla: string;
   categoria: string;
-  total_bolsas: number;
+  total_unidades: number;
   total_kg: number;
 }
 
@@ -179,7 +179,7 @@ export interface CreateOrdenIngresoForm {
   id_categoria_ingreso: number;
   id_unidad: number;
   nro_lote_campo?: string;
-  nro_bolsas?: number;
+  cantidad_unidades?: number;
   nro_cupon?: string;
   peso_bruto?: number;
   peso_tara?: number;
@@ -197,7 +197,7 @@ export interface CreateLoteProduccionForm {
   id_orden_ingreso: number;
   id_variedad: number;
   id_categoria_salida: number;
-  nro_bolsas: number;
+  cantidad_unidades: number;
   kg_por_bolsa: number;
   presentacion?: string;
   tipo_servicio?: string;

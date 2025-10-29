@@ -37,8 +37,8 @@ import { cn } from "@/lib/utils";
 const loteSchema = z.object({
   id_orden_ingreso: z.number({ message: "Requerido" }),
   id_categoria_salida: z.number({ message: "Requerido" }),
-  nro_bolsas: z.number().min(1, "Mínimo 1 bolsa"),
-  kg_por_bolsa: z.number().min(0.01, "Mínimo 0.01 kg"),
+  cantidad_unidades: z.number().min(1, "Mínimo 1 bolsa"),
+  kg_por_unidad: z.number().min(0.01, "Mínimo 0.01 kg"),
   presentacion: z.string().optional(),
   tipo_servicio: z.string().optional(),
   fecha_produccion: z.string().optional(),
@@ -85,11 +85,11 @@ export default function LoteProduccionFormPage() {
     },
   });
 
-  const nroBolsas = watch("nro_bolsas") || 0;
-  const kgPorBolsa = watch("kg_por_bolsa") || 0;
+  const cantidadUnidades = watch("cantidad_unidades") || 0;
+  const kgPorUnidad = watch("kg_por_unidad") || 0;
   const totalKg = useMemo(
-    () => nroBolsas * kgPorBolsa,
-    [nroBolsas, kgPorBolsa]
+    () => cantidadUnidades * kgPorUnidad,
+    [cantidadUnidades, kgPorUnidad]
   );
 
   // Calcular totales de la orden
@@ -107,8 +107,8 @@ export default function LoteProduccionFormPage() {
       reset({
         id_orden_ingreso: lote.id_orden_ingreso,
         id_categoria_salida: lote.id_categoria_salida,
-        nro_bolsas: lote.nro_bolsas,
-        kg_por_bolsa: Number(lote.kg_por_bolsa),
+        cantidad_unidades: lote.cantidad_unidades,
+        kg_por_unidad: Number(lote.kg_por_unidad),
         presentacion: lote.presentacion,
         tipo_servicio: lote.tipo_servicio,
         fecha_produccion: lote.fecha_produccion
@@ -283,8 +283,8 @@ export default function LoteProduccionFormPage() {
                               variant="secondary"
                               className="text-xs"
                             >
-                              {l.nro_lote}: {l.nro_bolsas} × {l.kg_por_bolsa}kg
-                              = {Number(l.total_kg)}kg
+                              {l.nro_lote}: {l.cantidad_unidades} ×{" "}
+                              {l.kg_por_unidad}kg = {Number(l.total_kg)}kg
                             </Badge>
                           ))}
                         </div>
@@ -437,38 +437,38 @@ export default function LoteProduccionFormPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
-                  <Label htmlFor="nro_bolsas">
+                  <Label htmlFor="cantidad_unidades">
                     Número de Bolsas <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="nro_bolsas"
+                    id="cantidad_unidades"
                     type="number"
                     min="1"
-                    {...register("nro_bolsas", { valueAsNumber: true })}
-                    className={errors.nro_bolsas ? "border-red-500" : ""}
+                    {...register("cantidad_unidades", { valueAsNumber: true })}
+                    className={errors.cantidad_unidades ? "border-red-500" : ""}
                   />
-                  {errors.nro_bolsas && (
+                  {errors.cantidad_unidades && (
                     <p className="text-sm text-red-500 mt-1">
-                      {errors.nro_bolsas.message}
+                      {errors.cantidad_unidades.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="kg_por_bolsa">
+                  <Label htmlFor="kg_por_unidad">
                     Kg por Bolsa <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="kg_por_bolsa"
+                    id="kg_por_unidad"
                     type="number"
                     step="0.01"
                     min="0.01"
-                    {...register("kg_por_bolsa", { valueAsNumber: true })}
-                    className={errors.kg_por_bolsa ? "border-red-500" : ""}
+                    {...register("kg_por_unidad", { valueAsNumber: true })}
+                    className={errors.kg_por_unidad ? "border-red-500" : ""}
                   />
-                  {errors.kg_por_bolsa && (
+                  {errors.kg_por_unidad && (
                     <p className="text-sm text-red-500 mt-1">
-                      {errors.kg_por_bolsa.message}
+                      {errors.kg_por_unidad.message}
                     </p>
                   )}
                 </div>
@@ -503,7 +503,8 @@ export default function LoteProduccionFormPage() {
                       </strong>
                     </p>
                     <p className="text-xs mt-1">
-                      Por favor, ajusta el número de bolsas o los kg por bolsa.
+                      Por favor, ajusta el número de unidades o los kg por
+                      bolsa.
                     </p>
                   </AlertDescription>
                 </Alert>

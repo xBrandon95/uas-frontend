@@ -83,17 +83,17 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "nro_bolsas",
-    header: "Bolsas",
+    accessorKey: "cantidad_unidades",
+    header: "Unidades",
     cell: ({ row }) => (
-      <span className="font-mono">{row.getValue("nro_bolsas")}</span>
+      <span className="font-mono">{row.getValue("cantidad_unidades")}</span>
     ),
   },
   {
-    accessorKey: "kg_por_bolsa",
-    header: "Kg/Bolsa",
+    accessorKey: "kg_por_unidad",
+    header: "Kg/Unidad",
     cell: ({ row }) => {
-      const kg = row.getValue("kg_por_bolsa") as number;
+      const kg = row.getValue("kg_por_unidad") as number;
       return <span className="font-mono">{kg} kg</span>;
     },
   },

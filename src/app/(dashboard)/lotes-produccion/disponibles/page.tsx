@@ -57,11 +57,11 @@ export default function LotesDisponiblesPage() {
   // Calcular totales
   const totales = lotesFiltrados?.reduce(
     (acc, lote) => ({
-      bolsas: acc.bolsas + lote.nro_bolsas,
+      unidades: acc.unidades + lote.cantidad_unidades,
       kg: acc.kg + Number(lote.total_kg),
       lotes: acc.lotes + 1,
     }),
-    { bolsas: 0, kg: 0, lotes: 0 }
+    { unidades: 0, kg: 0, lotes: 0 }
   );
 
   return (
@@ -98,7 +98,7 @@ export default function LotesDisponiblesPage() {
           <div className="bg-card rounded-lg border p-6">
             <p className="text-sm text-muted-foreground mb-1">Total Bolsas</p>
             <p className="text-3xl font-bold text-blue-600">
-              {totales?.bolsas || 0}
+              {totales?.unidades || 0}
             </p>
           </div>
           <div className="bg-card rounded-lg border p-6">
@@ -132,8 +132,8 @@ export default function LotesDisponiblesPage() {
                   <TableHead>Variedad</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead>Presentación</TableHead>
-                  <TableHead className="text-right">Bolsas</TableHead>
-                  <TableHead className="text-right">Kg/Bolsa</TableHead>
+                  <TableHead className="text-right">Unidades</TableHead>
+                  <TableHead className="text-right">Kg/Unidad</TableHead>
                   <TableHead className="text-right">Total Kg</TableHead>
                   <TableHead>Unidad</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -163,10 +163,10 @@ export default function LotesDisponiblesPage() {
                         {lote.presentacion || "-"}
                       </TableCell>
                       <TableCell className="text-right font-mono">
-                        {lote.nro_bolsas}
+                        {lote.cantidad_unidades}
                       </TableCell>
                       <TableCell className="text-right font-mono">
-                        {Number(lote.kg_por_bolsa)}
+                        {Number(lote.kg_por_unidad)}
                       </TableCell>
                       <TableCell className="text-right font-mono font-semibold">
                         {Number(lote.total_kg)}

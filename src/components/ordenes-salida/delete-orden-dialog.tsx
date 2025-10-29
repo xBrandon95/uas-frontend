@@ -34,8 +34,8 @@ export function DeleteOrdenDialog({
     onOpenChange(false);
   };
 
-  const totalBolsas =
-    orden?.detalles.reduce((sum, d) => sum + d.nro_bolsas, 0) || 0;
+  const totalUnidades =
+    orden?.detalles.reduce((sum, d) => sum + d.cantidad_unidades, 0) || 0;
   const totalKg = orden?.detalles.reduce((sum, d) => sum + d.total_kg, 0) || 0;
 
   return (
@@ -77,7 +77,7 @@ export function DeleteOrdenDialog({
                       • Semilla: <strong>{orden?.semilla?.nombre}</strong>
                     </p>
                     <p>
-                      • Total bolsas: <strong>{totalBolsas}</strong>
+                      • Total Unidades: <strong>{totalUnidades}</strong>
                     </p>
                     <p>
                       • Total kg: <strong>{totalKg.toFixed(2)}</strong>

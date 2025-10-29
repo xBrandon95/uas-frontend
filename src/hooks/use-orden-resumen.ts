@@ -9,7 +9,7 @@ interface ResumenProduccion {
   };
   produccion: {
     total_kg_producido: string;
-    total_bolsas_producidas: number;
+    total_unidades_producidas: number;
     cantidad_lotes: number;
     peso_disponible: string;
     porcentaje_utilizado: string;
@@ -18,8 +18,8 @@ interface ResumenProduccion {
     nro_lote: string;
     variedad: string;
     categoria: string;
-    nro_bolsas: number;
-    kg_por_bolsa: string;
+    cantidad_unidades: number;
+    kg_por_unidad: string;
     total_kg: string;
     estado: string;
     presentacion: string;

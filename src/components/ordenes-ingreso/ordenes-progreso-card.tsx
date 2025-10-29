@@ -13,7 +13,7 @@ interface OrdenProgresoCardProps {
   };
   produccion: {
     total_kg_producido: string;
-    total_bolsas_producidas: number;
+    total_unidades_producidas: number;
     cantidad_lotes: number;
     peso_disponible: string;
     porcentaje_utilizado: string;
@@ -84,9 +84,9 @@ export function OrdenProgresoCard({
           <div className="flex flex-col items-center justify-center bg-muted/50 rounded-lg p-3">
             <TrendingUp className="h-5 w-5 text-blue-600 mb-1" />
             <p className="text-2xl font-bold">
-              {produccion.total_bolsas_producidas}
+              {produccion.total_unidades_producidas}
             </p>
-            <p className="text-xs text-muted-foreground">Bolsas</p>
+            <p className="text-xs text-muted-foreground">Unidades</p>
           </div>
 
           <div className="flex flex-col items-center justify-center bg-muted/50 rounded-lg p-3">

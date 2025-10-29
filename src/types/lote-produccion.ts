@@ -13,8 +13,8 @@ export interface LoteProduccion {
   id_categoria_salida: number;
   categoria_salida: Categoria;
   nro_lote: string;
-  nro_bolsas: number;
-  kg_por_bolsa: number;
+  cantidad_unidades: number;
+  kg_por_unidad: number;
   total_kg: number;
   presentacion?: string;
   tipo_servicio?: string;
@@ -48,7 +48,7 @@ export interface InventarioVariedad {
   variedad: string;
   semilla: string;
   categoria: string;
-  total_bolsas: string;
+  total_unidades: string;
   total_kg: string;
 }
 
@@ -56,5 +56,5 @@ export interface EstadisticasLote {
   estado: string;
   cantidad: string;
   peso_total: string;
-  total_bolsas: string;
+  total_unidades: string;
 }

@@ -227,8 +227,10 @@ export function OrdenIngresoDetailDialog({
                           <TableHead>Nº Lote</TableHead>
                           <TableHead>Variedad</TableHead>
                           <TableHead>Categoría</TableHead>
-                          <TableHead className="text-right">Bolsas</TableHead>
-                          <TableHead className="text-right">Kg/Bolsa</TableHead>
+                          <TableHead className="text-right">Unidades</TableHead>
+                          <TableHead className="text-right">
+                            Kg/Unidad
+                          </TableHead>
                           <TableHead className="text-right">Total Kg</TableHead>
                           <TableHead>Estado</TableHead>
                         </TableRow>
@@ -248,10 +250,10 @@ export function OrdenIngresoDetailDialog({
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right font-mono">
-                              {lote.nro_bolsas}
+                              {lote.cantidad_unidades}
                             </TableCell>
                             <TableCell className="text-right font-mono">
-                              {lote.kg_por_bolsa}
+                              {lote.kg_por_unidad}
                             </TableCell>
                             <TableCell className="text-right font-mono font-semibold">
                               {lote.total_kg}

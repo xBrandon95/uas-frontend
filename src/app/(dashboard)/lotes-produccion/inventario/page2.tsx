@@ -24,13 +24,7 @@ import {
   Boxes,
   Scale,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function InventarioPage() {
   const router = useRouter();
@@ -66,7 +60,7 @@ export default function InventarioPage() {
   // Calcular totales generales
   const totales = inventarioFiltrado?.reduce(
     (acc, item) => ({
-      bolsas: acc.bolsas + Number(item.total_bolsas),
+      bolsas: acc.bolsas + Number(item.total_unidades),
       kg: acc.kg + Number(item.total_kg),
       items: acc.items + 1,
     }),
@@ -177,7 +171,7 @@ export default function InventarioPage() {
               {inventarioFiltrado && inventarioFiltrado.length > 0 ? (
                 inventarioFiltrado.map((item, index) => {
                   const kgPromedio =
-                    Number(item.total_kg) / Number(item.total_bolsas);
+                    Number(item.total_kg) / Number(item.total_unidades);
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
@@ -192,7 +186,7 @@ export default function InventarioPage() {
                         <Badge variant="default">{item.categoria}</Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono font-semibold">
-                        {Number(item.total_bolsas).toLocaleString()}
+                        {Number(item.total_unidades).toLocaleString()}
                       </TableCell>
                       <TableCell className="text-right font-mono font-bold text-green-600">
                         {Number(item.total_kg).toFixed(2)}

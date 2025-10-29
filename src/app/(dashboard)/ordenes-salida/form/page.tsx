@@ -53,8 +53,8 @@ const detalleSchema = z.object({
   id_categoria: z.number(),
   nro_lote: z.string(),
   tamano: z.string().optional(),
-  nro_bolsas: z.number().min(1, "Mínimo 1 bolsa"),
-  kg_bolsa: z.number().min(0.01, "Mínimo 0.01 kg"),
+  cantidad_unidades: z.number().min(1, "Mínimo 1 bolsa"),
+  kg_por_unidad: z.number().min(0.01, "Mínimo 0.01 kg"),
 });
 
 const ordenSalidaSchema = z.object({
@@ -135,13 +135,13 @@ export default function OrdenSalidaFormPage() {
   const totales = useMemo(() => {
     return detalles.reduce(
       (acc, detalle) => {
-        const totalKg = detalle.nro_bolsas * detalle.kg_bolsa;
+        const totalKg = detalle.cantidad_unidades * detalle.kg_por_unidad;
         return {
-          bolsas: acc.bolsas + detalle.nro_bolsas,
+          unidades: acc.unidades + detalle.cantidad_unidades,
           kg: acc.kg + totalKg,
         };
       },
-      { bolsas: 0, kg: 0 }
+      { unidades: 0, kg: 0 }
     );
   }, [detalles]);
 
@@ -169,8 +169,8 @@ export default function OrdenSalidaFormPage() {
       id_categoria: lote.id_categoria_salida,
       nro_lote: lote.nro_lote,
       tamano: lote.presentacion || "",
-      nro_bolsas: 1,
-      kg_bolsa: Number(lote.kg_por_bolsa),
+      cantidad_unidades: 1,
+      kg_por_unidad: Number(lote.kg_por_unidad),
     };
 
     append(nuevoDetalle);
@@ -178,14 +178,14 @@ export default function OrdenSalidaFormPage() {
   };
 
   const onSubmit = async (data: OrdenSalidaFormData) => {
-    // Validar que las bolsas no excedan el disponible
+    // Validar que las unidades no excedan el disponible
     for (const detalle of data.detalles) {
       const lote = lotesDisponibles?.find(
         (l) => l.id_lote_produccion === detalle.id_lote_produccion
       );
-      if (lote && detalle.nro_bolsas > lote.nro_bolsas) {
+      if (lote && detalle.cantidad_unidades > lote.cantidad_unidades) {
         alert(
-          `El lote ${lote.nro_lote} solo tiene ${lote.nro_bolsas} bolsas disponibles`
+          `El lote ${lote.nro_lote} solo tiene ${lote.cantidad_unidades} unidades disponibles`
         );
         return;
       }
@@ -466,8 +466,8 @@ export default function OrdenSalidaFormPage() {
                           <Badge variant="outline">{lote.nro_lote}</Badge>
                           <span>{lote.variedad?.nombre}</span>
                           <span className="text-muted-foreground">
-                            ({lote.nro_bolsas} bolsas ×{" "}
-                            {Number(lote.kg_por_bolsa)} kg)
+                            ({lote.cantidad_unidades} unidades ×{" "}
+                            {Number(lote.kg_por_unidad)} kg)
                           </span>
                         </div>
                       </SelectItem>
@@ -520,11 +520,12 @@ export default function OrdenSalidaFormPage() {
                       (l) => l.id_lote_produccion === field.id_lote_produccion
                     );
                     const totalKg =
-                      watch(`detalles.${index}.nro_bolsas`) *
-                      watch(`detalles.${index}.kg_bolsa`);
+                      watch(`detalles.${index}.cantidad_unidades`) *
+                      watch(`detalles.${index}.kg_por_unidad`);
                     const excedeDisponible =
                       lote &&
-                      watch(`detalles.${index}.nro_bolsas`) > lote.nro_bolsas;
+                      watch(`detalles.${index}.cantidad_unidades`) >
+                        lote.cantidad_unidades;
 
                     return (
                       <TableRow key={field.id}>
@@ -539,9 +540,12 @@ export default function OrdenSalidaFormPage() {
                           <Input
                             type="number"
                             min="1"
-                            {...register(`detalles.${index}.nro_bolsas`, {
-                              valueAsNumber: true,
-                            })}
+                            {...register(
+                              `detalles.${index}.cantidad_unidades`,
+                              {
+                                valueAsNumber: true,
+                              }
+                            )}
                             className={cn(
                               "w-24",
                               excedeDisponible && "border-red-500"
@@ -549,7 +553,7 @@ export default function OrdenSalidaFormPage() {
                           />
                           {excedeDisponible && (
                             <p className="text-xs text-red-500 mt-1">
-                              Máx: {lote.nro_bolsas}
+                              Máx: {lote.cantidad_unidades}
                             </p>
                           )}
                         </TableCell>
@@ -557,7 +561,7 @@ export default function OrdenSalidaFormPage() {
                           <Input
                             type="number"
                             step="0.01"
-                            {...register(`detalles.${index}.kg_bolsa`, {
+                            {...register(`detalles.${index}.kg_por_unidad`, {
                               valueAsNumber: true,
                             })}
                             className="w-24"
@@ -591,7 +595,7 @@ export default function OrdenSalidaFormPage() {
             <div className="mt-4 flex justify-end gap-8 text-sm">
               <div>
                 <span className="text-muted-foreground">Total Bolsas:</span>
-                <span className="ml-2 font-semibold">{totales.bolsas}</span>
+                <span className="ml-2 font-semibold">{totales.unidades}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">Total Kg:</span>

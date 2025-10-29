@@ -114,13 +114,13 @@ export function LoteDetailDialog({
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm text-muted-foreground">Nº Bolsas</p>
-                  <p className="text-2xl font-bold">{lote.nro_bolsas}</p>
+                  <p className="text-sm text-muted-foreground">Nº Unidades</p>
+                  <p className="text-2xl font-bold">{lote.cantidad_unidades}</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm text-muted-foreground">Kg/Bolsa</p>
+                  <p className="text-sm text-muted-foreground">Kg/Unidad</p>
                   <p className="text-2xl font-bold font-mono">
-                    {Number(lote.kg_por_bolsa).toFixed(2)}
+                    {Number(lote.kg_por_unidad).toFixed(2)}
                   </p>
                 </div>
                 <div className="rounded-lg bg-primary/10 p-4">

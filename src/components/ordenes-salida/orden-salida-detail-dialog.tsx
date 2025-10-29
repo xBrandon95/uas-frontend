@@ -186,8 +186,8 @@ export function OrdenSalidaDetailDialog({
                       <TableHead>Variedad</TableHead>
                       <TableHead>Categoría</TableHead>
                       <TableHead>Presentación</TableHead>
-                      <TableHead className="text-right">Bolsas</TableHead>
-                      <TableHead className="text-right">Kg/Bolsa</TableHead>
+                      <TableHead className="text-right">Unidades</TableHead>
+                      <TableHead className="text-right">Kg/Unidad</TableHead>
                       <TableHead className="text-right">Total Kg</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -209,10 +209,10 @@ export function OrdenSalidaDetailDialog({
                           {detalle.tamano || "-"}
                         </TableCell>
                         <TableCell className="text-right font-mono">
-                          {detalle.nro_bolsas}
+                          {detalle.cantidad_unidades}
                         </TableCell>
                         <TableCell className="text-right font-mono">
-                          {detalle.kg_bolsa}
+                          {detalle.kg_por_unidad}
                         </TableCell>
                         <TableCell className="text-right font-mono font-semibold">
                           {detalle.total_kg}
@@ -228,7 +228,10 @@ export function OrdenSalidaDetailDialog({
                 <div>
                   <span className="text-muted-foreground">Total Bolsas:</span>
                   <span className="ml-2 font-semibold">
-                    {orden.detalles.reduce((sum, d) => sum + d.nro_bolsas, 0)}
+                    {orden.detalles.reduce(
+                      (sum, d) => sum + d.cantidad_unidades,
+                      0
+                    )}
                   </span>
                 </div>
                 <div>
