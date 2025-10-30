@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck } from "lucide-react";
 import { LoteProduccion } from "@/types";
 

@@ -58,8 +58,7 @@ export default function LotesProduccionPage() {
   };
 
   const handleView = (lote: LoteProduccion) => {
-    setSelectedLoteId(lote.id_lote_produccion);
-    setDetailDialogOpen(true);
+    router.push(`/lotes-produccion/detalle?id=${lote.id_lote_produccion}`);
   };
 
   const handleEdit = (lote: LoteProduccion) => {
