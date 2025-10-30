@@ -28,7 +28,8 @@ export function useCategoriasActivas() {
   return useQuery({
     queryKey: ["categorias-activas"],
     queryFn: getCategoriasActivas,
-    staleTime: 30000,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }
 

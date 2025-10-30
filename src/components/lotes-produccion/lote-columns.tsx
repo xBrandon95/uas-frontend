@@ -116,10 +116,10 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "fecha_produccion",
+    accessorKey: "fecha_creacion",
     header: "Fecha Prod.",
     cell: ({ row }) => {
-      const fecha = row.getValue("fecha_produccion");
+      const fecha = row.getValue("fecha_creacion");
       if (!fecha) return <span className="text-muted-foreground">-</span>;
       return new Date(fecha as string).toLocaleDateString("es-BO");
     },

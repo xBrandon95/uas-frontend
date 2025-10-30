@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,10 +26,8 @@ import {
 } from "@/hooks/use-lotes-produccion";
 import {
   useOrdenesDisponiblesParaLotes,
-  useOrdenesIngreso,
   useOrdenIngreso,
 } from "@/hooks/use-ordenes-ingreso";
-import { useVariedadesBySemilla } from "@/hooks/use-variedades";
 import { useCategoriasActivas } from "@/hooks/use-categorias";
 import Loader from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
@@ -37,14 +35,34 @@ import { cn } from "@/lib/utils";
 const loteSchema = z.object({
   id_orden_ingreso: z.number({ message: "Requerido" }),
   id_categoria_salida: z.number({ message: "Requerido" }),
-  cantidad_unidades: z.number().min(1, "Mínimo 1 bolsa"),
+  cantidad_unidades: z.number().min(1, "Mínimo 1 unidad"),
   kg_por_unidad: z.number().min(0.01, "Mínimo 0.01 kg"),
-  presentacion: z.string().optional(),
+  presentacion: z.string().min(1, "Seleccione una presentación"),
   tipo_servicio: z.string().optional(),
-  fecha_produccion: z.string().optional(),
+  id_variedad: z.number().optional(),
+  id_unidad: z.number().optional(),
+  estado: z.string().optional(),
 });
 
 type LoteFormData = z.infer<typeof loteSchema>;
+
+const PRESENTACIONES = [
+  { value: "bolsas", label: "Bolsas" },
+  { value: "latas", label: "Latas" },
+  { value: "baldes", label: "Baldes" },
+] as const;
+
+const UNIDAD_LABELS: Record<string, { plural: string; singular: string }> = {
+  bolsas: { plural: "Bolsas", singular: "Bolsa" },
+  latas: { plural: "Latas", singular: "Lata" },
+  baldes: { plural: "Baldes", singular: "Balde" },
+};
+
+const getUnidadLabel = (presentacion: string, singular = false) => {
+  const unidad = UNIDAD_LABELS[presentacion];
+  if (!unidad) return singular ? "Unidad" : "Unidades";
+  return singular ? unidad.singular : unidad.plural;
+};
 
 export default function LoteProduccionFormPage() {
   const router = useRouter();
@@ -60,16 +78,10 @@ export default function LoteProduccionFormPage() {
     isEditing ? Number(loteId) : null
   );
 
-  // Cargar datos
   const { data: ordenes } = useOrdenesDisponiblesParaLotes();
   const { data: ordenSeleccionada } = useOrdenIngreso(selectedOrdenId);
   const { data: lotesExistentes } = useLotesByOrdenIngreso(selectedOrdenId);
   const { data: categorias } = useCategoriasActivas();
-
-  const selectedSemillaId = ordenSeleccionada?.id_semilla;
-  const { data: variedades } = useVariedadesBySemilla(
-    selectedSemillaId || null
-  );
 
   const {
     register,
@@ -82,25 +94,79 @@ export default function LoteProduccionFormPage() {
     resolver: zodResolver(loteSchema),
     defaultValues: {
       estado: "disponible",
+      presentacion: "",
     },
   });
 
   const cantidadUnidades = watch("cantidad_unidades") || 0;
   const kgPorUnidad = watch("kg_por_unidad") || 0;
+  const presentacionSeleccionada = watch("presentacion");
+  const categoriaSeleccionada = watch("id_categoria_salida");
+
+  // Cálculos memoizados
   const totalKg = useMemo(
     () => cantidadUnidades * kgPorUnidad,
     [cantidadUnidades, kgPorUnidad]
   );
 
-  // Calcular totales de la orden
   const pesoNetoOrden = ordenSeleccionada?.peso_neto || 0;
+
   const totalProducido = useMemo(() => {
     if (!lotesExistentes) return 0;
     return lotesExistentes.reduce((sum, l) => sum + Number(l.total_kg), 0);
   }, [lotesExistentes]);
-  const pesoDisponible = pesoNetoOrden - totalProducido;
-  const excedePeso = totalKg > pesoDisponible;
 
+  const pesoDisponible = useMemo(
+    () => pesoNetoOrden - totalProducido,
+    [pesoNetoOrden, totalProducido]
+  );
+
+  const excedePeso = useMemo(
+    () => !isEditing && totalKg > pesoDisponible,
+    [isEditing, totalKg, pesoDisponible]
+  );
+
+  const isLoading =
+    createMutation.isPending || updateMutation.isPending || isLoadingLote;
+
+  // Limpiar formulario al montar si no estamos editando
+  useEffect(() => {
+    if (!isEditing) {
+      setSelectedOrdenId(null);
+      reset({
+        estado: "disponible",
+        presentacion: "",
+      });
+    }
+  }, [isEditing, reset]);
+
+  // Auto-completar categoría cuando se carga la orden
+  useEffect(() => {
+    if (!ordenSeleccionada || isEditing || !categorias || categoriaSeleccionada)
+      return;
+
+    const { id_categoria_ingreso } = ordenSeleccionada;
+    if (!id_categoria_ingreso) return;
+
+    const categoriaExiste = categorias.some(
+      (c) => c.id_categoria === id_categoria_ingreso
+    );
+
+    if (categoriaExiste) {
+      setValue("id_categoria_salida", id_categoria_ingreso, {
+        shouldValidate: true,
+        shouldDirty: false,
+      });
+    }
+  }, [
+    ordenSeleccionada,
+    isEditing,
+    categorias,
+    categoriaSeleccionada,
+    setValue,
+  ]);
+
+  // Cargar datos al editar
   useEffect(() => {
     if (isEditing && lote) {
       setSelectedOrdenId(lote.id_orden_ingreso);
@@ -109,34 +175,44 @@ export default function LoteProduccionFormPage() {
         id_categoria_salida: lote.id_categoria_salida,
         cantidad_unidades: lote.cantidad_unidades,
         kg_por_unidad: Number(lote.kg_por_unidad),
-        presentacion: lote.presentacion,
+        presentacion: lote.presentacion || "",
         tipo_servicio: lote.tipo_servicio,
-        fecha_produccion: lote.fecha_produccion
-          ? new Date(lote.fecha_produccion).toISOString().split("T")[0]
-          : undefined,
         id_unidad: lote.id_unidad,
         estado: lote.estado,
       });
     }
   }, [isEditing, lote, reset]);
 
-  const onSubmit = async (data: LoteFormData) => {
-    data.id_unidad = ordenSeleccionada?.id_unidad;
-    data.estado = "disponible";
-    data.id_variedad = ordenSeleccionada?.id_variedad;
+  const handleOrdenChange = useCallback(
+    (value: string) => {
+      const id = Number(value);
+      setSelectedOrdenId(id);
+      setValue("id_orden_ingreso", id);
+      setValue("id_categoria_salida", undefined as any);
+    },
+    [setValue]
+  );
 
-    if (!isEditing && excedePeso) {
-      return;
-    }
+  const onSubmit = async (data: LoteFormData) => {
+    if (!ordenSeleccionada) return;
+
+    const submitData = {
+      ...data,
+      id_unidad: ordenSeleccionada.id_unidad,
+      id_variedad: ordenSeleccionada.id_variedad,
+      estado: "disponible" as const,
+    };
+
+    if (!isEditing && excedePeso) return;
 
     try {
       if (isEditing) {
         await updateMutation.mutateAsync({
           id: Number(loteId),
-          dto: data,
+          dto: submitData,
         });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(submitData);
       }
       router.push("/lotes-produccion");
     } catch (error) {
@@ -144,8 +220,7 @@ export default function LoteProduccionFormPage() {
     }
   };
 
-  const isLoading =
-    createMutation.isPending || updateMutation.isPending || isLoadingLote;
+  const handleBack = () => router.push("/lotes-produccion");
 
   if (isLoadingLote && isEditing) {
     return <Loader />;
@@ -153,12 +228,9 @@ export default function LoteProduccionFormPage() {
 
   return (
     <div className="container mx-auto py-6 max-w-5xl">
+      {/* Header */}
       <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/lotes-produccion")}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={handleBack} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver
         </Button>
@@ -173,7 +245,7 @@ export default function LoteProduccionFormPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Selección de Orden de Ingreso */}
+        {/* Paso 1: Selección de Orden */}
         {!isEditing && (
           <div className="bg-card rounded-lg border p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -186,14 +258,8 @@ export default function LoteProduccionFormPage() {
                   Orden de Ingreso <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={selectedOrdenId?.toString()}
-                  onValueChange={(value) => {
-                    const id = Number(value);
-                    setSelectedOrdenId(id);
-                    setValue("id_orden_ingreso", id);
-                    setValue("id_variedad", undefined as any);
-                    setValue("id_unidad", undefined as any);
-                  }}
+                  value={selectedOrdenId?.toString() || ""}
+                  onValueChange={handleOrdenChange}
                 >
                   <SelectTrigger
                     className={cn(
@@ -297,51 +363,52 @@ export default function LoteProduccionFormPage() {
           </div>
         )}
 
-        {/* Información del Lote */}
+        {/* Paso 2: Información del Lote */}
         {(selectedOrdenId || isEditing) && (
-          <>
-            <div className="bg-card rounded-lg border p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Paso 2: Información del Lote
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* <div>
-                  <Label htmlFor="id_variedad">
-                    Variedad <span className="text-red-500">*</span>
+          <div className="bg-card rounded-lg border p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              Paso 2: Información del Lote
+            </h2>
+            <div className="space-y-4">
+              {/* Presentación y Categoría */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="presentacion">
+                    Presentación <span className="text-red-500">*</span>
                   </Label>
                   <Select
-                    value={watch("id_variedad")?.toString()}
-                    onValueChange={(value) =>
-                      setValue("id_variedad", Number(value))
-                    }
+                    value={presentacionSeleccionada || ""}
+                    onValueChange={(value) => setValue("presentacion", value)}
                   >
                     <SelectTrigger
-                      className={errors.id_variedad ? "border-red-500" : ""}
+                      className={cn(
+                        "w-full",
+                        errors.presentacion && "border-red-500"
+                      )}
                     >
-                      <SelectValue placeholder="Seleccionar variedad" />
+                      <SelectValue placeholder="Seleccionar presentación" />
                     </SelectTrigger>
                     <SelectContent>
-                      {variedades?.map((variedad) => (
-                        <SelectItem
-                          key={variedad.id_variedad}
-                          value={variedad.id_variedad.toString()}
-                        >
-                          {variedad.nombre}
+                      {PRESENTACIONES.map((pres) => (
+                        <SelectItem key={pres.value} value={pres.value}>
+                          {pres.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.id_variedad && (
-                    <p className="text-sm text-red-500 mt-1">Campo requerido</p>
+                  {errors.presentacion && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.presentacion.message}
+                    </p>
                   )}
-                </div> */}
+                </div>
 
                 <div>
                   <Label htmlFor="id_categoria_salida">
                     Categoría de Salida <span className="text-red-500">*</span>
                   </Label>
                   <Select
-                    value={watch("id_categoria_salida")?.toString()}
+                    value={categoriaSeleccionada?.toString() || ""}
                     onValueChange={(value) =>
                       setValue("id_categoria_salida", Number(value))
                     }
@@ -369,76 +436,21 @@ export default function LoteProduccionFormPage() {
                     <p className="text-sm text-red-500 mt-1">Campo requerido</p>
                   )}
                 </div>
-
-                {/* <div>
-                  <Label htmlFor="id_unidad">
-                    Unidad <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    value={watch("id_unidad")?.toString()}
-                    onValueChange={(value) =>
-                      setValue("id_unidad", Number(value))
-                    }
-                  >
-                    <SelectTrigger
-                      className={errors.id_unidad ? "border-red-500" : ""}
-                    >
-                      <SelectValue placeholder="Seleccionar unidad" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {unidades?.data?.map((unidad) => (
-                        <SelectItem
-                          key={unidad.id_unidad}
-                          value={unidad.id_unidad.toString()}
-                        >
-                          {unidad.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.id_unidad && (
-                    <p className="text-sm text-red-500 mt-1">Campo requerido</p>
-                  )}
-                </div> */}
-
-                <div>
-                  <Label htmlFor="fecha_produccion">Fecha de Producción</Label>
-                  <Input
-                    id="fecha_produccion"
-                    type="date"
-                    {...register("fecha_produccion")}
-                  />
-                </div>
-
-                {/* <div>
-                  <Label htmlFor="estado">Estado</Label>
-                  <Select
-                    value={watch("estado")}
-                    onValueChange={(value) => setValue("estado", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="disponible">Disponible</SelectItem>
-                      <SelectItem value="reservado">Reservado</SelectItem>
-                      <SelectItem value="vendido">Vendido</SelectItem>
-                      <SelectItem value="descartado">Descartado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div> */}
               </div>
-            </div>
 
-            {/* Cantidades */}
-            <div className="bg-card rounded-lg border p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Paso 3: Cantidades y Presentación
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <p className="text-xs text-muted-foreground -mt-2">
+                La categoría se autocompletó con la de la orden, pero puedes
+                cambiarla
+              </p>
+
+              {/* Cantidades */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="cantidad_unidades">
-                    Número de Bolsas <span className="text-red-500">*</span>
+                    {presentacionSeleccionada
+                      ? `Número de ${getUnidadLabel(presentacionSeleccionada)}`
+                      : "Número de Unidades"}{" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="cantidad_unidades"
@@ -456,7 +468,13 @@ export default function LoteProduccionFormPage() {
 
                 <div>
                   <Label htmlFor="kg_por_unidad">
-                    Kg por Bolsa <span className="text-red-500">*</span>
+                    {presentacionSeleccionada
+                      ? `Kg por ${getUnidadLabel(
+                          presentacionSeleccionada,
+                          true
+                        )}`
+                      : "Kg por Unidad"}{" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="kg_por_unidad"
@@ -477,89 +495,84 @@ export default function LoteProduccionFormPage() {
                   <Label>Total Kg (calculado)</Label>
                   <div className="h-10 px-3 flex items-center rounded-md border bg-muted">
                     <Badge
-                      variant={
-                        excedePeso && !isEditing ? "destructive" : "default"
-                      }
+                      variant={excedePeso ? "destructive" : "default"}
                       className="font-mono text-base w-full justify-center"
                     >
-                      {totalKg} kg
+                      {totalKg.toFixed(2)} kg
                     </Badge>
                   </div>
                 </div>
               </div>
 
-              {!isEditing && excedePeso && (
-                <Alert variant="destructive" className="mb-4">
+              {/* Tipo de Servicio */}
+              <div>
+                <Label htmlFor="tipo_servicio">Tipo de Servicio</Label>
+                <Input
+                  id="tipo_servicio"
+                  {...register("tipo_servicio")}
+                  placeholder="Ej: Tratamiento Premium"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Servicio aplicado al lote (opcional)
+                </p>
+              </div>
+
+              {/* Alerta de exceso */}
+              {excedePeso && (
+                <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
                     <p className="font-semibold">
                       ⚠️ El total excede el peso disponible
                     </p>
                     <p className="text-sm mt-1">
-                      Peso del lote: <strong>{totalKg} kg</strong> | Disponible:{" "}
-                      <strong>{pesoDisponible} kg</strong> | Exceso:{" "}
+                      Peso del lote: <strong>{totalKg.toFixed(2)} kg</strong> |
+                      Disponible: <strong>{pesoDisponible} kg</strong> | Exceso:{" "}
                       <strong className="text-red-700">
-                        {totalKg - pesoDisponible} kg
+                        {(totalKg - pesoDisponible).toFixed(2)} kg
                       </strong>
                     </p>
                     <p className="text-xs mt-1">
-                      Por favor, ajusta el número de unidades o los kg por
-                      bolsa.
+                      Por favor, ajusta el número de{" "}
+                      {presentacionSeleccionada
+                        ? getUnidadLabel(presentacionSeleccionada).toLowerCase()
+                        : "unidades"}{" "}
+                      o los kg por{" "}
+                      {presentacionSeleccionada
+                        ? getUnidadLabel(
+                            presentacionSeleccionada,
+                            true
+                          ).toLowerCase()
+                        : "unidad"}
+                      .
                     </p>
                   </AlertDescription>
                 </Alert>
               )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="presentacion">Presentación</Label>
-                  <Input
-                    id="presentacion"
-                    {...register("presentacion")}
-                    placeholder="Ej: Bolsa 50kg Certificada"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Descripción de cómo se presenta el producto
-                  </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="tipo_servicio">Tipo de Servicio</Label>
-                  <Input
-                    id="tipo_servicio"
-                    {...register("tipo_servicio")}
-                    placeholder="Ej: Tratamiento Premium"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Servicio aplicado al lote
-                  </p>
-                </div>
-              </div>
             </div>
-
-            {/* Botones */}
-            <div className="flex justify-end gap-4 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push("/lotes-produccion")}
-                disabled={isLoading}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={isLoading || (!isEditing && excedePeso)}
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Save className="mr-2 h-4 w-4" />
-                {isEditing ? "Actualizar" : "Crear"} Lote
-              </Button>
-            </div>
-          </>
+          </div>
         )}
 
-        {/* Mensaje cuando no hay orden seleccionada */}
+        {/* Botones */}
+        {(selectedOrdenId || isEditing) && (
+          <div className="flex justify-end gap-4 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBack}
+              disabled={isLoading}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isLoading || excedePeso}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Save className="mr-2 h-4 w-4" />
+              {isEditing ? "Actualizar" : "Crear"} Lote
+            </Button>
+          </div>
+        )}
+
+        {/* Placeholder inicial */}
         {!selectedOrdenId && !isEditing && (
           <div className="bg-muted/50 rounded-lg border-2 border-dashed p-12 text-center">
             <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
