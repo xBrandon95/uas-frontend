@@ -24,6 +24,8 @@ export interface LoteProduccion {
   unidad: Unidad;
   id_usuario_creador: number;
   usuario_creador: Usuario;
+  cantidad_original?: number;
+  total_kg_original?: string | number;
   fecha_creacion: Date;
   fecha_actualizacion: Date;
 }

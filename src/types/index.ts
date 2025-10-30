@@ -2,6 +2,8 @@
 // AUTH TYPES
 // ============================================
 
+import { LoteProduccion } from "./lote-produccion";
+
 export * from "./auth";
 export * from "./unidad";
 export * from "./usuario";
@@ -17,6 +19,7 @@ export * from "./orden-ingreso";
 export * from "./lote-produccion";
 export * from "./orden-salida";
 export * from "./cliente";
+export * from "./movimiento-lote";
 
 // ============================================
 // ENTIDADES MAESTRAS
@@ -88,27 +91,27 @@ export interface OrdenIngreso {
   fecha_actualizacion: string;
 }
 
-export interface LoteProduccion {
-  id_lote_produccion: number;
-  id_orden_ingreso: number;
-  orden_ingreso?: OrdenIngreso;
-  id_variedad: number;
-  variedad?: Variedad;
-  id_categoria_salida: number;
-  categoria_salida?: Categoria;
-  nro_lote: string;
-  cantidad_unidades: number;
-  kg_por_unidad: number;
-  total_kg: number;
-  presentacion?: string;
-  tipo_servicio?: string;
-  estado: string;
-  fecha_produccion?: string;
-  id_unidad: number;
-  unidad?: Unidad;
-  fecha_creacion: string;
-  fecha_actualizacion: string;
-}
+// export interface LoteProduccion {
+//   id_lote_produccion: number;
+//   id_orden_ingreso: number;
+//   orden_ingreso?: OrdenIngreso;
+//   id_variedad: number;
+//   variedad?: Variedad;
+//   id_categoria_salida: number;
+//   categoria_salida?: Categoria;
+//   nro_lote: string;
+//   cantidad_unidades: number;
+//   kg_por_unidad: number;
+//   total_kg: number;
+//   presentacion?: string;
+//   tipo_servicio?: string;
+//   estado: string;
+//   fecha_produccion?: string;
+//   id_unidad: number;
+//   unidad?: Unidad;
+//   fecha_creacion: string;
+//   fecha_actualizacion: string;
+// }
 
 export interface DetalleOrdenSalida {
   id_detalle_salida?: number;
