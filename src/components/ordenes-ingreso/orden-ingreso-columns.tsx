@@ -58,7 +58,6 @@ function AccionesCell({
   onView,
   onEdit,
   onChangeStatus,
-  onDelete,
 }: {
   orden: OrdenIngreso;
   onView: (orden: OrdenIngreso) => void;

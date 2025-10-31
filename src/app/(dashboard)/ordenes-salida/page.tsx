@@ -13,6 +13,7 @@ import { useOrdenesSalida } from "@/hooks/use-ordenes-salida";
 import { Button } from "@/components/ui/button";
 import { TruckIcon, Plus } from "lucide-react";
 import { OrdenSalida } from "@/types";
+import { useDescargarReporteOrdenSalida } from "@/hooks/use-reportes";
 
 export default function OrdenesSalidaPage() {
   const router = useRouter();
@@ -31,6 +32,13 @@ export default function OrdenesSalidaPage() {
 
   const { data, isLoading, isError, error } = useOrdenesSalida();
 
+    // Hook para descargar el reporte PDF
+    const descargarReporte = useDescargarReporteOrdenSalida();
+  
+    // Handler para usarlo dentro de las columnas
+    const handleDownloadReport = (ordenId: number) => {
+      descargarReporte.mutate(ordenId);
+    };
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
@@ -73,6 +81,7 @@ export default function OrdenesSalidaPage() {
     onEdit: handleEdit,
     onChangeStatus: handleChangeStatus,
     onDelete: handleDelete,
+    onDownloadReport: handleDownloadReport,
   });
 
   if (isLoading) return <Loader />;

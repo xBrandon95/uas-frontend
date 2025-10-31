@@ -11,7 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Eye,
+  FileCheck,
+  FileText,
+} from "lucide-react";
 import { OrdenSalida } from "@/types";
 
 interface ColumnsProps {
@@ -19,8 +26,10 @@ interface ColumnsProps {
   onEdit: (orden: OrdenSalida) => void;
   onChangeStatus: (orden: OrdenSalida) => void;
   onDelete: (orden: OrdenSalida) => void;
+  onDownloadReport: (ordenId: number) => void; // ✅ Nuevo callback
 }
 
+// 🔹 Función para configurar los colores y etiquetas del estado
 const getEstadoBadge = (estado: string) => {
   const estados: Record<
     string,
@@ -38,11 +47,13 @@ const getEstadoBadge = (estado: string) => {
   return estados[estado] || { variant: "secondary", label: estado };
 };
 
+// 🔹 Definición de columnas
 export const createColumns = ({
   onView,
   onEdit,
   onChangeStatus,
   onDelete,
+  onDownloadReport,
 }: ColumnsProps): ColumnDef<OrdenSalida>[] => [
   {
     accessorKey: "numero_orden",
@@ -104,7 +115,9 @@ export const createColumns = ({
     id: "total_kg",
     header: "Total Kg",
     cell: ({ row }) => {
-      const kg = row.original.detalles.reduce((sum, d) => sum + Number(d.total_kg), 0).toFixed(2);
+      const kg = row.original.detalles
+        .reduce((sum, d) => sum + Number(d.total_kg), 0)
+        .toFixed(2);
       return <span className="font-mono font-semibold">{kg}</span>;
     },
   },
@@ -119,6 +132,7 @@ export const createColumns = ({
   },
   {
     id: "actions",
+    header: "Acciones",
     cell: ({ row }) => {
       const orden = row.original;
 
@@ -147,6 +161,12 @@ export const createColumns = ({
             <DropdownMenuItem onClick={() => onChangeStatus(orden)}>
               <FileCheck className="mr-2 h-4 w-4" />
               Cambiar Estado
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onDownloadReport(orden.id_orden_salida)}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Descargar Reporte
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
