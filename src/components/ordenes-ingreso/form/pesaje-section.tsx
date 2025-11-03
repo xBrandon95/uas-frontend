@@ -35,7 +35,7 @@ export function PesajeSection({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* PESO BRUTO */}
         <div>
           <Label htmlFor="peso_bruto">
@@ -74,9 +74,6 @@ export function PesajeSection({
         <div>
           <Label htmlFor="peso_neto">
             Peso Neto (kg) <span className="text-red-500">*</span>
-            <span className="text-blue-600 text-xs ml-2">
-              (Calculado automáticamente)
-            </span>
           </Label>
           <Input
             id="peso_neto"
@@ -86,7 +83,7 @@ export function PesajeSection({
             readOnly
             className="bg-muted/50 cursor-not-allowed"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-blue-600 text-xs ml-2">
             Peso Neto = Peso Bruto - Peso Tara
           </p>
         </div>
