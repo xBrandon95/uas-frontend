@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +32,6 @@ import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
-  onViewLotes: (orden: OrdenIngreso) => void; // ✅ NUEVO
   onEdit: (orden: OrdenIngreso) => void;
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
@@ -58,17 +58,16 @@ const getEstadoBadge = (estado: string) => {
 function AccionesCell({
   orden,
   onView,
-  onViewLotes,
   onEdit,
   onChangeStatus,
 }: {
   orden: OrdenIngreso;
   onView: (orden: OrdenIngreso) => void;
-  onViewLotes: (orden: OrdenIngreso) => void; // ✅ NUEVO
   onEdit: (orden: OrdenIngreso) => void;
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
 }) {
+  const router = useRouter();
   const descargarReporte = useDescargarReporteOrdenIngreso();
 
   // Verificar si puede editarse/eliminarse
@@ -94,8 +93,15 @@ function AccionesCell({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {/* Lotes de Producción */}
-        <DropdownMenuItem onClick={() => onViewLotes(orden)}>
+        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
+        {/* Lotes de Producción - Navegar a página */}
+        <DropdownMenuItem
+          onClick={() =>
+            router.push(`/ordenes-ingreso/${orden.id_orden_ingreso}/lotes`)
+          }
+        >
           <Package className="mr-2 h-4 w-4" />
           Crear lotes
           {cantidadLotes > 0 && (
@@ -160,7 +166,6 @@ function AccionesCell({
 
 export const createColumns = ({
   onView,
-  onViewLotes,
   onEdit,
   onChangeStatus,
   onDelete,
@@ -294,7 +299,6 @@ export const createColumns = ({
       <AccionesCell
         orden={row.original}
         onView={onView}
-        onViewLotes={onViewLotes}
         onEdit={onEdit}
         onChangeStatus={onChangeStatus}
         onDelete={onDelete}

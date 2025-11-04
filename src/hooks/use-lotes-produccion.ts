@@ -80,6 +80,8 @@ export function useLotesByOrdenIngreso(idOrdenIngreso: number | null) {
     queryKey: ["lotes-produccion", "orden-ingreso", idOrdenIngreso],
     queryFn: () => getLotesByOrdenIngreso(idOrdenIngreso!),
     enabled: !!idOrdenIngreso,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }
 
