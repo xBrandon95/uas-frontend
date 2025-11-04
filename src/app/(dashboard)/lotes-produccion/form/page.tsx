@@ -113,7 +113,10 @@ export default function LoteProduccionFormPage() {
 
   const totalProducido = useMemo(() => {
     if (!lotesExistentes) return 0;
-    return lotesExistentes.reduce((sum, l) => sum + Number(l.total_kg), 0);
+    return lotesExistentes.reduce(
+      (sum, l) => sum + Number(l.total_kg_original),
+      0
+    );
   }, [lotesExistentes]);
 
   const pesoDisponible = useMemo(

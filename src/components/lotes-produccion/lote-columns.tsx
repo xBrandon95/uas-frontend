@@ -12,8 +12,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Pencil, Trash2, Eye, FileCheck } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Eye,
+  FileCheck,
+  TrendingDown,
+} from "lucide-react";
 import { LoteProduccion } from "@/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface ColumnsProps {
   onView: (lote: LoteProduccion) => void;
@@ -86,9 +99,56 @@ export const createColumns = ({
   {
     accessorKey: "cantidad_unidades",
     header: "Unidades",
-    cell: ({ row }) => (
-      <span className="font-mono">{row.getValue("cantidad_unidades")}</span>
-    ),
+    cell: ({ row }) => {
+      const actual = row.original.cantidad_unidades;
+      const original = row.original.cantidad_original!;
+      const vendido = original - actual;
+      const hayVenta = vendido > 0;
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="font-mono cursor-help">
+                {hayVenta ? (
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground line-through">
+                      {original}
+                    </span>
+                    <span
+                      className={
+                        actual === 0
+                          ? "text-red-600 font-bold"
+                          : "text-blue-600 font-semibold"
+                      }
+                    >
+                      {actual}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="font-semibold">{actual}</span>
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="text-xs space-y-1">
+                <p>
+                  Original: <strong>{original}</strong> unidades
+                </p>
+                <p>
+                  Actual: <strong>{actual}</strong> unidades
+                </p>
+                {hayVenta && (
+                  <p className="text-red-500">
+                    Vendido: <strong>{vendido}</strong> unidades
+                  </p>
+                )}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    },
   },
   {
     accessorKey: "kg_por_unidad",
@@ -102,8 +162,55 @@ export const createColumns = ({
     accessorKey: "total_kg",
     header: "Total Kg",
     cell: ({ row }) => {
-      const total = row.getValue("total_kg") as number;
-      return <span className="font-mono font-semibold">{total} kg</span>;
+      const actual = Number(row.original.total_kg);
+      const original = Number(row.original.total_kg_original);
+      const vendido = original - actual;
+      const hayVenta = vendido > 0.01; // Tolerancia de 0.01 kg
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="font-mono cursor-help">
+                {hayVenta ? (
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground line-through">
+                      {original.toFixed(2)}
+                    </span>
+                    <span
+                      className={
+                        actual === 0
+                          ? "text-red-600 font-bold"
+                          : "text-blue-600 font-semibold"
+                      }
+                    >
+                      {actual.toFixed(2)} kg
+                    </span>
+                  </div>
+                ) : (
+                  <span className="font-semibold">{actual.toFixed(2)} kg</span>
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="text-xs space-y-1">
+                <p>
+                  Original: <strong>{original.toFixed(2)} kg</strong>
+                </p>
+                <p>
+                  Actual: <strong>{actual.toFixed(2)} kg</strong>
+                </p>
+                {hayVenta && (
+                  <p className="text-red-500 flex items-center gap-1">
+                    <TrendingDown className="h-3 w-3" />
+                    Vendido: <strong>{vendido.toFixed(2)} kg</strong>
+                  </p>
+                )}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
   },
   {
