@@ -178,7 +178,7 @@ export function LoteFormDialog({
         if (!isOpen) reset();
       }}
     >
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar Lote" : "Nuevo Lote de Producción"}
@@ -241,7 +241,9 @@ export function LoteFormDialog({
                   onValueChange={(value) => setValue("presentacion", value)}
                 >
                   <SelectTrigger
-                    className={cn(errors.presentacion && "border-red-500")}
+                    className={
+                      (cn(errors.presentacion && "border-red-500"), "w-full")
+                    }
                   >
                     <SelectValue placeholder="Seleccionar" />
                   </SelectTrigger>
@@ -272,7 +274,8 @@ export function LoteFormDialog({
                 >
                   <SelectTrigger
                     className={cn(
-                      errors.id_categoria_salida && "border-red-500"
+                      errors.id_categoria_salida && "border-red-500",
+                      "w-full"
                     )}
                   >
                     <SelectValue placeholder="Seleccionar" />

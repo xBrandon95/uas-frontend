@@ -7,6 +7,7 @@ import ErrorMessage from "@/components/ui/error-message";
 import { createColumns } from "@/components/ordenes-ingreso/orden-ingreso-columns";
 import { OrdenIngresoDataTable } from "@/components/ordenes-ingreso/orden-ingreso-data-table";
 import { OrdenIngresoDetailDialog } from "@/components/ordenes-ingreso/orden-ingreso-detail-dialog";
+import { OrdenLotesDialog } from "@/components/ordenes-ingreso/orden-lotes-dialog"; // ✅ NUEVO
 import { ChangeStatusDialog } from "@/components/ordenes-ingreso/change-status-dialog";
 import { DeleteOrdenDialog } from "@/components/ordenes-ingreso/delete-orden-dialog";
 import { useOrdenesIngreso } from "@/hooks/use-ordenes-ingreso";
@@ -23,6 +24,7 @@ export default function OrdenesIngresoPage() {
 
   // Modales
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [lotesDialogOpen, setLotesDialogOpen] = useState(false); // ✅ NUEVO
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedOrdenId, setSelectedOrdenId] = useState<number | null>(null);
@@ -67,6 +69,12 @@ export default function OrdenesIngresoPage() {
     setDetailDialogOpen(true);
   };
 
+  // ✅ NUEVO: Handler para ver lotes
+  const handleViewLotes = (orden: OrdenIngreso) => {
+    setSelectedOrdenId(orden.id_orden_ingreso);
+    setLotesDialogOpen(true);
+  };
+
   const handleEdit = (orden: OrdenIngreso) => {
     router.push(`/ordenes-ingreso/form?id=${orden.id_orden_ingreso}`);
   };
@@ -81,9 +89,10 @@ export default function OrdenesIngresoPage() {
     setDeleteDialogOpen(true);
   };
 
-  // handleDownloadReport al crear las columnas
+  // ✅ ACTUALIZADO: Pasar el nuevo handler
   const columns = createColumns({
     onView: handleView,
+    onViewLotes: handleViewLotes, // ✅ NUEVO
     onEdit: handleEdit,
     onChangeStatus: handleChangeStatus,
     onDelete: handleDelete,
@@ -143,9 +152,17 @@ export default function OrdenesIngresoPage() {
         </div>
       </div>
 
+      {/* Dialog de Detalle */}
       <OrdenIngresoDetailDialog
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
+        ordenId={selectedOrdenId}
+      />
+
+      {/* ✅ NUEVO: Dialog de Lotes */}
+      <OrdenLotesDialog
+        open={lotesDialogOpen}
+        onOpenChange={setLotesDialogOpen}
         ordenId={selectedOrdenId}
       />
 
