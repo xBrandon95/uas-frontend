@@ -18,8 +18,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Package, Plus, Pencil, Loader2, AlertCircle } from "lucide-react";
+import {
+  Package,
+  Plus,
+  Pencil,
+  Loader2,
+  AlertCircle,
+  TrendingDown,
+} from "lucide-react";
 import { useOrdenIngreso } from "@/hooks/use-ordenes-ingreso";
 import { useLotesByOrdenIngreso } from "@/hooks/use-lotes-produccion";
 import { LoteFormDialog } from "@/components/lotes-produccion/lote-form-dialog";
@@ -58,7 +71,7 @@ export function OrdenLotesDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[1100px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[1200px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
@@ -158,51 +171,170 @@ export function OrdenLotesDialog({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {lotes.map((lote) => (
-                        <TableRow key={lote.id_lote_produccion}>
-                          <TableCell>
-                            <Badge variant="outline" className="font-mono">
-                              {lote.nro_lote}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {lote.variedad?.nombre}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">
-                              {lote.categoria_salida?.nombre}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-sm">
-                            {lote.presentacion || "-"}
-                          </TableCell>
-                          <TableCell className="text-right font-mono">
-                            {lote.cantidad_unidades}
-                          </TableCell>
-                          <TableCell className="text-right font-mono">
-                            {Number(lote.kg_por_unidad).toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-right font-mono font-semibold">
-                            {Number(lote.total_kg).toFixed(2)}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{lote.estado}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  handleEditLote(lote.id_lote_produccion)
-                                }
-                              >
-                                <Pencil className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {lotes.map((lote) => {
+                        const actualUnidades = lote.cantidad_unidades;
+                        const originalUnidades = lote.cantidad_original!;
+                        const vendidoUnidades =
+                          originalUnidades - actualUnidades;
+                        const hayVentaUnidades = vendidoUnidades > 0;
+
+                        const actualKg = Number(lote.total_kg);
+                        const originalKg = Number(lote.total_kg_original);
+                        const vendidoKg = originalKg - actualKg;
+                        const hayVentaKg = vendidoKg > 0.01;
+
+                        return (
+                          <TableRow key={lote.id_lote_produccion}>
+                            <TableCell>
+                              <Badge variant="outline" className="font-mono">
+                                {lote.nro_lote}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {lote.variedad?.nombre}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">
+                                {lote.categoria_salida?.nombre}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {lote.presentacion || "-"}
+                            </TableCell>
+
+                            {/* UNIDADES CON TOOLTIP */}
+                            <TableCell className="text-right">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="font-mono cursor-help">
+                                      {hayVentaUnidades ? (
+                                        <div className="flex flex-col">
+                                          <span className="text-xs text-muted-foreground line-through">
+                                            {originalUnidades}
+                                          </span>
+                                          <span
+                                            className={
+                                              actualUnidades === 0
+                                                ? "text-red-600 font-bold"
+                                                : "text-blue-600 font-semibold"
+                                            }
+                                          >
+                                            {actualUnidades}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <span className="font-semibold">
+                                          {actualUnidades}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="text-xs space-y-1">
+                                      <p>
+                                        Original:{" "}
+                                        <strong>{originalUnidades}</strong>{" "}
+                                        unidades
+                                      </p>
+                                      <p>
+                                        Actual:{" "}
+                                        <strong>{actualUnidades}</strong>{" "}
+                                        unidades
+                                      </p>
+                                      {hayVentaUnidades && (
+                                        <p className="text-red-500">
+                                          Vendido:{" "}
+                                          <strong>{vendidoUnidades}</strong>{" "}
+                                          unidades
+                                        </p>
+                                      )}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </TableCell>
+
+                            <TableCell className="text-right font-mono">
+                              {Number(lote.kg_por_unidad).toFixed(2)}
+                            </TableCell>
+
+                            {/* TOTAL KG CON TOOLTIP */}
+                            <TableCell className="text-right">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="font-mono cursor-help">
+                                      {hayVentaKg ? (
+                                        <div className="flex flex-col">
+                                          <span className="text-xs text-muted-foreground line-through">
+                                            {originalKg.toFixed(2)}
+                                          </span>
+                                          <span
+                                            className={
+                                              actualKg === 0
+                                                ? "text-red-600 font-bold"
+                                                : "text-blue-600 font-semibold"
+                                            }
+                                          >
+                                            {actualKg.toFixed(2)} kg
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <span className="font-semibold">
+                                          {actualKg.toFixed(2)} kg
+                                        </span>
+                                      )}
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="text-xs space-y-1">
+                                      <p>
+                                        Original:{" "}
+                                        <strong>
+                                          {originalKg.toFixed(2)} kg
+                                        </strong>
+                                      </p>
+                                      <p>
+                                        Actual:{" "}
+                                        <strong>
+                                          {actualKg.toFixed(2)} kg
+                                        </strong>
+                                      </p>
+                                      {hayVentaKg && (
+                                        <p className="text-red-500 flex items-center gap-1">
+                                          <TrendingDown className="h-3 w-3" />
+                                          Vendido:{" "}
+                                          <strong>
+                                            {vendidoKg.toFixed(2)} kg
+                                          </strong>
+                                        </p>
+                                      )}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </TableCell>
+
+                            <TableCell>
+                              <Badge variant="outline">{lote.estado}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleEditLote(lote.id_lote_produccion)
+                                  }
+                                >
+                                  <Pencil className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </div>
