@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ShieldUser, Sprout, NotepadText, Users } from "lucide-react";
+import { ShieldUser, Sprout, NotepadText, Users, Package2 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -82,6 +82,11 @@ const navData = [
       {
         title: "Ordenes salida",
         url: "/ordenes-salida",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Inventario Consolidado",
+        url: "/inventario-consolidado",
         roles: ["admin", "encargado", "operador"],
       },
     ],
