@@ -406,7 +406,6 @@ export default function InventarioConsolidadoPage() {
                 <TableHead>Categoría</TableHead>
                 <TableHead className="text-right">Total Unidades</TableHead>
                 <TableHead className="text-right">Total Kg</TableHead>
-                <TableHead className="text-right">Kg Promedio/Unidad</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -432,9 +431,6 @@ export default function InventarioConsolidadoPage() {
                       </TableCell>
                       <TableCell className="text-right font-mono font-bold text-green-600">
                         {Number(item.total_kg).toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right font-mono text-sm text-muted-foreground">
-                        {kgPromedio.toFixed(2)}
                       </TableCell>
                     </TableRow>
                   );

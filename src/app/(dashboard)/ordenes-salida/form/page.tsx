@@ -535,7 +535,7 @@ export default function OrdenSalidaFormPage() {
                           setSelectedLoteId(lote.id_lote_produccion)
                         }
                       >
-                        <CardContent className="p-4">
+                        <CardContent>
                           <div className="flex items-start justify-between mb-2">
                             <Badge variant="outline" className="font-mono">
                               {lote.nro_lote}
