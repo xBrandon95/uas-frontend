@@ -32,13 +32,13 @@ export default function OrdenesSalidaPage() {
 
   const { data, isLoading, isError, error } = useOrdenesSalida();
 
-    // Hook para descargar el reporte PDF
-    const descargarReporte = useDescargarReporteOrdenSalida();
-  
-    // Handler para usarlo dentro de las columnas
-    const handleDownloadReport = (ordenId: number) => {
-      descargarReporte.mutate(ordenId);
-    };
+  // Hook para descargar el reporte PDF
+  const descargarReporte = useDescargarReporteOrdenSalida();
+
+  // Handler para usarlo dentro de las columnas
+  const handleDownloadReport = (ordenId: number) => {
+    descargarReporte.mutate(ordenId);
+  };
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
