@@ -279,7 +279,7 @@ export default function InventarioConsolidadoPage() {
             )}
           </div>
 
-          <div className="p-4 bg-muted/50 rounded-lg">
+          {/* <div className="p-4 bg-muted/50 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <Calendar className="h-4 w-4" />
               <label className="text-sm font-medium">
@@ -292,11 +292,11 @@ export default function InventarioConsolidadoPage() {
               placeholder="Seleccionar rango de fechas"
               className="max-w-md"
             />
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Búsqueda General */}
-            <div className="md:col-span-1">
+            {/* <div className="md:col-span-1">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -306,6 +306,15 @@ export default function InventarioConsolidadoPage() {
                   className="pl-8"
                 />
               </div>
+            </div> */}
+
+            <div>
+              <DateRangePicker
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+                placeholder="Seleccionar rango de fechas"
+                className="max-w-md"
+              />
             </div>
 
             {/* Filtro Semilla */}
@@ -314,7 +323,7 @@ export default function InventarioConsolidadoPage() {
                 value={filtroSemilla?.toString() || "all"}
                 onValueChange={handleSemillaChange}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Todas las semillas" />
                 </SelectTrigger>
                 <SelectContent>
@@ -340,7 +349,7 @@ export default function InventarioConsolidadoPage() {
                 }
                 disabled={!filtroSemilla}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Todas las variedades" />
                 </SelectTrigger>
                 <SelectContent>
@@ -367,7 +376,7 @@ export default function InventarioConsolidadoPage() {
                   )
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Todas las categorías" />
                 </SelectTrigger>
                 <SelectContent>
