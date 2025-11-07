@@ -1,6 +1,8 @@
+// src/app/(dashboard)/inventario-consolidado/page.tsx
 "use client";
 
 import { useState, useMemo } from "react";
+import { DateRange } from "react-day-picker";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
 import { useInventarioVariedad } from "@/hooks/use-lotes-produccion";
@@ -39,6 +41,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 
 export default function InventarioConsolidadoPage() {
   const { user } = useAuthStore();
@@ -52,8 +55,14 @@ export default function InventarioConsolidadoPage() {
     user?.rol === "admin" ? undefined : user?.id_unidad
   );
 
-  const [fechaInicio, setFechaInicio] = useState<string>("");
-  const [fechaFin, setFechaFin] = useState<string>("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  const fechaInicio = dateRange?.from
+    ? dateRange.from.toISOString().split("T")[0]
+    : undefined;
+  const fechaFin = dateRange?.to
+    ? dateRange.to.toISOString().split("T")[0]
+    : undefined;
 
   // Cargar datos de catálogos
   const { data: unidades } = useAllUnidades();
@@ -61,7 +70,7 @@ export default function InventarioConsolidadoPage() {
   const { data: variedades } = useVariedadesBySemilla(filtroSemilla || null);
   const { data: categorias } = useCategoriasActivas();
 
-  // ✅ UNA SOLA LLAMADA AL BACKEND CON TODOS LOS FILTROS
+  // Llamada al backend con filtro de fechas
   const {
     data: inventario,
     isLoading,
@@ -72,8 +81,8 @@ export default function InventarioConsolidadoPage() {
     filtroSemilla,
     filtroVariedad,
     filtroCategoria,
-    fechaInicio || undefined,
-    fechaFin || undefined
+    fechaInicio,
+    fechaFin
   );
 
   // Filtro local solo para búsqueda por texto
@@ -108,8 +117,7 @@ export default function InventarioConsolidadoPage() {
     !!filtroSemilla ||
     !!filtroVariedad ||
     !!filtroCategoria ||
-    !!fechaInicio ||
-    !!fechaFin ||
+    !!dateRange ||
     searchTerm !== "";
 
   // Limpiar todos los filtros
@@ -117,8 +125,7 @@ export default function InventarioConsolidadoPage() {
     setFiltroSemilla(undefined);
     setFiltroVariedad(undefined);
     setFiltroCategoria(undefined);
-    setFechaInicio("");
-    setFechaFin("");
+    setDateRange(undefined);
     setSearchTerm("");
   };
 
@@ -272,31 +279,19 @@ export default function InventarioConsolidadoPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Fecha Inicio
+          <div className="p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <Calendar className="h-4 w-4" />
+              <label className="text-sm font-medium">
+                Filtrar por Fecha de Creación
               </label>
-              <Input
-                type="date"
-                value={fechaInicio}
-                onChange={(e) => setFechaInicio(e.target.value)}
-                placeholder="Seleccionar fecha"
-              />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Fecha Fin
-              </label>
-              <Input
-                type="date"
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
-                placeholder="Seleccionar fecha"
-              />
-            </div>
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+              placeholder="Seleccionar rango de fechas"
+              className="max-w-md"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -393,6 +388,22 @@ export default function InventarioConsolidadoPage() {
           {/* Badges de filtros activos */}
           {hayFiltrosActivos && (
             <div className="flex flex-wrap gap-2">
+              {dateRange?.from && (
+                <Badge variant="secondary" className="gap-1">
+                  {dateRange.to ? (
+                    <>
+                      {dateRange.from.toLocaleDateString("es-BO")} -{" "}
+                      {dateRange.to.toLocaleDateString("es-BO")}
+                    </>
+                  ) : (
+                    <>Desde: {dateRange.from.toLocaleDateString("es-BO")}</>
+                  )}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => setDateRange(undefined)}
+                  />
+                </Badge>
+              )}
               {filtroSemilla && (
                 <Badge variant="secondary" className="gap-1">
                   Semilla:{" "}
