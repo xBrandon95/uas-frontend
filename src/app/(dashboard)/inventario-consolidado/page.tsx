@@ -7,6 +7,9 @@ import ErrorMessage from "@/components/ui/error-message";
 import { useInventarioVariedad } from "@/hooks/use-lotes-produccion";
 import { useAuthStore } from "@/stores/authStore";
 import { useAllUnidades } from "@/hooks/use-unidades";
+import { useSemillasActivas } from "@/hooks/use-semillas";
+import { useVariedadesBySemilla } from "@/hooks/use-variedades";
+import { useCategoriasActivas } from "@/hooks/use-categorias";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -33,89 +36,56 @@ import {
   Scale,
   X,
   Building2,
+  Filter,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function InventarioConsolidadoPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+
+  // Estados para filtros
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroSemilla, setFiltroSemilla] = useState<string>("all");
-  const [filtroVariedad, setFiltroVariedad] = useState<string>("all");
-  const [filtroCategoria, setFiltroCategoria] = useState<string>("all");
+  const [filtroSemilla, setFiltroSemilla] = useState<number | undefined>();
+  const [filtroVariedad, setFiltroVariedad] = useState<number | undefined>();
+  const [filtroCategoria, setFiltroCategoria] = useState<number | undefined>();
   const [filtroUnidad, setFiltroUnidad] = useState<number | undefined>(
     user?.rol === "admin" ? undefined : user?.id_unidad
   );
 
-  // Cargar unidades (solo para admin)
+  // Cargar datos de catálogos
   const { data: unidades } = useAllUnidades();
+  const { data: semillas } = useSemillasActivas();
+  const { data: variedades } = useVariedadesBySemilla(filtroSemilla || null);
+  const { data: categorias } = useCategoriasActivas();
 
+  // ✅ UNA SOLA LLAMADA AL BACKEND CON TODOS LOS FILTROS
   const {
     data: inventario,
     isLoading,
     isError,
     error,
-  } = useInventarioVariedad(filtroUnidad);
+  } = useInventarioVariedad(
+    filtroUnidad,
+    filtroSemilla,
+    filtroVariedad,
+    filtroCategoria
+  );
 
-  // Obtener opciones únicas para los filtros
-  const opcionesSemillas = useMemo(() => {
-    if (!inventario) return [];
-    const semillas = [...new Set(inventario.map((item) => item.semilla))];
-    return semillas.sort();
-  }, [inventario]);
-
-  const opcionesVariedades = useMemo(() => {
-    if (!inventario) return [];
-    let items = inventario;
-    if (filtroSemilla !== "all") {
-      items = items.filter((item) => item.semilla === filtroSemilla);
-    }
-    const variedades = [...new Set(items.map((item) => item.variedad))];
-    return variedades.sort();
-  }, [inventario, filtroSemilla]);
-
-  const opcionesCategorias = useMemo(() => {
-    if (!inventario) return [];
-    const categorias = [...new Set(inventario.map((item) => item.categoria))];
-    return categorias.sort();
-  }, [inventario]);
-
-  // Aplicar filtros
+  // Filtro local solo para búsqueda por texto (opcional)
   const inventarioFiltrado = useMemo(() => {
     if (!inventario) return [];
 
-    let resultado = inventario;
+    if (!searchTerm.trim()) return inventario;
 
-    // Filtro por búsqueda
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      resultado = resultado.filter(
-        (item) =>
-          item.variedad.toLowerCase().includes(searchLower) ||
-          item.semilla.toLowerCase().includes(searchLower) ||
-          item.categoria.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Filtro por semilla
-    if (filtroSemilla !== "all") {
-      resultado = resultado.filter((item) => item.semilla === filtroSemilla);
-    }
-
-    // Filtro por variedad
-    if (filtroVariedad !== "all") {
-      resultado = resultado.filter((item) => item.variedad === filtroVariedad);
-    }
-
-    // Filtro por categoría
-    if (filtroCategoria !== "all") {
-      resultado = resultado.filter(
-        (item) => item.categoria === filtroCategoria
-      );
-    }
-
-    return resultado;
-  }, [inventario, searchTerm, filtroSemilla, filtroVariedad, filtroCategoria]);
+    const searchLower = searchTerm.toLowerCase();
+    return inventario.filter(
+      (item) =>
+        item.variedad.toLowerCase().includes(searchLower) ||
+        item.semilla.toLowerCase().includes(searchLower) ||
+        item.categoria.toLowerCase().includes(searchLower)
+    );
+  }, [inventario, searchTerm]);
 
   // Calcular totales
   const totales = useMemo(() => {
@@ -131,17 +101,28 @@ export default function InventarioConsolidadoPage() {
 
   // Verificar si hay filtros activos
   const hayFiltrosActivos =
-    filtroSemilla !== "all" ||
-    filtroVariedad !== "all" ||
-    filtroCategoria !== "all" ||
+    !!filtroSemilla ||
+    !!filtroVariedad ||
+    !!filtroCategoria ||
     searchTerm !== "";
 
   // Limpiar todos los filtros
   const limpiarFiltros = () => {
-    setFiltroSemilla("all");
-    setFiltroVariedad("all");
-    setFiltroCategoria("all");
+    setFiltroSemilla(undefined);
+    setFiltroVariedad(undefined);
+    setFiltroCategoria(undefined);
     setSearchTerm("");
+  };
+
+  // Limpiar variedad cuando cambia la semilla
+  const handleSemillaChange = (value: string) => {
+    if (value === "all") {
+      setFiltroSemilla(undefined);
+      setFiltroVariedad(undefined);
+    } else {
+      setFiltroSemilla(Number(value));
+      setFiltroVariedad(undefined); // Resetear variedad
+    }
   };
 
   if (isLoading) return <Loader />;
@@ -166,7 +147,7 @@ export default function InventarioConsolidadoPage() {
         <p className="text-muted-foreground mt-2">
           {user?.rol === "admin"
             ? "Vista de inventario de todas las unidades"
-            : `Inventario de la unidad: ${user?.id_unidad || "N/A"}`}
+            : `Inventario de tu unidad`}
         </p>
       </div>
 
@@ -266,7 +247,10 @@ export default function InventarioConsolidadoPage() {
         {/* Barra de Filtros */}
         <div className="space-y-4 mb-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Filtros</h3>
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filtros
+            </h3>
             {hayFiltrosActivos && (
               <Button
                 variant="ghost"
@@ -296,15 +280,21 @@ export default function InventarioConsolidadoPage() {
 
             {/* Filtro Semilla */}
             <div>
-              <Select value={filtroSemilla} onValueChange={setFiltroSemilla}>
+              <Select
+                value={filtroSemilla?.toString() || "all"}
+                onValueChange={handleSemillaChange}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Todas las semillas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas las semillas</SelectItem>
-                  {opcionesSemillas.map((semilla) => (
-                    <SelectItem key={semilla} value={semilla}>
-                      {semilla}
+                  {semillas?.map((semilla) => (
+                    <SelectItem
+                      key={semilla.id_semilla}
+                      value={semilla.id_semilla.toString()}
+                    >
+                      {semilla.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -314,18 +304,23 @@ export default function InventarioConsolidadoPage() {
             {/* Filtro Variedad */}
             <div>
               <Select
-                value={filtroVariedad}
-                onValueChange={setFiltroVariedad}
-                disabled={opcionesVariedades.length === 0}
+                value={filtroVariedad?.toString() || "all"}
+                onValueChange={(value) =>
+                  setFiltroVariedad(value === "all" ? undefined : Number(value))
+                }
+                disabled={!filtroSemilla}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todas las variedades" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas las variedades</SelectItem>
-                  {opcionesVariedades.map((variedad) => (
-                    <SelectItem key={variedad} value={variedad}>
-                      {variedad}
+                  {variedades?.map((variedad) => (
+                    <SelectItem
+                      key={variedad.id_variedad}
+                      value={variedad.id_variedad.toString()}
+                    >
+                      {variedad.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -335,17 +330,24 @@ export default function InventarioConsolidadoPage() {
             {/* Filtro Categoría */}
             <div>
               <Select
-                value={filtroCategoria}
-                onValueChange={setFiltroCategoria}
+                value={filtroCategoria?.toString() || "all"}
+                onValueChange={(value) =>
+                  setFiltroCategoria(
+                    value === "all" ? undefined : Number(value)
+                  )
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todas las categorías" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas las categorías</SelectItem>
-                  {opcionesCategorias.map((categoria) => (
-                    <SelectItem key={categoria} value={categoria}>
-                      {categoria}
+                  {categorias?.map((categoria) => (
+                    <SelectItem
+                      key={categoria.id_categoria}
+                      value={categoria.id_categoria.toString()}
+                    >
+                      {categoria.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -356,36 +358,42 @@ export default function InventarioConsolidadoPage() {
           {/* Badges de filtros activos */}
           {hayFiltrosActivos && (
             <div className="flex flex-wrap gap-2">
-              {filtroSemilla !== "all" && (
+              {filtroSemilla && (
                 <Badge variant="secondary" className="gap-1">
-                  Semilla: {filtroSemilla}
+                  Semilla:{" "}
+                  {semillas?.find((s) => s.id_semilla === filtroSemilla)
+                    ?.nombre || filtroSemilla}
                   <X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={() => setFiltroSemilla("all")}
+                    onClick={() => handleSemillaChange("all")}
                   />
                 </Badge>
               )}
-              {filtroVariedad !== "all" && (
+              {filtroVariedad && (
                 <Badge variant="secondary" className="gap-1">
-                  Variedad: {filtroVariedad}
+                  Variedad:{" "}
+                  {variedades?.find((v) => v.id_variedad === filtroVariedad)
+                    ?.nombre || filtroVariedad}
                   <X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={() => setFiltroVariedad("all")}
+                    onClick={() => setFiltroVariedad(undefined)}
                   />
                 </Badge>
               )}
-              {filtroCategoria !== "all" && (
+              {filtroCategoria && (
                 <Badge variant="secondary" className="gap-1">
-                  Categoría: {filtroCategoria}
+                  Categoría:{" "}
+                  {categorias?.find((c) => c.id_categoria === filtroCategoria)
+                    ?.nombre || filtroCategoria}
                   <X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={() => setFiltroCategoria("all")}
+                    onClick={() => setFiltroCategoria(undefined)}
                   />
                 </Badge>
               )}
               {searchTerm && (
                 <Badge variant="secondary" className="gap-1">
-                  Búsqueda: "{searchTerm}"
+                  {`Búsqueda: "${searchTerm}"`}
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => setSearchTerm("")}
@@ -410,34 +418,30 @@ export default function InventarioConsolidadoPage() {
             </TableHeader>
             <TableBody>
               {inventarioFiltrado && inventarioFiltrado.length > 0 ? (
-                inventarioFiltrado.map((item, index) => {
-                  const kgPromedio =
-                    Number(item.total_kg) / Number(item.total_unidades);
-                  return (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        {item.semilla}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="font-medium">
-                          {item.variedad}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="default">{item.categoria}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-mono font-semibold">
-                        {Number(item.total_unidades).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right font-mono font-bold text-green-600">
-                        {Number(item.total_kg).toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
+                inventarioFiltrado.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {item.semilla}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-medium">
+                        {item.variedad}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="default">{item.categoria}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-semibold">
+                      {Number(item.total_unidades).toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-bold text-green-600">
+                      {Number(item.total_kg).toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center">
                     {hayFiltrosActivos
                       ? "No se encontraron resultados con los filtros aplicados"
                       : "No hay inventario disponible"}
@@ -452,8 +456,7 @@ export default function InventarioConsolidadoPage() {
         {inventarioFiltrado && inventarioFiltrado.length > 0 && (
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Mostrando {inventarioFiltrado.length} de {inventario?.length || 0}{" "}
-              productos
+              Mostrando {inventarioFiltrado.length} productos
             </p>
             <div className="text-sm text-muted-foreground">
               Total mostrado:{" "}
@@ -477,8 +480,7 @@ export default function InventarioConsolidadoPage() {
           descartados no se muestran en este reporte.
           {user?.rol !== "admin" && (
             <span className="block mt-2">
-              Solo puedes ver el inventario de tu unidad:{" "}
-              <strong>{user?.unidad?.nombre}</strong>
+              Solo puedes ver el inventario de tu unidad.
             </span>
           )}
         </p>

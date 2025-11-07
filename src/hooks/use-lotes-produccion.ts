@@ -85,11 +85,24 @@ export function useLotesByOrdenIngreso(idOrdenIngreso: number | null) {
   });
 }
 
-// Obtener inventario por variedad
-export function useInventarioVariedad(idUnidad?: number) {
+// ✅ ACTUALIZADO: Obtener inventario por variedad con filtros de fecha
+export function useInventarioVariedad(
+  idUnidad?: number,
+  idSemilla?: number,
+  idVariedad?: number,
+  idCategoria?: number
+) {
   return useQuery({
-    queryKey: ["lotes-produccion", "inventario", idUnidad],
-    queryFn: () => getInventarioVariedad(idUnidad),
+    queryKey: [
+      "lotes-produccion",
+      "inventario",
+      idUnidad,
+      idSemilla,
+      idVariedad,
+      idCategoria,
+    ],
+    queryFn: () =>
+      getInventarioVariedad(idUnidad, idSemilla, idVariedad, idCategoria),
   });
 }
 
