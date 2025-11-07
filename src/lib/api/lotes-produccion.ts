@@ -67,13 +67,18 @@ export async function getInventarioVariedad(
   idUnidad?: number,
   idSemilla?: number,
   idVariedad?: number,
-  idCategoria?: number
+  idCategoria?: number,
+  fechaInicio?: string,
+  fechaFin?: string
 ): Promise<InventarioVariedad[]> {
-  const params: Record<string, number | undefined> = {};
+  const params: Record<string, number | string | undefined> = {};
+
   if (idUnidad) params.idUnidad = idUnidad;
   if (idSemilla) params.idSemilla = idSemilla;
   if (idVariedad) params.idVariedad = idVariedad;
   if (idCategoria) params.idCategoria = idCategoria;
+  if (fechaInicio) params.fechaInicio = fechaInicio;
+  if (fechaFin) params.fechaFin = fechaFin;
 
   const { data } = await api.get("/lotes-produccion/inventario", { params });
   return data;

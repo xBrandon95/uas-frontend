@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
 import { useInventarioVariedad } from "@/hooks/use-lotes-produccion";
@@ -37,11 +36,11 @@ import {
   X,
   Building2,
   Filter,
+  Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function InventarioConsolidadoPage() {
-  const router = useRouter();
   const { user } = useAuthStore();
 
   // Estados para filtros
@@ -52,6 +51,9 @@ export default function InventarioConsolidadoPage() {
   const [filtroUnidad, setFiltroUnidad] = useState<number | undefined>(
     user?.rol === "admin" ? undefined : user?.id_unidad
   );
+
+  const [fechaInicio, setFechaInicio] = useState<string>("");
+  const [fechaFin, setFechaFin] = useState<string>("");
 
   // Cargar datos de catálogos
   const { data: unidades } = useAllUnidades();
@@ -69,10 +71,12 @@ export default function InventarioConsolidadoPage() {
     filtroUnidad,
     filtroSemilla,
     filtroVariedad,
-    filtroCategoria
+    filtroCategoria,
+    fechaInicio || undefined,
+    fechaFin || undefined
   );
 
-  // Filtro local solo para búsqueda por texto (opcional)
+  // Filtro local solo para búsqueda por texto
   const inventarioFiltrado = useMemo(() => {
     if (!inventario) return [];
 
@@ -104,6 +108,8 @@ export default function InventarioConsolidadoPage() {
     !!filtroSemilla ||
     !!filtroVariedad ||
     !!filtroCategoria ||
+    !!fechaInicio ||
+    !!fechaFin ||
     searchTerm !== "";
 
   // Limpiar todos los filtros
@@ -111,6 +117,8 @@ export default function InventarioConsolidadoPage() {
     setFiltroSemilla(undefined);
     setFiltroVariedad(undefined);
     setFiltroCategoria(undefined);
+    setFechaInicio("");
+    setFechaFin("");
     setSearchTerm("");
   };
 
@@ -121,7 +129,7 @@ export default function InventarioConsolidadoPage() {
       setFiltroVariedad(undefined);
     } else {
       setFiltroSemilla(Number(value));
-      setFiltroVariedad(undefined); // Resetear variedad
+      setFiltroVariedad(undefined);
     }
   };
 
@@ -262,6 +270,33 @@ export default function InventarioConsolidadoPage() {
                 Limpiar Filtros
               </Button>
             )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Fecha Inicio
+              </label>
+              <Input
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                placeholder="Seleccionar fecha"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Fecha Fin
+              </label>
+              <Input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                placeholder="Seleccionar fecha"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

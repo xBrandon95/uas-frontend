@@ -85,12 +85,14 @@ export function useLotesByOrdenIngreso(idOrdenIngreso: number | null) {
   });
 }
 
-// ✅ ACTUALIZADO: Obtener inventario por variedad con filtros de fecha
+//  Obtener inventario por variedad con filtros
 export function useInventarioVariedad(
   idUnidad?: number,
   idSemilla?: number,
   idVariedad?: number,
-  idCategoria?: number
+  idCategoria?: number,
+  fechaInicio?: string,
+  fechaFin?: string
 ) {
   return useQuery({
     queryKey: [
@@ -100,9 +102,18 @@ export function useInventarioVariedad(
       idSemilla,
       idVariedad,
       idCategoria,
+      fechaInicio,
+      fechaFin,
     ],
     queryFn: () =>
-      getInventarioVariedad(idUnidad, idSemilla, idVariedad, idCategoria),
+      getInventarioVariedad(
+        idUnidad,
+        idSemilla,
+        idVariedad,
+        idCategoria,
+        fechaInicio,
+        fechaFin
+      ),
   });
 }
 
