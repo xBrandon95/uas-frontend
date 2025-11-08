@@ -26,6 +26,7 @@ interface SemillaFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   semillaId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const semillaSchema = z.object({
@@ -42,6 +43,7 @@ export function SemillaFormDialog({
   open,
   onOpenChange,
   semillaId,
+  onCreated,
 }: SemillaFormDialogProps) {
   const isEditing = !!semillaId;
   const createMutation = useCreateSemilla();
@@ -90,8 +92,14 @@ export function SemillaFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(data);
+    const result = await createMutation.mutateAsync(data);
+
+    if (onCreated && result?.id_semilla) {
+      onCreated(result.id_semilla);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

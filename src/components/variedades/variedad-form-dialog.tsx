@@ -35,6 +35,7 @@ interface VariedadFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   variedadId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const variedadSchema = z.object({
@@ -51,6 +52,7 @@ export function VariedadFormDialog({
   open,
   onOpenChange,
   variedadId,
+  onCreated,
 }: VariedadFormDialogProps) {
   const isEditing = !!variedadId;
   const createMutation = useCreateVariedad();
@@ -106,8 +108,14 @@ export function VariedadFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(data);
+    const result = await createMutation.mutateAsync(data);
+
+    if (onCreated && result?.id_semilla) {
+      onCreated(result.id_semilla);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading =

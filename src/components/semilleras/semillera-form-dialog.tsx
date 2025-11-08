@@ -26,6 +26,7 @@ interface SemilleraFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   semilleraId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const semilleraSchema = z.object({
@@ -52,6 +53,7 @@ export function SemilleraFormDialog({
   open,
   onOpenChange,
   semilleraId,
+  onCreated,
 }: SemilleraFormDialogProps) {
   const isEditing = !!semilleraId;
   const createMutation = useCreateSemillera();
@@ -110,7 +112,12 @@ export function SemilleraFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(submitData);
+    const result = await createMutation.mutateAsync(submitData);
+
+    if (onCreated && result?.id_semillera) {
+      onCreated(result.id_semillera);
+    }
+
     onOpenChange(false);
     reset();
   };

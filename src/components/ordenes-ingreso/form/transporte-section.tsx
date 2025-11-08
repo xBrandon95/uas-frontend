@@ -16,16 +16,37 @@ import { useMemo } from "react";
 interface TransporteSectionProps {
   form: UseFormReturn<CreateOrdenFormData>;
   dialogs: {
-    semillera: { open: boolean; setOpen: (open: boolean) => void };
-    cooperador: { open: boolean; setOpen: (open: boolean) => void };
-    conductor: { open: boolean; setOpen: (open: boolean) => void };
-    vehiculo: { open: boolean; setOpen: (open: boolean) => void };
+    semillera: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
+    cooperador: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
+    conductor: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
+    vehiculo: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
   };
 }
 
 export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
   const {
     control,
+    setValue,
     formState: { errors },
   } = form;
 
@@ -79,6 +100,39 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
     [vehiculos]
   );
 
+  // Handlers para abrir diálogos con callbacks
+  const handleOpenSemillera = () => {
+    dialogs.semillera.setOnCreated((id: number) => {
+      setValue("id_semillera", id);
+      dialogs.semillera.setOnCreated(null);
+    });
+    dialogs.semillera.setOpen(true);
+  };
+
+  const handleOpenCooperador = () => {
+    dialogs.cooperador.setOnCreated((id: number) => {
+      setValue("id_cooperador", id);
+      dialogs.cooperador.setOnCreated(null);
+    });
+    dialogs.cooperador.setOpen(true);
+  };
+
+  const handleOpenConductor = () => {
+    dialogs.conductor.setOnCreated((id: number) => {
+      setValue("id_conductor", id);
+      dialogs.conductor.setOnCreated(null);
+    });
+    dialogs.conductor.setOpen(true);
+  };
+
+  const handleOpenVehiculo = () => {
+    dialogs.vehiculo.setOnCreated((id: number) => {
+      setValue("id_vehiculo", id);
+      dialogs.vehiculo.setOnCreated(null);
+    });
+    dialogs.vehiculo.setOpen(true);
+  };
+
   return (
     <div className="bg-card rounded-lg border p-6">
       <h2 className="text-xl font-semibold mb-4">Información de Transporte</h2>
@@ -113,7 +167,8 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.semillera.setOpen(true)}
+              onClick={handleOpenSemillera}
+              title="Crear nueva semillera"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -155,7 +210,8 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.cooperador.setOpen(true)}
+              onClick={handleOpenCooperador}
+              title="Crear nuevo cooperador"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -197,7 +253,8 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.conductor.setOpen(true)}
+              onClick={handleOpenConductor}
+              title="Crear nuevo conductor"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -239,7 +296,8 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.vehiculo.setOpen(true)}
+              onClick={handleOpenVehiculo}
+              title="Crear nuevo vehículo"
             >
               <Plus className="h-4 w-4" />
             </Button>

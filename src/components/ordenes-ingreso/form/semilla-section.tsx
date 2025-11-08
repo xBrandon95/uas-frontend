@@ -16,9 +16,24 @@ import { useMemo } from "react";
 interface SemillaSectionProps {
   form: UseFormReturn<CreateOrdenFormData>;
   dialogs: {
-    semilla: { open: boolean; setOpen: (open: boolean) => void };
-    variedad: { open: boolean; setOpen: (open: boolean) => void };
-    categoria: { open: boolean; setOpen: (open: boolean) => void };
+    semilla: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
+    variedad: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
+    categoria: {
+      open: boolean;
+      setOpen: (open: boolean) => void;
+      onCreated: ((id: number) => void) | null;
+      setOnCreated: (callback: ((id: number) => void) | null) => void;
+    };
   };
 }
 
@@ -69,6 +84,32 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
     [categorias]
   );
 
+  // Handlers para abrir diálogos con callbacks
+  const handleOpenSemilla = () => {
+    dialogs.semilla.setOnCreated((id: number) => {
+      setValue("id_semilla", id);
+      setValue("id_variedad", undefined as any); // Reset variedad
+      dialogs.semilla.setOnCreated(null);
+    });
+    dialogs.semilla.setOpen(true);
+  };
+
+  const handleOpenVariedad = () => {
+    dialogs.variedad.setOnCreated((id: number) => {
+      setValue("id_variedad", id);
+      dialogs.variedad.setOnCreated(null);
+    });
+    dialogs.variedad.setOpen(true);
+  };
+
+  const handleOpenCategoria = () => {
+    dialogs.categoria.setOnCreated((id: number) => {
+      setValue("id_categoria_ingreso", id);
+      dialogs.categoria.setOnCreated(null);
+    });
+    dialogs.categoria.setOpen(true);
+  };
+
   return (
     <div className="bg-card rounded-lg border p-6">
       <h2 className="text-xl font-semibold mb-4">Información de Semilla</h2>
@@ -106,7 +147,7 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.semilla.setOpen(true)}
+              onClick={handleOpenSemilla}
               title="Crear nueva semilla"
             >
               <Plus className="h-4 w-4" />
@@ -150,7 +191,7 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.variedad.setOpen(true)}
+              onClick={handleOpenVariedad}
               disabled={!selectedSemillaId}
               title="Crear nueva variedad"
             >
@@ -194,7 +235,7 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => dialogs.categoria.setOpen(true)}
+              onClick={handleOpenCategoria}
               title="Crear nueva categoría"
             >
               <Plus className="h-4 w-4" />

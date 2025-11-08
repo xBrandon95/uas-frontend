@@ -26,6 +26,7 @@ interface VehiculoFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   vehiculoId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const vehiculoSchema = z.object({
@@ -46,6 +47,7 @@ export function VehiculoFormDialog({
   open,
   onOpenChange,
   vehiculoId,
+  onCreated,
 }: VehiculoFormDialogProps) {
   const isEditing = !!vehiculoId;
   const createMutation = useCreateVehiculo();
@@ -94,8 +96,14 @@ export function VehiculoFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(data);
+    const result = await createMutation.mutateAsync(data);
+
+    if (onCreated && result?.id_vehiculo) {
+      onCreated(result.id_vehiculo);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

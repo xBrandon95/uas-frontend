@@ -26,6 +26,7 @@ interface CategoriaFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   categoriaId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const categoriaSchema = z.object({
@@ -41,6 +42,7 @@ export function CategoriaFormDialog({
   open,
   onOpenChange,
   categoriaId,
+  onCreated,
 }: CategoriaFormDialogProps) {
   const isEditing = !!categoriaId;
   const createMutation = useCreateCategoria();
@@ -86,8 +88,14 @@ export function CategoriaFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(data);
+    const result = await createMutation.mutateAsync(data);
+
+    if (onCreated && result?.id_categoria) {
+      onCreated(result.id_categoria);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;

@@ -26,6 +26,7 @@ interface CooperadorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cooperadorId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const cooperadorSchema = z.object({
@@ -54,6 +55,7 @@ export function CooperadorFormDialog({
   open,
   onOpenChange,
   cooperadorId,
+  onCreated,
 }: CooperadorFormDialogProps) {
   const isEditing = !!cooperadorId;
   const createMutation = useCreateCooperador();
@@ -107,7 +109,13 @@ export function CooperadorFormDialog({
       onOpenChange(false);
       return;
     }
-    await createMutation.mutateAsync(submitData);
+
+    const result = await createMutation.mutateAsync(submitData);
+
+    if (onCreated && result?.id_cooperador) {
+      onCreated(result.id_cooperador);
+    }
+
     onOpenChange(false);
     reset();
   };

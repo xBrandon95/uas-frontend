@@ -26,6 +26,7 @@ interface ConductorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   conductorId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const conductorSchema = z.object({
@@ -50,6 +51,7 @@ export function ConductorFormDialog({
   open,
   onOpenChange,
   conductorId,
+  onCreated,
 }: ConductorFormDialogProps) {
   const isEditing = !!conductorId;
   const createMutation = useCreateConductor();
@@ -106,8 +108,14 @@ export function ConductorFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(submitData);
+    const result = await createMutation.mutateAsync(submitData);
+
+    if (onCreated && result?.id_conductor) {
+      onCreated(result.id_conductor);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
