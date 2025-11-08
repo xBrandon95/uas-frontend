@@ -1,6 +1,4 @@
 import { UseFormReturn } from "react-hook-form";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { PercentageInput } from "@/components/ui/percentage-input";
 import {
   CreateOrdenFormData,
@@ -52,27 +50,14 @@ export function LaboratorioSection({
           {...register("porcentaje_impureza")}
         />
 
-        <div>
-          <Label htmlFor="peso_hectolitrico">
-            Peso Hectolítrico (kg/hl) <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="peso_hectolitrico"
-            type="number"
-            step="0.01"
-            min="0"
-            className={errors.peso_hectolitrico ? "border-red-500" : ""}
-            {...register("peso_hectolitrico")}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Debe ser mayor a 0
-          </p>
-          {errors.peso_hectolitrico && (
-            <p className="text-sm text-red-500 mt-1">
-              {errors.peso_hectolitrico.message}
-            </p>
-          )}
-        </div>
+        <PercentageInput
+          id="peso_hectolitrico"
+          label="Peso Hectolítrico (kg/hl)"
+          required
+          helperText="Valores mayores a 100 se ajustarán automáticamente"
+          error={errors.peso_hectolitrico?.message}
+          {...register("peso_hectolitrico")}
+        />
 
         <PercentageInput
           id="porcentaje_grano_danado"

@@ -88,7 +88,7 @@ const baseFields = {
   peso_liquido: requiredNumber("Peso líquido"),
   porcentaje_humedad: requiredPercentage("Humedad"),
   porcentaje_impureza: requiredPercentage("Impureza"),
-  peso_hectolitrico: requiredPositiveNumber("Peso hectolítrico"),
+  peso_hectolitrico: requiredPercentage("Peso hectolítrico"),
   porcentaje_grano_danado: requiredPercentage("Grano dañado"),
   porcentaje_grano_verde: requiredPercentage("Grano verde"),
   // Únicos campos opcionales

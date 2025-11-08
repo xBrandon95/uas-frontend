@@ -29,11 +29,6 @@ export function OrdenIngresoDetailDialog({
   const { data: resumen, isLoading: isLoadingResumen } =
     useResumenProduccion(ordenId);
 
-  const formatDate = (date: Date | string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleString("es-BO");
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
