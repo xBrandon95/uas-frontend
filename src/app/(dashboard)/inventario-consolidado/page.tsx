@@ -21,7 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -31,17 +30,18 @@ import {
 } from "@/components/ui/select";
 import {
   Package2,
-  Search,
   TrendingUp,
   Boxes,
   Scale,
   X,
   Building2,
   Filter,
-  Calendar,
+  FileDown,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { useDescargarReporteInventarioConsolidado } from "@/hooks/use-reportes";
 
 export default function InventarioConsolidadoPage() {
   const { user } = useAuthStore();
@@ -84,6 +84,22 @@ export default function InventarioConsolidadoPage() {
     fechaInicio,
     fechaFin
   );
+  const descargarReporteMutation = useDescargarReporteInventarioConsolidado();
+
+  const generarReporte = () => {
+    descargarReporteMutation.mutate({
+      idUnidad: filtroUnidad,
+      idSemilla: filtroSemilla,
+      idVariedad: filtroVariedad,
+      idCategoria: filtroCategoria,
+      fechaInicio: dateRange?.from
+        ? dateRange.from.toISOString().split("T")[0]
+        : undefined,
+      fechaFin: dateRange?.to
+        ? dateRange.to.toISOString().split("T")[0]
+        : undefined,
+    });
+  };
 
   // Filtro local solo para búsqueda por texto
   const inventarioFiltrado = useMemo(() => {
@@ -166,47 +182,10 @@ export default function InventarioConsolidadoPage() {
         </p>
       </div>
 
-      {/* Selector de Unidad (solo para Admin) */}
-      {user?.rol === "admin" && (
-        <div className="mb-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                Filtrar por Unidad
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select
-                value={filtroUnidad?.toString() || "all"}
-                onValueChange={(value) =>
-                  setFiltroUnidad(value === "all" ? undefined : Number(value))
-                }
-              >
-                <SelectTrigger className="w-full max-w-xs">
-                  <SelectValue placeholder="Todas las unidades" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las unidades</SelectItem>
-                  {unidades?.map((unidad) => (
-                    <SelectItem
-                      key={unidad.id_unidad}
-                      value={unidad.id_unidad.toString()}
-                    >
-                      {unidad.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
       {/* Cards de Resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">
               Total Productos
             </CardTitle>
@@ -266,18 +245,69 @@ export default function InventarioConsolidadoPage() {
               <Filter className="h-5 w-5" />
               Filtros
             </h3>
-            {hayFiltrosActivos && (
+
+            <div className="flex gap-2">
+              {hayFiltrosActivos && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={limpiarFiltros}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Limpiar Filtros
+                </Button>
+              )}
               <Button
-                variant="ghost"
+                onClick={generarReporte}
+                disabled={
+                  descargarReporteMutation.isPending ||
+                  !inventarioFiltrado ||
+                  inventarioFiltrado.length === 0
+                }
                 size="sm"
-                onClick={limpiarFiltros}
-                className="text-red-600 hover:text-red-700"
               >
-                <X className="h-4 w-4 mr-1" />
-                Limpiar Filtros
+                {descargarReporteMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generando PDF...
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Descargar PDF
+                  </>
+                )}
               </Button>
-            )}
+            </div>
           </div>
+
+          {/* Selector de Unidad (solo para Admin) */}
+          {user?.rol === "admin" && (
+            <div className="mb-6">
+              <Select
+                value={filtroUnidad?.toString() || "all"}
+                onValueChange={(value) =>
+                  setFiltroUnidad(value === "all" ? undefined : Number(value))
+                }
+              >
+                <SelectTrigger className="w-full max-w-xs">
+                  <SelectValue placeholder="Todas las unidades" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las unidades</SelectItem>
+                  {unidades?.map((unidad) => (
+                    <SelectItem
+                      key={unidad.id_unidad}
+                      value={unidad.id_unidad.toString()}
+                    >
+                      {unidad.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* <div className="p-4 bg-muted/50 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
