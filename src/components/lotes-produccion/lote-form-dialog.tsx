@@ -34,6 +34,7 @@ import {
 } from "@/hooks/use-lotes-produccion";
 import { useOrdenIngreso } from "@/hooks/use-ordenes-ingreso";
 import { useCategoriasActivas } from "@/hooks/use-categorias";
+import { MultiSelectTipoServicio } from "../ui/multi-select-tipo-servicio";
 
 const loteSchema = z.object({
   id_categoria_salida: z.number({ message: "Requerido" }),
@@ -46,9 +47,24 @@ const loteSchema = z.object({
 type LoteFormData = z.infer<typeof loteSchema>;
 
 const PRESENTACIONES = [
-  { value: "bolsas", label: "Bolsas" },
-  { value: "latas", label: "Latas" },
-  { value: "baldes", label: "Baldes" },
+  {
+    value: "bolsas",
+    label: "🛍️ Bolsas",
+    unidadLabel: "Bolsas",
+    kgLabel: "Kg/Bolsa",
+  },
+  {
+    value: "latas",
+    label: "🥫 Latas",
+    unidadLabel: "Latas",
+    kgLabel: "Kg/Lata",
+  },
+  {
+    value: "baldes",
+    label: "🪣 Baldes",
+    unidadLabel: "Baldes",
+    kgLabel: "Kg/Balde",
+  },
 ] as const;
 
 interface LoteFormDialogProps {
@@ -96,6 +112,12 @@ export function LoteFormDialog({
   const kgPorUnidad = watch("kg_por_unidad") || 0;
   const presentacionSeleccionada = watch("presentacion");
   const categoriaSeleccionada = watch("id_categoria_salida");
+
+  // Obtener labels dinámicos según la presentación
+  const presentacionActual = useMemo(
+    () => PRESENTACIONES.find((p) => p.value === presentacionSeleccionada),
+    [presentacionSeleccionada]
+  );
 
   // Calcular total kg
   const totalKg = useMemo(
@@ -152,7 +174,7 @@ export function LoteFormDialog({
       } else if (!isEditing) {
         // Modo creación: limpiar formulario
         reset({
-          id_categoria_salida: undefined,
+          id_categoria_salida: orden?.id_categoria_ingreso,
           cantidad_unidades: undefined,
           kg_por_unidad: undefined,
           presentacion: "",
@@ -160,7 +182,7 @@ export function LoteFormDialog({
         });
       }
     }
-  }, [open, isEditing, lote, isLoadingLote, reset]);
+  }, [open, isEditing, lote, isLoadingLote, reset, orden]);
 
   const onSubmit = async (data: LoteFormData) => {
     if (!orden) return;
@@ -188,7 +210,6 @@ export function LoteFormDialog({
 
       // Cerrar diálogo y limpiar estado
       onOpenChange(false);
-      setSelectedLoteId(null); // Limpiar el ID seleccionado
 
       // Reset con valores limpios después de cerrar
       setTimeout(() => {
@@ -244,7 +265,7 @@ export function LoteFormDialog({
             </span>
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-4">
             {/* Resumen de disponibilidad - MEJORADO: Mostrar siempre */}
             {orden && (
               <Alert className="border-blue-200 bg-blue-50/50">
@@ -365,7 +386,8 @@ export function LoteFormDialog({
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="cantidad_unidades">
-                  Unidades <span className="text-red-500">*</span>
+                  {presentacionActual?.unidadLabel || "Unidades"}{" "}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="cantidad_unidades"
@@ -383,7 +405,8 @@ export function LoteFormDialog({
 
               <div>
                 <Label htmlFor="kg_por_unidad">
-                  Kg/Unidad <span className="text-red-500">*</span>
+                  {presentacionActual?.kgLabel || "Kg/Unidad"}{" "}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="kg_por_unidad"
@@ -416,11 +439,14 @@ export function LoteFormDialog({
             {/* Tipo de Servicio */}
             <div>
               <Label htmlFor="tipo_servicio">Tipo de Servicio</Label>
-              <Input
-                id="tipo_servicio"
-                {...register("tipo_servicio")}
-                placeholder="Ej: Tratamiento Premium (opcional)"
+              <MultiSelectTipoServicio
+                value={watch("tipo_servicio") || ""}
+                onChange={(value) => setValue("tipo_servicio", value)}
+                error={!!errors.tipo_servicio}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Selecciona uno o más servicios aplicados
+              </p>
             </div>
 
             {/* Alerta de exceso */}
@@ -448,13 +474,17 @@ export function LoteFormDialog({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading || excedePeso}>
+              <Button
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isLoading || excedePeso}
+              >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Save className="mr-2 h-4 w-4" />
                 {isEditing ? "Actualizar" : "Crear"} Lote
               </Button>
             </DialogFooter>
-          </form>
+          </div>
         )}
       </DialogContent>
     </Dialog>
