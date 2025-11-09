@@ -771,6 +771,7 @@ export default function OrdenSalidaFormPage() {
                               <Input
                                 type="number"
                                 step="0.01"
+                                readOnly
                                 {...register(
                                   `detalles.${index}.kg_por_unidad`,
                                   {
