@@ -110,8 +110,8 @@ export function VariedadFormDialog({
 
     const result = await createMutation.mutateAsync(data);
 
-    if (onCreated && result?.id_semilla) {
-      onCreated(result.id_semilla);
+    if (onCreated && result?.id_variedad) {
+      onCreated(result.id_variedad);
     }
 
     onOpenChange(false);

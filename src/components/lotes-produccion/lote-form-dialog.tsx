@@ -83,8 +83,13 @@ export function LoteFormDialog({
   } = useForm<LoteFormData>({
     resolver: zodResolver(loteSchema),
     defaultValues: {
+      id_categoria_salida: undefined,
+      cantidad_unidades: undefined,
+      kg_por_unidad: undefined,
       presentacion: "",
+      tipo_servicio: "",
     },
+    mode: "onChange",
   });
 
   const cantidadUnidades = watch("cantidad_unidades") || 0;
@@ -105,7 +110,7 @@ export function LoteFormDialog({
     return lotesExistentes.reduce(
       (sum, l) => sum + Number(l.total_kg_original),
       0
-    ); // ✅
+    );
   }, [lotesExistentes]);
 
   const pesoDisponible = useMemo(
@@ -121,28 +126,33 @@ export function LoteFormDialog({
   const isLoading =
     createMutation.isPending || updateMutation.isPending || isLoadingLote;
 
-  // Cargar datos al editar
+  // Reset al abrir el diálogo o cambiar de modo
   useEffect(() => {
-    if (isEditing && lote) {
-      reset({
-        id_categoria_salida: lote.id_categoria_salida,
-        cantidad_unidades: lote.cantidad_unidades,
-        kg_por_unidad: Number(lote.kg_por_unidad),
-        presentacion: lote.presentacion || "",
-        tipo_servicio: lote.tipo_servicio,
-      });
-    } else if (!isEditing && open) {
-      // Auto-completar categoría al crear nuevo lote
-      if (orden?.id_categoria_ingreso && categorias) {
-        const categoriaExiste = categorias.some(
-          (c) => c.id_categoria === orden.id_categoria_ingreso
-        );
-        if (categoriaExiste) {
-          setValue("id_categoria_salida", orden.id_categoria_ingreso);
-        }
+    if (open) {
+      if (isEditing && lote && !isLoadingLote) {
+        // Modo edición: cargar datos del lote
+        const timer = setTimeout(() => {
+          reset({
+            id_categoria_salida: lote.id_categoria_salida,
+            cantidad_unidades: lote.cantidad_unidades,
+            kg_por_unidad: Number(lote.kg_por_unidad),
+            presentacion: lote.presentacion,
+            tipo_servicio: lote.tipo_servicio || "",
+          });
+        }, 100);
+        return () => clearTimeout(timer);
+      } else if (!isEditing) {
+        // Modo creación: limpiar formulario
+        reset({
+          id_categoria_salida: undefined,
+          cantidad_unidades: undefined,
+          kg_por_unidad: undefined,
+          presentacion: "",
+          tipo_servicio: "",
+        });
       }
     }
-  }, [isEditing, lote, orden, categorias, open, reset, setValue]);
+  }, [open, isEditing, lote, isLoadingLote, reset]);
 
   const onSubmit = async (data: LoteFormData) => {
     if (!orden) return;
@@ -166,8 +176,20 @@ export function LoteFormDialog({
       } else {
         await createMutation.mutateAsync(submitData);
       }
+
+      // Cerrar diálogo
       onOpenChange(false);
-      reset();
+
+      // Reset con valores limpios después de cerrar
+      setTimeout(() => {
+        reset({
+          id_categoria_salida: undefined,
+          cantidad_unidades: undefined,
+          kg_por_unidad: undefined,
+          presentacion: "",
+          tipo_servicio: "",
+        });
+      }, 300);
     } catch (error) {
       // Error manejado por el hook
     }
@@ -178,7 +200,18 @@ export function LoteFormDialog({
       open={open}
       onOpenChange={(isOpen) => {
         onOpenChange(isOpen);
-        if (!isOpen) reset();
+        // Reset inmediato al cerrar
+        if (!isOpen) {
+          setTimeout(() => {
+            reset({
+              id_categoria_salida: undefined,
+              cantidad_unidades: undefined,
+              kg_por_unidad: undefined,
+              presentacion: "",
+              tipo_servicio: "",
+            });
+          }, 200);
+        }
       }}
     >
       <DialogContent className="sm:max-w-[800px]">
@@ -193,9 +226,12 @@ export function LoteFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isLoadingLote ? (
+        {isLoadingLote && isEditing ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="ml-2 text-sm text-muted-foreground">
+              Cargando datos del lote...
+            </span>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -207,7 +243,14 @@ export function LoteFormDialog({
                   <p className="font-semibold text-blue-900 mb-2">
                     Disponibilidad de la Orden
                   </p>
-                  <div className="grid grid-cols-3 gap-3 text-sm">
+                  <div className="grid grid-cols-4 gap-3 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Semilla</p>
+                      <p className="font-bold text-indigo-600">
+                        {orden?.semilla?.nombre || "N/A"} -{" "}
+                        {orden?.variedad?.nombre || "N/A"}
+                      </p>
+                    </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Peso Neto</p>
                       <p className="font-bold text-blue-900">
@@ -244,9 +287,10 @@ export function LoteFormDialog({
                   onValueChange={(value) => setValue("presentacion", value)}
                 >
                   <SelectTrigger
-                    className={
-                      (cn(errors.presentacion && "border-red-500"), "w-full")
-                    }
+                    className={cn(
+                      errors.presentacion && "border-red-500",
+                      "w-full"
+                    )}
                   >
                     <SelectValue placeholder="Seleccionar" />
                   </SelectTrigger>

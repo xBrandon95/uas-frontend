@@ -75,7 +75,9 @@ function AccionesCell({
   const cantidadLotes = (orden as any).cantidad_lotes || 0;
   const estaCompletado = orden.estado === "completado";
   const estaEnProceso = orden.estado === "en_proceso";
-  const puedeEditar = !tieneLotsProduccion && !estaCompletado && !estaEnProceso;
+  const estaCancelado = orden.estado === "cancelado";
+  const puedeEditar =
+    !tieneLotsProduccion && !estaCompletado && !estaEnProceso && !estaCancelado;
 
   // Mensaje de tooltip para editar
   const mensajeEditar = !puedeEditar

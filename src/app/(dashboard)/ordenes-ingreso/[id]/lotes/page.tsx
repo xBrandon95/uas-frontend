@@ -194,6 +194,7 @@ export default function OrdenLotesPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nº Lote</TableHead>
+                    <TableHead>Semilla</TableHead>
                     <TableHead>Variedad</TableHead>
                     <TableHead>Categoría</TableHead>
                     <TableHead>Presentación</TableHead>
@@ -222,6 +223,9 @@ export default function OrdenLotesPage() {
                           <Badge variant="outline" className="font-mono">
                             {lote.nro_lote}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {lote.variedad?.semilla?.nombre}
                         </TableCell>
                         <TableCell className="font-medium">
                           {lote.variedad?.nombre}
