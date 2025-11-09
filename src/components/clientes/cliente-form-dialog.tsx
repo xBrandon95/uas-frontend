@@ -27,6 +27,7 @@ interface ClienteFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clienteId?: number | null;
+  onCreated?: ((id: number) => void) | null;
 }
 
 const clienteSchema = z.object({
@@ -57,6 +58,7 @@ export function ClienteFormDialog({
   open,
   onOpenChange,
   clienteId,
+  onCreated,
 }: ClienteFormDialogProps) {
   const isEditing = !!clienteId;
   const createMutation = useCreateCliente();
@@ -118,8 +120,14 @@ export function ClienteFormDialog({
       return;
     }
 
-    await createMutation.mutateAsync(submitData);
+    const result = await createMutation.mutateAsync(submitData);
+
+    if (onCreated && result?.id_cliente) {
+      onCreated(result.id_cliente);
+    }
+
     onOpenChange(false);
+    reset();
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
