@@ -176,12 +176,22 @@ export function OrdenLotesDialog({
                         const originalUnidades = lote.cantidad_original!;
                         const vendidoUnidades =
                           originalUnidades - actualUnidades;
-                        const hayVentaUnidades = vendidoUnidades > 0;
+                        // Solo mostrar como vendido si hay cambio Y el estado indica venta
+                        const hayVentaUnidades =
+                          vendidoUnidades > 0 &&
+                          (lote.estado === "parcialmente_vendido" ||
+                            lote.estado === "vendido");
 
                         const actualKg = Number(lote.total_kg);
                         const originalKg = Number(lote.total_kg_original);
                         const vendidoKg = originalKg - actualKg;
-                        const hayVentaKg = vendidoKg > 0.01;
+                        // Solo mostrar como vendido si hay cambio Y el estado indica venta
+                        const hayVentaKg =
+                          vendidoKg > 0.01 &&
+                          (lote.estado === "parcialmente_vendido" ||
+                            lote.estado === "vendido");
+
+                        const puedeEditar = lote.estado === "disponible";
 
                         return (
                           <TableRow key={lote.id_lote_produccion}>
@@ -321,15 +331,34 @@ export function OrdenLotesDialog({
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    handleEditLote(lote.id_lote_produccion)
-                                  }
-                                >
-                                  <Pencil className="h-3 w-3" />
-                                </Button>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() =>
+                                            handleEditLote(
+                                              lote.id_lote_produccion
+                                            )
+                                          }
+                                          disabled={!puedeEditar}
+                                        >
+                                          <Pencil className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    </TooltipTrigger>
+                                    {!puedeEditar && (
+                                      <TooltipContent>
+                                        <p className="max-w-xs">
+                                          Solo se pueden editar lotes en estado
+                                          "disponible"
+                                        </p>
+                                      </TooltipContent>
+                                    )}
+                                  </Tooltip>
+                                </TooltipProvider>
                               </div>
                             </TableCell>
                           </TableRow>

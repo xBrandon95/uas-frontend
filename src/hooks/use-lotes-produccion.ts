@@ -131,7 +131,7 @@ export function useLoteProduccion(id: number | null) {
     queryKey: ["lote-produccion", id],
     queryFn: () => getLoteProduccionById(id!),
     enabled: !!id,
-    staleTime: 30000,
+    staleTime: 0, // Siempre refrescar
   });
 }
 
@@ -141,9 +141,20 @@ export function useCreateLoteProduccion() {
 
   return useMutation({
     mutationFn: (dto: CreateLoteProduccionDto) => createLoteProduccion(dto),
-    onSuccess: () => {
+    onSuccess: (newLote) => {
+      // Invalidar TODAS las queries relacionadas
       queryClient.invalidateQueries({ queryKey: ["lotes-produccion"] });
       queryClient.invalidateQueries({ queryKey: ["ordenes-ingreso"] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "lotes-produccion",
+          "orden-ingreso",
+          newLote.id_orden_ingreso,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["orden-ingreso", newLote.id_orden_ingreso],
+      });
       toast.success("Lote de producción creado exitosamente");
     },
     onError: (error: unknown) => {
@@ -152,15 +163,42 @@ export function useCreateLoteProduccion() {
   });
 }
 
-// Actualizar lote
+// Actualizar lote - CORREGIDO
 export function useUpdateLoteProduccion() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: UpdateLoteProduccionDto }) =>
       updateLoteProduccion(id, dto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lotes-produccion"] });
+    onSuccess: async (updatedLote) => {
+      // Invalidar el lote específico primero
+      queryClient.invalidateQueries({
+        queryKey: ["lote-produccion", updatedLote.id_lote_produccion],
+      });
+
+      // Invalidar la lista de lotes de la orden
+      queryClient.invalidateQueries({
+        queryKey: [
+          "lotes-produccion",
+          "orden-ingreso",
+          updatedLote.id_orden_ingreso,
+        ],
+      });
+
+      // Invalidar todas las listas de lotes
+      queryClient.invalidateQueries({
+        queryKey: ["lotes-produccion"],
+      });
+
+      // Invalidar la orden de ingreso para actualizar disponibilidad
+      queryClient.invalidateQueries({
+        queryKey: ["orden-ingreso", updatedLote.id_orden_ingreso],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["ordenes-ingreso"],
+      });
+
       toast.success("Lote de producción actualizado exitosamente");
     },
     onError: (error: unknown) => {
@@ -194,6 +232,7 @@ export function useDeleteLoteProduccion() {
     mutationFn: (id: number) => deleteLoteProduccion(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lotes-produccion"] });
+      queryClient.invalidateQueries({ queryKey: ["ordenes-ingreso"] });
       toast.success("Lote de producción eliminado exitosamente");
     },
     onError: (error: unknown) => {

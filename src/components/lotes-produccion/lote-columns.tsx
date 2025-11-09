@@ -103,7 +103,11 @@ export const createColumns = ({
       const actual = row.original.cantidad_unidades;
       const original = row.original.cantidad_original!;
       const vendido = original - actual;
-      const hayVenta = vendido > 0;
+      // Solo mostrar como vendido si hay cambio Y el estado indica venta
+      const hayVenta =
+        vendido > 0 &&
+        (row.original.estado === "parcialmente_vendido" ||
+          row.original.estado === "vendido");
 
       return (
         <TooltipProvider>
@@ -165,7 +169,11 @@ export const createColumns = ({
       const actual = Number(row.original.total_kg);
       const original = Number(row.original.total_kg_original);
       const vendido = original - actual;
-      const hayVenta = vendido > 0.01; // Tolerancia de 0.01 kg
+      // Solo mostrar como vendido si hay cambio Y el estado indica venta
+      const hayVenta =
+        vendido > 0.01 &&
+        (row.original.estado === "parcialmente_vendido" ||
+          row.original.estado === "vendido");
 
       return (
         <TooltipProvider>
@@ -235,6 +243,7 @@ export const createColumns = ({
     id: "actions",
     cell: ({ row }) => {
       const lote = row.original;
+      const puedeEditar = lote.estado === "disponible";
 
       return (
         <DropdownMenu>
@@ -251,10 +260,33 @@ export const createColumns = ({
               <Eye className="mr-2 h-4 w-4" />
               Ver Detalle
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(lote)}>
-              <Pencil className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <DropdownMenuItem
+                      onClick={() => puedeEditar && onEdit(lote)}
+                      disabled={!puedeEditar}
+                      className={
+                        !puedeEditar ? "opacity-50 cursor-not-allowed" : ""
+                      }
+                    >
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Editar
+                    </DropdownMenuItem>
+                  </div>
+                </TooltipTrigger>
+                {!puedeEditar && (
+                  <TooltipContent>
+                    <p className="max-w-xs">
+                      Solo se pueden editar lotes en estado "disponible"
+                    </p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
             <DropdownMenuItem onClick={() => onChangeStatus(lote)}>
               <FileCheck className="mr-2 h-4 w-4" />
               Cambiar Estado

@@ -103,24 +103,32 @@ export function LoteFormDialog({
     [cantidadUnidades, kgPorUnidad]
   );
 
-  // Calcular disponibilidad
+  // Calcular disponibilidad - CORREGIDO: Excluir peso del lote actual al editar
   const pesoNetoOrden = orden?.peso_neto || 0;
   const totalProducido = useMemo(() => {
     if (!lotesExistentes) return 0;
-    return lotesExistentes.reduce(
-      (sum, l) => sum + Number(l.total_kg_original),
-      0
-    );
-  }, [lotesExistentes]);
+    return lotesExistentes.reduce((sum, l) => {
+      // Al editar, excluir el peso del lote actual del cálculo
+      if (
+        isEditing &&
+        lote &&
+        l.id_lote_produccion === lote.id_lote_produccion
+      ) {
+        return sum;
+      }
+      return sum + Number(l.total_kg_original);
+    }, 0);
+  }, [lotesExistentes, isEditing, lote]);
 
   const pesoDisponible = useMemo(
     () => pesoNetoOrden - totalProducido,
     [pesoNetoOrden, totalProducido]
   );
 
+  // CORREGIDO: Validar exceso tanto en crear como en editar
   const excedePeso = useMemo(
-    () => !isEditing && totalKg > pesoDisponible,
-    [isEditing, totalKg, pesoDisponible]
+    () => totalKg > pesoDisponible,
+    [totalKg, pesoDisponible]
   );
 
   const isLoading =
@@ -165,7 +173,8 @@ export function LoteFormDialog({
       estado: "disponible" as const,
     };
 
-    if (!isEditing && excedePeso) return;
+    // CORREGIDO: Validar que no exceda el peso disponible (tanto en crear como editar)
+    if (excedePeso) return;
 
     try {
       if (isEditing) {
@@ -177,8 +186,9 @@ export function LoteFormDialog({
         await createMutation.mutateAsync(submitData);
       }
 
-      // Cerrar diálogo
+      // Cerrar diálogo y limpiar estado
       onOpenChange(false);
+      setSelectedLoteId(null); // Limpiar el ID seleccionado
 
       // Reset con valores limpios después de cerrar
       setTimeout(() => {
@@ -235,13 +245,15 @@ export function LoteFormDialog({
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Resumen de disponibilidad */}
-            {!isEditing && (
+            {/* Resumen de disponibilidad - MEJORADO: Mostrar siempre */}
+            {orden && (
               <Alert className="border-blue-200 bg-blue-50/50">
                 <AlertCircle className="h-4 w-4 text-blue-600" />
                 <AlertDescription>
                   <p className="font-semibold text-blue-900 mb-2">
-                    Disponibilidad de la Orden
+                    {isEditing
+                      ? "Disponibilidad (editando)"
+                      : "Disponibilidad de la Orden"}
                   </p>
                   <div className="grid grid-cols-4 gap-3 text-sm">
                     <div>
@@ -272,6 +284,11 @@ export function LoteFormDialog({
                       </p>
                     </div>
                   </div>
+                  {isEditing && (
+                    <p className="text-xs text-muted-foreground mt-2 italic">
+                      * El peso del lote actual no está incluido en "Producido"
+                    </p>
+                  )}
                 </AlertDescription>
               </Alert>
             )}
