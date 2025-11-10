@@ -512,17 +512,6 @@ export default function OrdenSalidaFormPage() {
                     <p className="text-sm text-red-500 mt-1">Campo requerido</p>
                   )}
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="deposito">Depósito</Label>
-                  <Input
-                    id="deposito"
-                    {...register("deposito")}
-                    placeholder="Depósito destino (opcional)"
-                  />
-                </div>
 
                 <div>
                   <Label htmlFor="total_costo_servicio">
@@ -531,7 +520,7 @@ export default function OrdenSalidaFormPage() {
                       (Opcional)
                     </span>
                   </Label>
-                  <div className="relative">
+                  <div className="relative mt-2">
                     <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="total_costo_servicio"
@@ -556,14 +545,25 @@ export default function OrdenSalidaFormPage() {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="observaciones">Observaciones</Label>
-                <Textarea
-                  id="observaciones"
-                  {...register("observaciones")}
-                  rows={3}
-                  placeholder="Observaciones adicionales..."
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="deposito">Depósito</Label>
+                  <Input
+                    id="deposito"
+                    {...register("deposito")}
+                    placeholder="Depósito destino (opcional)"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="observaciones">Observaciones</Label>
+                  <Textarea
+                    id="observaciones"
+                    {...register("observaciones")}
+                    rows={3}
+                    placeholder="Observaciones adicionales..."
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
