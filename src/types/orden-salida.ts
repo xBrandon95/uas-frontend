@@ -1,5 +1,3 @@
-// Actualizar src/types/orden-salida.ts con esta versión completa
-
 import { Semillera } from "./semillera";
 import { Cliente } from "./cliente";
 import { Conductor } from "./conductor";
@@ -9,6 +7,7 @@ import { Usuario } from "./usuario";
 import { Variedad } from "./variedad";
 import { Categoria } from "./categoria";
 import { LoteProduccion } from "./lote-produccion";
+import { Semilla } from "./semilla";
 
 export interface DetalleOrdenSalida {
   id_detalle_salida: number;
@@ -31,6 +30,8 @@ export interface OrdenSalida {
   numero_orden: string;
   id_semillera: number;
   semillera: Semillera;
+  id_semilla: number;
+  semilla: Semilla;
   id_cliente: number;
   cliente: Cliente;
   id_conductor: number;
@@ -39,9 +40,10 @@ export interface OrdenSalida {
   vehiculo: Vehiculo;
   id_unidad: number;
   unidad: Unidad;
-  fecha_salida: Date;
+  fecha_salida?: Date;
   deposito?: string;
   observaciones?: string;
+  total_costo_servicio?: number;
   estado: string;
   id_usuario_creador: number;
   usuario_creador: Usuario;
@@ -62,13 +64,15 @@ export interface CreateDetalleOrdenSalidaDto {
 
 export type CreateOrdenSalidaDto = {
   id_semillera: number;
+  id_semilla: number;
   id_cliente: number;
   id_conductor: number;
   id_vehiculo: number;
   id_unidad: number;
-  fecha_salida: string;
+  fecha_salida?: string;
   deposito?: string;
   observaciones?: string;
+  total_costo_servicio?: number;
   estado?: string;
   detalles: CreateDetalleOrdenSalidaDto[];
 };

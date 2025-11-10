@@ -31,6 +31,7 @@ import {
   TrendingUp,
   X,
   Search,
+  DollarSign,
 } from "lucide-react";
 import {
   useCreateOrdenSalida,
@@ -64,9 +65,13 @@ const ordenSalidaSchema = z.object({
   id_cliente: z.number({ message: "Requerido" }),
   id_conductor: z.number({ message: "Requerido" }),
   id_vehiculo: z.number({ message: "Requerido" }),
-  fecha_salida: z.string().min(1, "Requerido"),
+  fecha_salida: z.string().optional(),
   deposito: z.string().optional(),
   observaciones: z.string().optional(),
+  total_costo_servicio: z
+    .number({ message: "Ingresa un número" })
+    .min(0, "Debe ser mayor o igual a 0")
+    .optional(),
   detalles: z.array(detalleSchema).min(1, "Debe agregar al menos un lote"),
 });
 
@@ -106,8 +111,9 @@ export default function OrdenSalidaFormPage() {
   } = useForm<OrdenSalidaFormData>({
     resolver: zodResolver(ordenSalidaSchema),
     defaultValues: {
-      fecha_salida: new Date().toISOString().split("T")[0],
+      fecha_salida: new Date().toISOString().split("T")[0], // Por defecto la fecha actual
       detalles: [],
+      total_costo_servicio: 0,
     },
   });
 
@@ -427,23 +433,6 @@ export default function OrdenSalidaFormPage() {
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="fecha_salida">
-                    Fecha de Salida <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="fecha_salida"
-                    type="date"
-                    {...register("fecha_salida")}
-                    className={errors.fecha_salida ? "border-red-500" : ""}
-                  />
-                  {errors.fecha_salida && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.fecha_salida.message}
-                    </p>
-                  )}
-                </div>
-
                 {/* CONDUCTOR */}
                 <div>
                   <Label htmlFor="id_conductor">
@@ -525,13 +514,46 @@ export default function OrdenSalidaFormPage() {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="deposito">Depósito</Label>
-                <Input
-                  id="deposito"
-                  {...register("deposito")}
-                  placeholder="Depósito destino (opcional)"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="deposito">Depósito</Label>
+                  <Input
+                    id="deposito"
+                    {...register("deposito")}
+                    placeholder="Depósito destino (opcional)"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="total_costo_servicio">
+                    Total Costo Servicio (Bs.){" "}
+                    <span className="text-muted-foreground text-xs">
+                      (Opcional)
+                    </span>
+                  </Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="total_costo_servicio"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      {...register("total_costo_servicio", {
+                        valueAsNumber: true,
+                      })}
+                      placeholder="0.00"
+                      className={cn(
+                        "pl-9",
+                        errors.total_costo_servicio ? "border-red-500" : ""
+                      )}
+                    />
+                  </div>
+                  {errors.total_costo_servicio && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.total_costo_servicio.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div>

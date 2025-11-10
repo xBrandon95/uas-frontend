@@ -26,6 +26,7 @@ import {
   Package,
   Loader2,
   MapPin,
+  DollarSign,
 } from "lucide-react";
 import { useOrdenSalida } from "@/hooks/use-ordenes-salida";
 
@@ -131,12 +132,24 @@ export function OrdenSalidaDetailDialog({
                   <p className="text-sm text-muted-foreground">Cliente</p>
                   <p className="font-medium">{orden.cliente?.nombre}</p>
                 </div>
+                {/* ✅ Fecha de Salida - Solo si existe */}
+                {orden.fecha_salida && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Fecha de Salida
+                    </p>
+                    <p className="font-medium">
+                      {formatDate(orden.fecha_salida)}
+                    </p>
+                  </div>
+                )}
+                {/* ✅ Fecha de Creación - Siempre mostrar */}
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    Fecha de Salida
+                    Fecha de Creación
                   </p>
                   <p className="font-medium">
-                    {formatDate(orden.fecha_salida)}
+                    {formatDate(orden.fecha_creacion)}
                   </p>
                 </div>
               </div>
@@ -224,22 +237,45 @@ export function OrdenSalidaDetailDialog({
               </div>
 
               {/* Totales */}
-              <div className="mt-4 flex justify-end gap-8 text-sm border-t pt-4">
-                <div>
-                  <span className="text-muted-foreground">Total Bolsas:</span>
-                  <span className="ml-2 font-semibold">
-                    {orden.detalles.reduce(
-                      (sum, d) => sum + d.cantidad_unidades,
-                      0
-                    )}
-                  </span>
+              <div className="mt-4 space-y-2 border-t pt-4">
+                <div className="flex justify-end gap-8 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Total Bolsas:</span>
+                    <span className="ml-2 font-semibold">
+                      {orden.detalles.reduce(
+                        (sum, d) => sum + d.cantidad_unidades,
+                        0
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Total Kg:</span>
+                    <span className="ml-2 font-semibold font-mono">
+                      {orden.detalles
+                        .reduce((sum, d) => sum + Number(d.total_kg), 0)
+                        .toFixed(2)}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Total Kg:</span>
-                  <span className="ml-2 font-semibold font-mono">
-                    {orden.detalles.reduce((sum, d) => sum + Number(d.total_kg), 0).toFixed(2)}
-                  </span>
-                </div>
+
+                {/* ✅ Total Costo Servicio - Solo si existe */}
+                {orden.total_costo_servicio !== undefined &&
+                  orden.total_costo_servicio !== null &&
+                  orden.total_costo_servicio > 0 && (
+                    <div className="flex justify-end">
+                      <div className="bg-primary/10 px-4 py-2 rounded-md">
+                        <div className="flex items-center gap-2 text-primary">
+                          <DollarSign className="h-4 w-4" />
+                          <span className="text-sm font-medium">
+                            Total Costo Servicio:
+                          </span>
+                          <span className="text-lg font-bold">
+                            Bs. {Number(orden.total_costo_servicio).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
 

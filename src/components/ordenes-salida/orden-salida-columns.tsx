@@ -26,10 +26,9 @@ interface ColumnsProps {
   onEdit: (orden: OrdenSalida) => void;
   onChangeStatus: (orden: OrdenSalida) => void;
   onDelete: (orden: OrdenSalida) => void;
-  onDownloadReport: (ordenId: number) => void; // ✅ Nuevo callback
+  onDownloadReport: (ordenId: number) => void;
 }
 
-// 🔹 Función para configurar los colores y etiquetas del estado
 const getEstadoBadge = (estado: string) => {
   const estados: Record<
     string,
@@ -47,7 +46,6 @@ const getEstadoBadge = (estado: string) => {
   return estados[estado] || { variant: "secondary", label: estado };
 };
 
-// 🔹 Definición de columnas
 export const createColumns = ({
   onView,
   onEdit,
@@ -93,14 +91,6 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "fecha_salida",
-    header: "Fecha Salida",
-    cell: ({ row }) => {
-      const fecha = row.getValue("fecha_salida") as string;
-      return new Date(fecha).toLocaleDateString("es-BO");
-    },
-  },
-  {
     id: "total_unidades",
     header: "Total Unidades",
     cell: ({ row }) => {
@@ -119,6 +109,29 @@ export const createColumns = ({
         .reduce((sum, d) => sum + Number(d.total_kg), 0)
         .toFixed(2);
       return <span className="font-mono font-semibold">{kg}</span>;
+    },
+  },
+  {
+    id: "costo_servicio",
+    header: "Costo Servicio",
+    cell: ({ row }) => {
+      const costo = row.original.total_costo_servicio;
+      if (!costo || costo === 0) {
+        return <span className="text-muted-foreground text-xs">-</span>;
+      }
+      return (
+        <span className="font-mono text-sm">
+          Bs. {Number(costo).toFixed(2)}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "fecha_creacion",
+    header: "Fecha",
+    cell: ({ row }) => {
+      const fecha = row.getValue("fecha_creacion") as string;
+      return new Date(fecha).toLocaleDateString("es-BO");
     },
   },
   {

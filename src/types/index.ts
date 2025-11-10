@@ -128,27 +128,27 @@ export interface DetalleOrdenSalida {
   total_kg?: number;
 }
 
-export interface OrdenSalida {
-  id_orden_salida: number;
-  numero_orden: string;
-  id_semillera: number;
-  semillera?: Semillera;
-  id_cliente: number;
-  cliente?: Cliente;
-  id_conductor: number;
-  conductor?: Conductor;
-  id_vehiculo: number;
-  vehiculo?: Vehiculo;
-  id_unidad: number;
-  unidad?: Unidad;
-  deposito?: string;
-  observaciones?: string;
-  estado: string;
-  fecha_salida: string;
-  detalles: DetalleOrdenSalida[];
-  fecha_creacion: string;
-  fecha_actualizacion: string;
-}
+// export interface OrdenSalida {
+//   id_orden_salida: number;
+//   numero_orden: string;
+//   id_semillera: number;
+//   semillera?: Semillera;
+//   id_cliente: number;
+//   cliente?: Cliente;
+//   id_conductor: number;
+//   conductor?: Conductor;
+//   id_vehiculo: number;
+//   vehiculo?: Vehiculo;
+//   id_unidad: number;
+//   unidad?: Unidad;
+//   deposito?: string;
+//   observaciones?: string;
+//   estado: string;
+//   fecha_salida: string;
+//   detalles: DetalleOrdenSalida[];
+//   fecha_creacion: string;
+//   fecha_actualizacion: string;
+// }
 
 // ============================================
 // INVENTARIO Y REPORTES
