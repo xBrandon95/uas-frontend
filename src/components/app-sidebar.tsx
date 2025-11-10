@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ShieldUser, Sprout, NotepadText, Users, Package2 } from "lucide-react";
+import { ShieldUser, Sprout, NotepadText } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -59,7 +58,6 @@ const navData = [
       {
         title: "Clientes",
         url: "/clientes",
-        icon: Users,
       },
     ],
   },
@@ -110,11 +108,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-2 font-medium">
-          <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
-            <Sprout className="size-5" />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 font-medium">
+            <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
+              <Sprout className="size-5" />
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">SEMILLAS</span>
+
+              {user?.rol === "admin" ? (
+                <span className="text-xs text-sidebar-foreground/60">
+                  Administrador
+                </span>
+              ) : (
+                user?.nombre_unidad && (
+                  <span className="text-xs text-sidebar-foreground/70">
+                    {user.nombre_unidad}
+                  </span>
+                )
+              )}
+            </div>
           </div>
-          SEMILLAS
         </div>
       </SidebarHeader>
 
@@ -122,7 +137,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={filteredNav} />
       </SidebarContent>
 
-      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        <div className="px-2 py-1.5 text-xs text-sidebar-foreground/50">
+          v1.0.0
+        </div>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

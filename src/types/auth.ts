@@ -3,7 +3,8 @@ export interface User {
   nombre: string;
   usuario: string;
   rol: "admin" | "encargado" | "operador";
-  id_unidad: number;
+  id_unidad: number | null;
+  nombre_unidad?: string | null;
 }
 
 export interface LoginRequest {

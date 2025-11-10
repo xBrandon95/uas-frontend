@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { LogOut, User as UserIcon, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -15,24 +8,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/authStore";
 import { User } from "@/types";
+import { Badge } from "@/components/ui/badge";
+
+const roleLabels = {
+  admin: "Administrador",
+  encargado: "Encargado",
+  operador: "Operador",
+};
+
+const roleVariants = {
+  admin: "admin",
+  encargado: "encargado",
+  operador: "operador",
+} as const;
 
 export function NavUser({ user }: { user: User }) {
-  const { isMobile } = useSidebar();
-
   const router = useRouter();
   const { logout } = useAuthStore();
 
@@ -43,84 +41,75 @@ export function NavUser({ user }: { user: User }) {
   };
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 rounded-full">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 h-auto px-3 py-2"
+        >
+          <Avatar className="h-8 w-8 rounded-full">
+            <AvatarImage
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                user.nombre
+              )}&background=205284&color=fff`}
+              alt={user.nombre}
+            />
+            <AvatarFallback className="rounded-full bg-primary text-primary-foreground">
+              {user.nombre.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="hidden md:flex flex-col items-start text-left text-sm">
+            <span className="font-medium">{user.nombre}</span>
+            <span className="text-xs text-muted-foreground">
+              {user.usuario}
+            </span>
+          </div>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64" align="end" side="bottom">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-10 w-10 rounded-full">
                 <AvatarImage
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                     user.nombre
-                  )}&background=0D8ABC&color=fff`}
+                  )}&background=205284&color=fff`}
                   alt={user.nombre}
                 />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-full bg-primary text-primary-foreground">
+                  {user.nombre.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
+              <div className="flex flex-col">
+                <span className="font-medium text-sm">{user.nombre}</span>
+                <span className="text-xs text-muted-foreground">
+                  @{user.usuario}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant={roleVariants[user.rol]} className="text-xs">
+                {roleLabels[user.rol]}
+              </Badge>
 
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.nombre}</span>
-                <span className="truncate text-xs">{user.usuario}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-full">
-                  <AvatarImage
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user.nombre
-                    )}&background=0D8ABC&color=fff`}
-                    alt={user.nombre}
-                  />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.nombre}</span>
-                  <span className="truncate text-xs">{user.usuario}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
-              Cerrar sesión
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+              {user.rol !== "admin" && user?.nombre_unidad && (
+                <span className="text-xs text-muted-foreground">
+                  {user.nombre_unidad}
+                </span>
+              )}
+            </div>
+          </div>
+        </DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+          <LogOut className="mr-2 h-4 w-4" />
+          Cerrar Sesión
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
