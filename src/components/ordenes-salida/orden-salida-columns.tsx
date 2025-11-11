@@ -17,7 +17,7 @@ import {
   Trash2,
   Eye,
   FileCheck,
-  FileText,
+  Download,
 } from "lucide-react";
 import { OrdenSalida } from "@/types";
 
@@ -178,10 +178,10 @@ export const createColumns = ({
             <DropdownMenuItem
               onClick={() => onDownloadReport(orden.id_orden_salida)}
             >
-              <FileText className="mr-2 h-4 w-4" />
+              <Download className="mr-2 h-4 w-4" />
               Descargar Reporte
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => onDelete(orden)}
               className="text-red-600"
@@ -189,7 +189,7 @@ export const createColumns = ({
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Eliminar
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

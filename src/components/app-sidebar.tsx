@@ -73,11 +73,6 @@ const navData = [
         roles: ["admin", "encargado", "operador"],
       },
       {
-        title: "Lotes produccion",
-        url: "/lotes-produccion",
-        roles: ["admin", "encargado", "operador"],
-      },
-      {
         title: "Ordenes salida",
         url: "/ordenes-salida",
         roles: ["admin", "encargado", "operador"],
@@ -85,6 +80,11 @@ const navData = [
       {
         title: "Inventario Consolidado",
         url: "/inventario-consolidado",
+        roles: ["admin", "encargado", "operador"],
+      },
+      {
+        title: "Movimiento lotes",
+        url: "/lotes-produccion",
         roles: ["admin", "encargado", "operador"],
       },
     ],

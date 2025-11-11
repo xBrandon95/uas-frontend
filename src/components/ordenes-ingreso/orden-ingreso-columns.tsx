@@ -119,8 +119,6 @@ function AccionesCell({
           Ver Detalle
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
-
         {/* Editar - Con validación */}
         <TooltipProvider>
           <Tooltip>
@@ -159,7 +157,7 @@ function AccionesCell({
           disabled={descargarReporte.isPending}
         >
           <Download className="mr-2 h-4 w-4" />
-          {descargarReporte.isPending ? "Descargando..." : "Descargar PDF"}
+          {descargarReporte.isPending ? "Descargando..." : "Descargar Reporte"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

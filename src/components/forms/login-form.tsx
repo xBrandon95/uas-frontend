@@ -44,7 +44,7 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">SEMILLAS</h1>
+          <h1 className="text-md font-bold uppercase">Unidad de Acondicionamiento de Semillas</h1>
           <p className="text-muted-foreground text-sm text-balance">
             Inicia sesión con tu cuenta
           </p>
