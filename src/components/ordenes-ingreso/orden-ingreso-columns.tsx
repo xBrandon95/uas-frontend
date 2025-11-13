@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { OrdenIngreso } from "@/types";
 import { useDescargarReporteOrdenIngreso } from "@/hooks/use-reportes";
+import { useAuthStore } from "@/stores/authStore";
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
@@ -67,6 +68,7 @@ function AccionesCell({
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
 }) {
+  const { user } = useAuthStore();
   const router = useRouter();
   const descargarReporte = useDescargarReporteOrdenIngreso();
 

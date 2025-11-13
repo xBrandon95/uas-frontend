@@ -29,9 +29,6 @@ import {
   AlertCircle,
   Package,
   TrendingUp,
-  X,
-  Search,
-  DollarSign,
 } from "lucide-react";
 import {
   useCreateOrdenSalida,
@@ -521,7 +518,6 @@ export default function OrdenSalidaFormPage() {
                     </span>
                   </Label>
                   <div className="relative mt-2">
-                    <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="total_costo_servicio"
                       type="number"
@@ -532,7 +528,6 @@ export default function OrdenSalidaFormPage() {
                       })}
                       placeholder="0.00"
                       className={cn(
-                        "pl-9",
                         errors.total_costo_servicio ? "border-red-500" : ""
                       )}
                     />
@@ -586,34 +581,6 @@ export default function OrdenSalidaFormPage() {
                   </AlertDescription>
                 </Alert>
               )}
-
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
-                  <Label>Buscar y Seleccionar Lote Disponible</Label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Buscar por lote, variedad, categoría..."
-                        value={searchLote}
-                        onChange={(e) => setSearchLote(e.target.value)}
-                        disabled={!puedeAgregarLotes}
-                        className="pl-8"
-                      />
-                    </div>
-                    {searchLote && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSearchLote("")}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
 
               {puedeAgregarLotes && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto p-1">

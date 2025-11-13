@@ -135,7 +135,7 @@ export function TransporteSection({ form, dialogs }: TransporteSectionProps) {
 
   return (
     <div className="bg-card rounded-lg border p-6">
-      <h2 className="text-xl font-semibold mb-4">Información de Transporte</h2>
+      <h2 className="text-xl font-semibold mb-4">Información General</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* SEMILLERA */}

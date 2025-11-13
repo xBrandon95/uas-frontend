@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
 import {
   MoreHorizontal,
   Pencil,
@@ -27,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { useAuthStore } from "@/stores/authStore";
 
 interface ColumnsProps {
   onView: (lote: LoteProduccion) => void;
@@ -280,7 +280,7 @@ export const createColumns = ({
                 {!puedeEditar && (
                   <TooltipContent>
                     <p className="max-w-xs">
-                      Solo se pueden editar lotes en estado "disponible"
+                      {`Solo se pueden editar lotes en estado "disponible"`}
                     </p>
                   </TooltipContent>
                 )}

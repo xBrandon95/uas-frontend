@@ -20,6 +20,7 @@ export * from "./lote-produccion";
 export * from "./orden-salida";
 export * from "./cliente";
 export * from "./movimiento-lote";
+export * from "./servicio";
 
 // ============================================
 // ENTIDADES MAESTRAS

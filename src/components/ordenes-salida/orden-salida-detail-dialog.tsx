@@ -161,7 +161,7 @@ export function OrdenSalidaDetailDialog({
             <div>
               <h3 className="flex items-center gap-2 font-semibold mb-3">
                 <TruckIcon className="h-4 w-4" />
-                Información de Transporte
+                Información General
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 <div>

@@ -97,7 +97,7 @@ const baseFields = {
 
 // Schema para CREAR orden (TODOS LOS CAMPOS REQUERIDOS)
 export const createOrdenSchema = z.object({
-  // Información de transporte
+  // Información general
   id_semillera: z.number({ message: "Semillera es requerida" }),
   id_cooperador: z.number({ message: "Cooperador es requerido" }),
   id_conductor: z.number({ message: "Conductor es requerido" }),

@@ -9,7 +9,7 @@ interface ReadOnlyTransporteProps {
 export function ReadOnlyTransporte({ orden }: ReadOnlyTransporteProps) {
   return (
     <div className="bg-card rounded-lg border p-6">
-      <h2 className="text-xl font-semibold mb-4">Información de Transporte</h2>
+      <h2 className="text-xl font-semibold mb-4">Información General</h2>
 
       <div className="bg-muted/30 rounded-lg p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -35,7 +35,7 @@ export function ReadOnlyTransporte({ orden }: ReadOnlyTransporteProps) {
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3 italic">
-          * La información de transporte no puede modificarse en modo edición
+          * La información de general no puede modificarse en modo edición
         </p>
       </div>
     </div>
