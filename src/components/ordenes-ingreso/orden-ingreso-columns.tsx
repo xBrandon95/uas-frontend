@@ -75,18 +75,27 @@ function AccionesCell({
   // Verificar si puede editarse/eliminarse
   const tieneLotsProduccion = (orden as any).tiene_lotes_produccion || false;
   const cantidadLotes = (orden as any).cantidad_lotes || 0;
-  const estaCompletado = orden.estado === "completado";
-  const estaEnProceso = orden.estado === "en_proceso";
-  const estaCancelado = orden.estado === "cancelado";
-  const puedeEditar =
-    !tieneLotsProduccion && !estaCompletado && !estaEnProceso && !estaCancelado;
+  const esPendiente = orden.estado === "pendiente";
 
-  // Mensaje de tooltip para editar
-  const mensajeEditar = !puedeEditar
-    ? tieneLotsProduccion
-      ? `No puede editarse: tiene ${cantidadLotes} lote(s) de producción asociado(s)`
-      : "No se puede editar"
-    : "Editar orden de ingreso";
+  const esAdmin = user?.rol === "admin";
+  const esEncargado = user?.rol === "encargado";
+  const puedeEditarPorRol = esAdmin || esEncargado;
+
+  const puedeEditar = esPendiente && !tieneLotsProduccion && puedeEditarPorRol;
+
+  // Mensajes específicos según la razón
+  const getMensajeEditar = () => {
+    if (!puedeEditarPorRol) {
+      return "Solo administradores y encargados pueden editar órdenes";
+    }
+    if (!esPendiente) {
+      return `No puede editarse: estado actual es "${orden.estado}"`;
+    }
+    if (tieneLotsProduccion) {
+      return `No puede editarse: tiene ${cantidadLotes} lote(s) asociado(s)`;
+    }
+    return "Editar orden de ingreso";
+  };
 
   return (
     <DropdownMenu>
@@ -139,11 +148,9 @@ function AccionesCell({
                 </DropdownMenuItem>
               </div>
             </TooltipTrigger>
-            {!puedeEditar && (
-              <TooltipContent>
-                <p className="max-w-xs">{mensajeEditar}</p>
-              </TooltipContent>
-            )}
+            <TooltipContent side="left" className="max-w-xs">
+              <p>{getMensajeEditar()}</p>
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
