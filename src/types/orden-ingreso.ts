@@ -67,6 +67,9 @@ export interface OrdenIngreso {
 export type CreateOrdenIngresoDto = Omit<
   OrdenIngreso,
   | "id_orden_ingreso"
+  | "numero_orden"
+  | "id_usuario_creador"
+  | "id_unidad"
   | "semillera"
   | "cooperador"
   | "conductor"
@@ -78,9 +81,22 @@ export type CreateOrdenIngresoDto = Omit<
   | "usuario_creador"
   | "fecha_creacion"
   | "fecha_actualizacion"
->;
+> & {
+  id_unidad?: number;
+};
 
-export type UpdateOrdenIngresoDto = Partial<CreateOrdenIngresoDto>;
+export type UpdateOrdenIngresoDto = {
+  peso_bruto: number;
+  peso_tara: number;
+  peso_neto: number;
+  peso_liquido: number;
+  porcentaje_humedad: number;
+  porcentaje_impureza: number;
+  peso_hectolitrico: number;
+  porcentaje_grano_danado: number;
+  porcentaje_grano_verde: number;
+  observaciones?: string;
+};
 
 export interface CreateOrdenIngresoForm {
   id_semillera: number;

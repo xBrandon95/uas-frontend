@@ -88,7 +88,7 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
   const handleOpenSemilla = () => {
     dialogs.semilla.setOnCreated((id: number) => {
       setValue("id_semilla", id);
-      setValue("id_variedad", undefined as any); // Reset variedad
+      setValue("id_variedad", 0);
       dialogs.semilla.setOnCreated(null);
     });
     dialogs.semilla.setOpen(true);
@@ -132,7 +132,7 @@ export function SemillaSection({ form, dialogs }: SemillaSectionProps) {
                   value={field.value?.toString()}
                   onValueChange={(value) => {
                     field.onChange(Number(value));
-                    setValue("id_variedad", undefined as any);
+                    setValue("id_variedad", 0);
                   }}
                   placeholder="Buscar semilla..."
                   searchPlaceholder="Escriba para buscar..."
