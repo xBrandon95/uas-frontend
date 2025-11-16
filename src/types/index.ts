@@ -51,46 +51,46 @@ export * from "./servicio";
 // PROCESOS OPERATIVOS
 // ============================================
 
-export interface OrdenIngreso {
-  id_orden_ingreso: number;
-  numero_orden: string;
-  id_semillera: number;
-  semillera?: Semillera;
-  id_cooperador: number;
-  cooperador?: Cooperador;
-  id_conductor: number;
-  conductor?: Conductor;
-  id_vehiculo: number;
-  vehiculo?: Vehiculo;
-  id_semilla: number;
-  semilla?: Semilla;
-  id_variedad: number;
-  variedad?: Variedad;
-  id_categoria_ingreso: number;
-  categoria_ingreso?: Categoria;
-  id_unidad: number;
-  unidad?: Unidad;
-  nro_lote_campo?: string;
-  cantidad_unidades?: number;
-  nro_cupon?: string;
-  lugar_ingreso?: string;
-  hora_ingreso?: string;
-  lugar_salida?: string;
-  hora_salida?: string;
-  peso_bruto?: number;
-  peso_tara?: number;
-  peso_neto?: number;
-  peso_liquido?: number;
-  porcentaje_humedad?: number;
-  porcentaje_impureza?: number;
-  peso_hectolitrico?: number;
-  porcentaje_grano_danado?: number;
-  porcentaje_grano_verde?: number;
-  observaciones?: string;
-  estado: string;
-  fecha_creacion: string;
-  fecha_actualizacion: string;
-}
+// export interface OrdenIngreso {
+//   id_orden_ingreso: number;
+//   numero_orden: string;
+//   id_semillera: number;
+//   semillera?: Semillera;
+//   id_cooperador: number;
+//   cooperador?: Cooperador;
+//   id_conductor: number;
+//   conductor?: Conductor;
+//   id_vehiculo: number;
+//   vehiculo?: Vehiculo;
+//   id_semilla: number;
+//   semilla?: Semilla;
+//   id_variedad: number;
+//   variedad?: Variedad;
+//   id_categoria_ingreso: number;
+//   categoria_ingreso?: Categoria;
+//   id_unidad: number;
+//   unidad?: Unidad;
+//   nro_lote_campo?: string;
+//   cantidad_unidades?: number;
+//   nro_cupon?: string;
+//   lugar_ingreso?: string;
+//   hora_ingreso?: string;
+//   lugar_salida?: string;
+//   hora_salida?: string;
+//   peso_bruto?: number;
+//   peso_tara?: number;
+//   peso_neto?: number;
+//   peso_liquido?: number;
+//   porcentaje_humedad?: number;
+//   porcentaje_impureza?: number;
+//   peso_hectolitrico?: number;
+//   porcentaje_grano_danado?: number;
+//   porcentaje_grano_verde?: number;
+//   observaciones?: string;
+//   estado: string;
+//   fecha_creacion: string;
+//   fecha_actualizacion: string;
+// }
 
 // export interface LoteProduccion {
 //   id_lote_produccion: number;
@@ -172,30 +172,6 @@ export interface Estadistica {
 // ============================================
 // FORMS
 // ============================================
-
-export interface CreateOrdenIngresoForm {
-  id_semillera: number;
-  id_cooperador: number;
-  id_conductor: number;
-  id_vehiculo: number;
-  id_semilla: number;
-  id_variedad: number;
-  id_categoria_ingreso: number;
-  id_unidad: number;
-  nro_lote_campo?: string;
-  cantidad_unidades?: number;
-  nro_cupon?: string;
-  peso_bruto?: number;
-  peso_tara?: number;
-  peso_neto?: number;
-  peso_liquido?: number;
-  porcentaje_humedad?: number;
-  porcentaje_impureza?: number;
-  peso_hectolitrico?: number;
-  porcentaje_grano_danado?: number;
-  porcentaje_grano_verde?: number;
-  observaciones?: string;
-}
 
 export interface CreateLoteProduccionForm {
   id_orden_ingreso: number;
