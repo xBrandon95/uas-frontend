@@ -14,21 +14,21 @@ export interface OrdenIngreso {
 
   // Relaciones de transporte
   id_semillera: number;
-  semillera: Semillera;
+  semillera?: Semillera;
   id_cooperador: number;
-  cooperador: Cooperador;
+  cooperador?: Cooperador;
   id_conductor: number;
-  conductor: Conductor;
+  conductor?: Conductor;
   id_vehiculo: number;
-  vehiculo: Vehiculo;
+  vehiculo?: Vehiculo;
 
   // Información de la semilla
   id_semilla: number;
-  semilla: Semilla;
+  semilla?: Semilla;
   id_variedad: number;
-  variedad: Variedad;
+  variedad?: Variedad;
   id_categoria_ingreso: number;
-  categoria_ingreso: Categoria;
+  categoria_ingreso?: Categoria;
   nro_lote_campo: string;
   nro_cupon: string;
 
@@ -57,11 +57,15 @@ export interface OrdenIngreso {
   // Estado y tracking
   estado: string;
   id_unidad: number;
-  unidad: Unidad;
+  unidad?: Unidad;
   id_usuario_creador: number;
-  usuario_creador: Usuario;
+  usuario_creador?: Usuario;
   fecha_creacion: Date;
   fecha_actualizacion: Date;
+
+  // Propiedades adicionales del backend
+  tiene_lotes_produccion?: boolean;
+  cantidad_lotes?: number;
 }
 
 export type CreateOrdenIngresoDto = Omit<

@@ -63,23 +63,6 @@ const requiredPercentage = (fieldName: string) =>
       .max(100, `${fieldName} no puede ser mayor a 100%`)
   );
 
-// Helper para peso hectolítrico REQUERIDO
-const requiredPositiveNumber = (fieldName: string) =>
-  z.preprocess(
-    (val) => {
-      try {
-        return toNumber(val);
-      } catch {
-        return undefined;
-      }
-    },
-    z
-      .number({
-        message: `${fieldName} es requerido`,
-      })
-      .positive(`${fieldName} debe ser mayor a 0`)
-  );
-
 // Schema base para campos comunes (TODOS REQUERIDOS)
 const baseFields = {
   peso_bruto: requiredNumber("Peso bruto"),
