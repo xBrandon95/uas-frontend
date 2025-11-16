@@ -8,9 +8,7 @@ import {
   deleteOrdenIngreso,
   getOrdenesIngresoByEstado,
   getOrdenesIngresoByUnidad,
-  getOrdenesIngresoByFecha,
   getEstadisticasOrdenesIngreso,
-  getOrdenIngresoByNumero,
   getOrdenesDisponiblesParaLotes,
 } from "@/lib/api/ordenes-ingreso";
 import {

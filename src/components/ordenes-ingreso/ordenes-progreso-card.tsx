@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Package, TrendingUp, Weight, CheckCircle2 } from "lucide-react";
+import { TrendingUp, Weight, CheckCircle2 } from "lucide-react";
 
 interface OrdenProgresoCardProps {
   ordenIngreso: {
@@ -26,16 +26,6 @@ export function OrdenProgresoCard({
 }: OrdenProgresoCardProps) {
   const porcentaje = parseFloat(produccion.porcentaje_utilizado);
   const estaCompleto = porcentaje >= 100;
-
-  const getEstadoColor = (estado: string) => {
-    const colores: Record<string, string> = {
-      pendiente: "bg-yellow-500",
-      en_proceso: "bg-blue-500",
-      completado: "bg-green-500",
-      cancelado: "bg-red-500",
-    };
-    return colores[estado] || "bg-gray-500";
-  };
 
   const getEstadoLabel = (estado: string) => {
     const labels: Record<string, string> = {
