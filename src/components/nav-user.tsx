@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, User as UserIcon, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 

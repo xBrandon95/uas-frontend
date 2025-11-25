@@ -45,8 +45,8 @@ export const createColumns = ({
   onView,
   onEdit,
   onToggleActive,
-  onDelete,
-}: ColumnsProps): ColumnDef<Usuario>[] => [
+}: // onDelete,
+ColumnsProps): ColumnDef<Usuario>[] => [
   {
     accessorKey: "nombre",
     header: "Nombre",

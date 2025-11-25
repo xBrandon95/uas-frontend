@@ -17,17 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  TruckIcon,
-  User,
-  Store,
-  Wheat,
-  Calendar,
-  Package,
-  Loader2,
-  MapPin,
-  DollarSign,
-} from "lucide-react";
+import { TruckIcon, Store, Package, Loader2, DollarSign } from "lucide-react";
 import { useOrdenSalida } from "@/hooks/use-ordenes-salida";
 
 interface OrdenSalidaDetailDialogProps {

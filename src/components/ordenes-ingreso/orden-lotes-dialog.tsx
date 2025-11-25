@@ -353,7 +353,7 @@ export function OrdenLotesDialog({
                                       <TooltipContent>
                                         <p className="max-w-xs">
                                           Solo se pueden editar lotes en estado
-                                          "disponible"
+                                          disponible
                                         </p>
                                       </TooltipContent>
                                     )}

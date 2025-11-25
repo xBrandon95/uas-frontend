@@ -32,7 +32,7 @@ const servicioSchema = z.object({
     .string()
     .max(500, "La descripción no puede exceder 500 caracteres")
     .optional(),
-  activo: z.boolean().default(true),
+  activo: z.boolean(),
 });
 
 type ServicioFormData = z.infer<typeof servicioSchema>;
@@ -54,8 +54,9 @@ export function ServicioFormDialog({
   const createMutation = useCreateServicio();
   const updateMutation = useUpdateServicio();
 
-  const { data: servicio, isLoading: isLoadingServicio } =
-    useServicio(servicioId);
+  const { data: servicio, isLoading: isLoadingServicio } = useServicio(
+    servicioId ?? null
+  );
 
   const {
     register,
@@ -103,6 +104,7 @@ export function ServicioFormDialog({
       onOpenChange(false);
       reset();
     } catch (error) {
+      console.log(error);
       // Error ya manejado por el hook
     }
   };

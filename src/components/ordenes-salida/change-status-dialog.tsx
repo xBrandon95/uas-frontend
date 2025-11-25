@@ -150,7 +150,7 @@ export function ChangeStatusDialog({
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>Atención:</strong> Una vez marcada como "Completado", no
+                <strong>Atención:</strong> Una vez marcada como Completado, no
                 podrás editar ni eliminar esta orden.
               </AlertDescription>
             </Alert>

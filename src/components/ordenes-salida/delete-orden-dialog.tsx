@@ -10,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { useDeleteOrdenSalida } from "@/hooks/use-ordenes-salida";
 import { OrdenSalida } from "@/types";

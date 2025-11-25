@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Power, Trash2, Eye } from "lucide-react";
+import { MoreHorizontal, Pencil, Power, Eye } from "lucide-react";
 import { Unidad } from "@/types";
 
 interface ColumnsProps {
@@ -25,8 +25,8 @@ export const createColumns = ({
   onView,
   onEdit,
   onToggleActive,
-  onDelete,
-}: ColumnsProps): ColumnDef<Unidad>[] => [
+}: // onDelete,
+ColumnsProps): ColumnDef<Unidad>[] => [
   {
     accessorKey: "nombre",
     header: "Nombre",

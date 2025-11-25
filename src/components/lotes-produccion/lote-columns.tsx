@@ -26,7 +26,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useAuthStore } from "@/stores/authStore";
 
 interface ColumnsProps {
   onView: (lote: LoteProduccion) => void;

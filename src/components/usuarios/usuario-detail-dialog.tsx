@@ -9,14 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  CalendarDays,
-  User,
-  Shield,
-  Building2,
-  Activity,
-  Loader2,
-} from "lucide-react";
+import { User, Shield, Building2, Activity, Loader2 } from "lucide-react";
 import { useUsuario } from "@/hooks/use-usuarios";
 import { Role } from "@/types";
 
@@ -52,18 +45,6 @@ export function UsuarioDetailDialog({
   usuarioId,
 }: UsuarioDetailDialogProps) {
   const { data: usuario, isLoading } = useUsuario(usuarioId);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-BO", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -85,7 +85,9 @@ export function LoteFormDialog({
 
   const createMutation = useCreateLoteProduccion();
   const updateMutation = useUpdateLoteProduccion();
-  const { data: lote, isLoading: isLoadingLote } = useLoteProduccion(loteId);
+  const { data: lote, isLoading: isLoadingLote } = useLoteProduccion(
+    loteId ?? null
+  );
 
   const { data: orden } = useOrdenIngreso(ordenId);
   const { data: lotesExistentes } = useLotesByOrdenIngreso(ordenId);
@@ -226,6 +228,7 @@ export function LoteFormDialog({
         });
       }, 300);
     } catch (error) {
+      console.log(error);
       // Error manejado por el hook
     }
   };
@@ -316,8 +319,7 @@ export function LoteFormDialog({
                     </div>
                     {isEditing && (
                       <p className="text-xs text-muted-foreground mt-2 italic">
-                        * El peso del lote actual no está incluido en
-                        "Producido"
+                        * El peso del lote actual no está incluido en Producido
                       </p>
                     )}
                   </AlertDescription>

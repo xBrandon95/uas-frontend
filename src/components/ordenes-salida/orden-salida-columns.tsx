@@ -11,14 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Eye,
-  FileCheck,
-  Download,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Eye, FileCheck, Download } from "lucide-react";
 import { OrdenSalida } from "@/types";
 
 interface ColumnsProps {
@@ -50,7 +43,6 @@ export const createColumns = ({
   onView,
   onEdit,
   onChangeStatus,
-  onDelete,
   onDownloadReport,
 }: ColumnsProps): ColumnDef<OrdenSalida>[] => [
   {
