@@ -33,6 +33,7 @@ import { useAuthStore } from "@/stores/authStore";
 
 interface ColumnsProps {
   onView: (orden: OrdenIngreso) => void;
+  onViewLotes: (orden: OrdenIngreso) => void;
   onEdit: (orden: OrdenIngreso) => void;
   onChangeStatus: (orden: OrdenIngreso) => void;
   onDelete: (orden: OrdenIngreso) => void;
@@ -73,8 +74,8 @@ function AccionesCell({
   const descargarReporte = useDescargarReporteOrdenIngreso();
 
   // Verificar si puede editarse/eliminarse
-  const tieneLotsProduccion = (orden as any).tiene_lotes_produccion || false;
-  const cantidadLotes = (orden as any).cantidad_lotes || 0;
+  const tieneLotsProduccion = orden.tiene_lotes_produccion || false;
+  const cantidadLotes = orden.cantidad_lotes || 0;
   const esPendiente = orden.estado === "pendiente";
 
   const esAdmin = user?.rol === "admin";
@@ -246,7 +247,7 @@ export const createColumns = ({
     cell: ({ row }) => {
       const estado = row.getValue("estado") as string;
       const estadoConfig = getEstadoBadge(estado);
-      const orden = row.original as any;
+      const orden = row.original;
       const tieneLotsProduccion = orden.tiene_lotes_produccion || false;
       const cantidadLotes = orden.cantidad_lotes || 0;
       const esEstadoFinal = estado === "completado" || estado === "cancelado";

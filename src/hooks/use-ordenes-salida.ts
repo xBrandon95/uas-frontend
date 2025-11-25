@@ -7,21 +7,24 @@ import {
   deleteOrdenSalida,
   getOrdenesSalidaByEstado,
   getOrdenesSalidaByUnidad,
-  getOrdenesSalidaByCliente,
   getEstadisticasOrdenesSalida,
   getLotesDisponiblesParaOrden,
   getLotesDisponiblesFiltrados, // ✅ NUEVO
 } from "@/lib/api/ordenes-salida";
-import { CreateOrdenSalidaDto, UpdateOrdenSalidaDto } from "@/types";
+import {
+  CreateOrdenSalidaDto,
+  PaginationFilterParams,
+  UpdateOrdenSalidaDto,
+} from "@/types";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils/error";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Obtener todas las órdenes
-export function useOrdenesSalida() {
+export function useOrdenesSalida(params: PaginationFilterParams) {
   return useQuery({
-    queryKey: ["ordenes-salida"],
-    queryFn: getOrdenesSalida,
+    queryKey: ["ordenes-salida", params],
+    queryFn: () => getOrdenesSalida(params),
   });
 }
 

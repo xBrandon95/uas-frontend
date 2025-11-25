@@ -24,7 +24,7 @@ export default function OrdenesIngresoPage() {
 
   // Modales
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
-  const [lotesDialogOpen, setLotesDialogOpen] = useState(false); // ✅ NUEVO
+  const [lotesDialogOpen, setLotesDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedOrdenId, setSelectedOrdenId] = useState<number | null>(null);
@@ -69,7 +69,6 @@ export default function OrdenesIngresoPage() {
     setDetailDialogOpen(true);
   };
 
-  // ✅ NUEVO: Handler para ver lotes
   const handleViewLotes = (orden: OrdenIngreso) => {
     setSelectedOrdenId(orden.id_orden_ingreso);
     setLotesDialogOpen(true);

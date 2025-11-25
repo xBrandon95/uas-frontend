@@ -30,7 +30,11 @@ export default function OrdenesSalidaPage() {
     useState<OrdenSalida | null>(null);
   const [ordenToDelete, setOrdenToDelete] = useState<OrdenSalida | null>(null);
 
-  const { data, isLoading, isError, error } = useOrdenesSalida();
+  const { data, isLoading, isError, error } = useOrdenesSalida({
+    page,
+    limit,
+    search,
+  });
 
   // Hook para descargar el reporte PDF
   const descargarReporte = useDescargarReporteOrdenSalida();

@@ -1,6 +1,7 @@
 // src/components/ordenes-ingreso/hooks/useOrdenIngresoForm.ts
 import { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+// 1. Importamos Resolver además de SubmitHandler
+import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import {
@@ -15,22 +16,25 @@ import {
   UpdateOrdenFormData,
 } from "../schemas/ordenIngresoSchema";
 
+type OrdenFormValues = CreateOrdenFormData | UpdateOrdenFormData;
+
 export function useOrdenIngresoForm(ordenId: string | null) {
   const router = useRouter();
   const isEditing = !!ordenId;
 
-  // Mutations
   const createMutation = useCreateOrdenIngreso();
   const updateMutation = useUpdateOrdenIngreso();
 
-  // Query
   const { data: orden, isLoading: isLoadingOrden } = useOrdenIngreso(
     isEditing ? Number(ordenId) : null
   );
 
-  // Form
-  const form = useForm<CreateOrdenFormData | UpdateOrdenFormData>({
-    resolver: zodResolver(isEditing ? updateOrdenSchema : createOrdenSchema),
+  const form = useForm<OrdenFormValues>({
+    // 2. Solución clave: Hacemos cast del resolver a Resolver<OrdenFormValues>
+    // Esto resuelve el conflicto entre 'unknown' del preprocess y 'number' del tipo
+    resolver: zodResolver(
+      isEditing ? updateOrdenSchema : createOrdenSchema
+    ) as Resolver<OrdenFormValues>,
     defaultValues: isEditing
       ? {}
       : {
@@ -40,11 +44,9 @@ export function useOrdenIngresoForm(ordenId: string | null) {
 
   const { watch, setValue, reset } = form;
 
-  // Watch para cálculos automáticos
   const pesoBruto = watch("peso_bruto");
   const pesoTara = watch("peso_tara");
 
-  // Calcular peso neto automáticamente
   const pesoNetoCalculado = useMemo(() => {
     if (pesoBruto && pesoTara) {
       return Number((pesoBruto - pesoTara).toFixed(2));
@@ -52,14 +54,12 @@ export function useOrdenIngresoForm(ordenId: string | null) {
     return undefined;
   }, [pesoBruto, pesoTara]);
 
-  // Actualizar peso neto cuando cambie el cálculo
   useEffect(() => {
     if (pesoNetoCalculado !== undefined) {
       setValue("peso_neto", pesoNetoCalculado);
     }
   }, [pesoNetoCalculado, setValue]);
 
-  // Cargar datos al editar
   useEffect(() => {
     if (isEditing && orden) {
       reset({
@@ -89,13 +89,12 @@ export function useOrdenIngresoForm(ordenId: string | null) {
     }
   }, [isEditing, orden, reset]);
 
-  // Submit handler
-  const onSubmit = async (data: CreateOrdenFormData | UpdateOrdenFormData) => {
+  const onSubmit: SubmitHandler<OrdenFormValues> = async (data) => {
     try {
       if (isEditing) {
         await updateMutation.mutateAsync({
           id: Number(ordenId),
-          dto: data,
+          dto: data as UpdateOrdenFormData,
         });
       } else {
         console.log(data);

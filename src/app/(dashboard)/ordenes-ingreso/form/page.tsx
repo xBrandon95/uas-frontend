@@ -19,6 +19,8 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { UseFormReturn } from "react-hook-form";
+import { CreateOrdenFormData } from "@/components/ordenes-ingreso/schemas/ordenIngresoSchema";
 
 export default function OrdenIngresoFormPage() {
   const { user } = useAuthStore();
@@ -123,8 +125,14 @@ export default function OrdenIngresoFormPage() {
           </>
         ) : (
           <>
-            <TransporteSection form={form} dialogs={dialogs} />
-            <SemillaSection form={form} dialogs={dialogs} />
+            <TransporteSection
+              form={form as unknown as UseFormReturn<CreateOrdenFormData>}
+              dialogs={dialogs}
+            />
+            <SemillaSection
+              form={form as unknown as UseFormReturn<CreateOrdenFormData>}
+              dialogs={dialogs}
+            />
           </>
         )}
 

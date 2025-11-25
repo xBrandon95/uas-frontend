@@ -3,12 +3,16 @@ import {
   OrdenSalida,
   CreateOrdenSalidaDto,
   UpdateOrdenSalidaDto,
+  PaginationFilterParams,
+  PaginatedResponse,
 } from "@/types";
 import { LoteProduccion } from "@/types";
 
 // Obtener todas las órdenes
-export async function getOrdenesSalida(): Promise<OrdenSalida[]> {
-  const { data } = await api.get("/ordenes-salida");
+export async function getOrdenesSalida(
+  params: PaginationFilterParams
+): Promise<PaginatedResponse<OrdenSalida>> {
+  const { data } = await api.get("/ordenes-salida", { params });
   console.log(data);
   return data;
 }
