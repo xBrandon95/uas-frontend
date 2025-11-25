@@ -344,7 +344,7 @@ export default function InventarioPage() {
               )}
               {searchTerm && (
                 <Badge variant="secondary" className="gap-1">
-                  Búsqueda: "{searchTerm}"
+                  {`Busqueda "${searchTerm}"`}
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => setSearchTerm("")}

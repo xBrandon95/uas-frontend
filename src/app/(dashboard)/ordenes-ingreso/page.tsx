@@ -89,10 +89,9 @@ export default function OrdenesIngresoPage() {
     setDeleteDialogOpen(true);
   };
 
-  // ✅ ACTUALIZADO: Pasar el nuevo handler
   const columns = createColumns({
     onView: handleView,
-    onViewLotes: handleViewLotes, // ✅ NUEVO
+    onViewLotes: handleViewLotes,
     onEdit: handleEdit,
     onChangeStatus: handleChangeStatus,
     onDelete: handleDelete,
@@ -159,7 +158,7 @@ export default function OrdenesIngresoPage() {
         ordenId={selectedOrdenId}
       />
 
-      {/* ✅ NUEVO: Dialog de Lotes */}
+      {/* Dialog de Lotes */}
       <OrdenLotesDialog
         open={lotesDialogOpen}
         onOpenChange={setLotesDialogOpen}

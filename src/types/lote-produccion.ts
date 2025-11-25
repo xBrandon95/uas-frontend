@@ -24,8 +24,8 @@ export interface LoteProduccion {
   unidad: Unidad;
   id_usuario_creador: number;
   usuario_creador: Usuario;
-  cantidad_original?: number;
-  total_kg_original?: string | number;
+  cantidad_original: number;
+  total_kg_original: string | number;
   fecha_creacion: Date;
   fecha_actualizacion: Date;
 }
@@ -33,6 +33,7 @@ export interface LoteProduccion {
 export type CreateLoteProduccionDto = Omit<
   LoteProduccion,
   | "id_lote_produccion"
+  | "id_usuario_creador"
   | "orden_ingreso"
   | "variedad"
   | "categoria_salida"
@@ -40,6 +41,8 @@ export type CreateLoteProduccionDto = Omit<
   | "usuario_creador"
   | "nro_lote"
   | "total_kg"
+  | "cantidad_original"
+  | "total_kg_original"
   | "fecha_creacion"
   | "fecha_actualizacion"
 >;

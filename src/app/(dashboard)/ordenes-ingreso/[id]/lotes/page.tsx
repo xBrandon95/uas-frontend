@@ -378,8 +378,8 @@ export default function OrdenLotesPage() {
                               {!puedeEditar && (
                                 <TooltipContent>
                                   <p className="max-w-xs">
-                                    Solo se pueden editar lotes en estado
-                                    "disponible"
+                                    {`Solo se pueden editar lotes en estado
+                                    "disponible"`}
                                   </p>
                                 </TooltipContent>
                               )}

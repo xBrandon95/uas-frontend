@@ -23,7 +23,7 @@ export default function LotesProduccionPage() {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedLoteId, setSelectedLoteId] = useState<number | null>(null);
+  const [selectedLoteId] = useState<number | null>(null);
   const [loteToChangeStatus, setLoteToChangeStatus] =
     useState<LoteProduccion | null>(null);
   const [loteToDelete, setLoteToDelete] = useState<LoteProduccion | null>(null);

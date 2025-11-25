@@ -19,7 +19,7 @@ export interface DetalleOrdenSalida {
   id_categoria: number;
   categoria: Categoria;
   nro_lote: string;
-  tamano: string;
+  tamano?: string;
   cantidad_unidades: number;
   kg_por_unidad: number;
   total_kg: number;
@@ -40,7 +40,7 @@ export interface OrdenSalida {
   vehiculo: Vehiculo;
   id_unidad: number;
   unidad: Unidad;
-  fecha_salida?: Date;
+  fecha_salida: Date;
   deposito?: string;
   observaciones?: string;
   total_costo_servicio?: number;
@@ -69,7 +69,7 @@ export type CreateOrdenSalidaDto = {
   id_conductor: number;
   id_vehiculo: number;
   id_unidad: number;
-  fecha_salida?: string;
+  fecha_salida: string;
   deposito?: string;
   observaciones?: string;
   total_costo_servicio?: number;

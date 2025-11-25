@@ -188,10 +188,11 @@ export default function LoteProduccionFormPage() {
 
   const handleOrdenChange = useCallback(
     (value: string) => {
+      console.log(value);
       const id = Number(value);
       setSelectedOrdenId(id);
       setValue("id_orden_ingreso", id);
-      setValue("id_categoria_salida", undefined as any);
+      setValue("id_categoria_salida", 0);
     },
     [setValue]
   );
@@ -219,7 +220,7 @@ export default function LoteProduccionFormPage() {
       }
       router.push("/lotes-produccion");
     } catch (error) {
-      // Error manejado por el hook
+      console.log(error);
     }
   };
 
