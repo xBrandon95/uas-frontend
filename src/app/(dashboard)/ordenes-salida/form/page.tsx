@@ -62,7 +62,7 @@ const ordenSalidaSchema = z.object({
   id_cliente: z.number({ message: "Requerido" }),
   id_conductor: z.number({ message: "Requerido" }),
   id_vehiculo: z.number({ message: "Requerido" }),
-  fecha_salida: z.string().optional(),
+  fecha_salida: z.string(),
   deposito: z.string().optional(),
   observaciones: z.string().optional(),
   total_costo_servicio: z
@@ -108,7 +108,7 @@ export default function OrdenSalidaFormPage() {
   } = useForm<OrdenSalidaFormData>({
     resolver: zodResolver(ordenSalidaSchema),
     defaultValues: {
-      fecha_salida: new Date().toISOString().split("T")[0], // Por defecto la fecha actual
+      fecha_salida: new Date().toISOString().split("T")[0],
       detalles: [],
       total_costo_servicio: 0,
     },
@@ -293,7 +293,7 @@ export default function OrdenSalidaFormPage() {
 
     const dto = {
       ...data,
-      id_unidad: user?.id_unidad!,
+      id_unidad: user?.id_unidad || 0,
       estado: "pendiente",
     };
 
