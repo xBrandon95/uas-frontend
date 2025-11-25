@@ -34,7 +34,6 @@ import {
   Boxes,
   Scale,
   X,
-  Building2,
   Filter,
   FileDown,
   Loader2,
@@ -52,7 +51,7 @@ export default function InventarioConsolidadoPage() {
   const [filtroVariedad, setFiltroVariedad] = useState<number | undefined>();
   const [filtroCategoria, setFiltroCategoria] = useState<number | undefined>();
   const [filtroUnidad, setFiltroUnidad] = useState<number | undefined>(
-    user?.rol === "admin" ? undefined : user?.id_unidad
+    user?.rol === "admin" ? undefined : user?.id_unidad ?? undefined
   );
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
